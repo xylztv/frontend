@@ -10,13 +10,13 @@
 }
 
 #bg0 {
-    background: url(images/bg-blur.jpg);
+    background: url(../images/bg-blur.jpg);
     background-position: 0% 90%;
     height: 60%;
 }
 
 #bg1 {
-    background: url(images/bg2.png);
+    background: url(../images/bg2.png);
     background-size: 40%;
     width: 25%;
     height: 80%;
@@ -25,7 +25,7 @@
 }
 
 #bg2 {
-    background: url(images/bg2.png);
+    background: url(../images/bg2.png);
     background-position: 0% 140%;
     background-size: 90%;
     width: 20%;
@@ -35,7 +35,7 @@
 }
 
 #bg3 {
-    background: url(images/bg2.png);
+    background: url(../images/bg2.png);
     background-size: 200%;
     width: 12%;
     height: 140%;
