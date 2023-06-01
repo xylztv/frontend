@@ -1,0 +1,38 @@
+.removed-header {
+    color: #fff; /* Text color */
+    /* padding: 20px 0 20px 375px; */
+    padding: 8px 0px;
+    text-align: center; /* Align the text to the left */
+    font-size: 48px; /* Increased font size for a bold impact */
+    font-weight: 700; /* Bolder font weight */
+    font-family: 'IBM Plex Sans', sans-serif;
+    letter-spacing: 2px; /* Add some letter spacing */
+    text-transform: uppercase; /* Transform the text to uppercase */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Adjusted text shadow for better readability */
+    transition: color 0.3s ease; /* Add a smooth transition effect for text color */
+}
+
+.removed-header:hover {
+    color: #ffcc00; /* Vibrant text color on hover */
+}
+
+.removed-header span {
+    display: inline-block; /* Make the header text wrap as a single line */
+    vertical-align: middle; /* Align the text vertically in the middle */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap');

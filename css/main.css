@@ -1,0 +1,71 @@
+html {
+    height: 100%;
+    box-sizing: border-box;
+}
+
+body {
+    /* -ms-overflow-style: none;
+    scrollbar-width: none; */
+    overflow-y: scroll;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.25;
+    background: #FAD02C;
+    color: #161616;
+    box-sizing: border-box;
+    /* width: 100%; */
+    min-height: 100%;
+    margin: 0;
+    position: relative;
+}
+
+/* For Webkit browsers */
+/* 
+body::-webkit-scrollbar {
+    display: none;
+}
+*/
+body::-webkit-scrollbar-thumb {
+    background-color: #a8a8a8;
+    border-radius: 10px;
+}
+body::-webkit-scrollbar-track {
+    background-color: #f8efe4;
+}
+body::-webkit-scrollbar-corner {
+    background-color: #f8efe4;
+}
+
+/* For Firefox */
+body scrollbar {
+    width: 0.5em;
+    background-color: #f8efe4;
+}
+body scrollbar thumb {
+    border-radius: 10px;
+    background-color: #a8a8a8;
+}
+
+/* For Edge */
+body::-ms-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #a8a8a8;
+}
+body::-ms-scrollbar-track {
+    background-color: #f8efe4;
+}
+
+p {
+    margin: 0;
+}
+
+.content-row {
+    display: -ms-flexbox; /* IE10 */
+    display: flex;
+    -ms-flex-wrap: wrap; /* IE10 */
+    flex-wrap: wrap;
+    min-height: 100vh;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap');

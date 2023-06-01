@@ -1,0 +1,128 @@
+.header {
+    height: 64px;
+    min-width: 1200px;
+    background: #282120;
+    display: flex;
+    justify-content: space-between;
+    padding: 0px 32px;
+    box-shadow:
+    0px 1px 2px rgba(250, 208, 44, 0.5),
+    0px 2px 4px rgba(250, 208, 44, 0.5), 
+    0px 4px 8px rgba(250, 208, 44, 0.5), 
+    0px 8px 16px rgba(250, 208, 44, 0.5);
+}
+
+/* CSS */
+.button-54 {
+    font-family: "Open Sans", sans-serif;
+    font-size: 16px;
+    letter-spacing: 2px;
+    text-decoration: none;
+    text-transform: uppercase;
+    color: #000;
+    cursor: pointer;
+    border: 3px solid;
+    padding: 0.25em 0.5em;
+    box-shadow: 1px 1px 0px 0px, 2px 2px 0px 0px, 3px 3px 0px 0px, 4px 4px 0px 0px, 5px 5px 0px 0px;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+.button-54:active {
+    box-shadow: 0px 0px 0px 0px;
+    top: 5px;
+    left: 5px;
+}
+.button-54:focus{
+    outline: none;
+}
+
+@media (min-width: 768px) {
+    .button-54 {
+        padding: 0.25em 0.75em;
+    }
+}
+
+.left-section {
+    display: flex;
+    align-items: center;
+    text-indent: 0%;
+    width: 256px;
+}
+
+#home-link {
+    display: flex;
+    position: relative;
+    text-decoration: none;
+    /* Hide the text */
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.main-icon {
+    height: 40px;
+    margin: 8px;
+}
+
+.main-title {
+    height: 24px;
+    margin: 0px 8px;
+    color: #ffffff;
+    font-family: 'IBM Plex Mono', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 24px;
+}
+
+.middle-section {
+    flex: 1;
+    margin-left: 32px;
+    margin-right: 32px;
+    display: flex;
+    align-items: center;
+    max-width: 256px;
+    justify-content: space-between;
+}
+
+.twitch-icon,
+.youtube-icon,
+.discord-icon,
+.twitter-icon {
+    height: 32px;
+    filter: invert(100%);
+}
+
+.right-section {
+    display: flex;
+    align-items: center;
+    column-gap: 16px;
+    width: 256px;
+    flex-direction: row-reverse;
+}
+
+.right-section a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.right-section a:hover {
+    text-decoration: underline;
+}
+
+@media screen and (max-width: 1344px) {
+    .header {
+        min-width: 0px;
+        padding: 0 16px;
+        column-gap: 16px;
+        justify-content: none;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .right-section {
+        display: none;
+    }
+}

@@ -1,0 +1,24 @@
+.footer {
+    height: 64px;
+    min-width: 1200px;
+    background: white;
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+}
+
+.footer-text {
+    color: #525252;
+}
+
+@media screen and (max-width: 1344px) {
+    .footer {
+        min-width: 0px;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .footer {
+        padding: 0 16px;
+    }
+}
