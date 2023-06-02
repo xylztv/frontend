@@ -65,15 +65,15 @@ async function Setup() {
 					id: 87793135,
 					progress: "100%",
 					verified: true,
-					points: 362,
-					rank: 1
+					link: url,
+					points: 362
 				},
 				{
 					id: 87454329,
 					progress: "100%",
 					verified: false,
-					points: 166,
-					rank: 4
+					link: url,
+					points: 166
 				},
 				...
 			],
@@ -117,6 +117,7 @@ async function Setup() {
 			name: challengeInfo.name,
 			progress: recordInfo.progress,
 			verified: false,
+			link: recordInfo.link,
 			points: points
 		})
 
@@ -135,6 +136,7 @@ async function Setup() {
 			name: challengeInfo.name,
 			progress: "100%",
 			verified: true,
+			link: challengeInfo.link,
 			points: points
 		})
 
@@ -250,7 +252,7 @@ async function Setup() {
 			txt += `
 						</td>
 						<td>
-							<a href=${challengeInfo.link} target="_blank">Link</a>
+							<a href=${recordInfo.link} target="_blank">Link</a>
 						</td>
 					</tr>
 			`
