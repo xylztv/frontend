@@ -1,7 +1,8 @@
 import { token, tokenDev } from "./config.js";
 
 const fetch_url_records = `https://sheets.googleapis.com/v4/spreadsheets/12iBLpB-CSAIV8iFrbjjzxJKMzMMbRoAoLz1gOCrnFTo/values/Blad2!A3:D1000?key=${token}`;
-const fetch_url_challenges = `https://sheets.googleapis.com/v4/spreadsheets/1R1hyDMdNR6c7i3fUFTvyM894_FrCNwAakPXWM1DgtVI/values/Blad1!C4:G53?key=${token}`;
+const fetch_url_challenges = `https://sheets.googleapis.com/v4/spreadsheets/1R1hyDMdNR6c7i3fUFTvyM894_FrCNwAakPXWM1DgtVI/values/Blad1!C4:G103?key=${token}`;
+const REQUIREMENT = 60
 
 async function fetchData(url) {
 	const response = await fetch(url);
@@ -44,9 +45,19 @@ async function GetChallenges() {
 }
 
 function GetPoints(rank, progress) {
-	let maxPoints = 10 + Math.pow(180, 35 / (rank + 30))
+	let maxPoints
 
-	return progress == 100 ? maxPoints : maxPoints * progress * 0.005
+	if (rank <= 10) {
+		maxPoints = 149.61 * (Math.pow(1.38796762063, 1 - rank)) + 100.39
+	} else if (rank <= 20) {
+		maxPoints = 166.611 * (Math.pow(1.0172736527773, -8 - rank)) - 14.195692219
+	} else if (rank <= 35) {
+		maxPoints = 261.8498558893426 * (Math.pow(1.036, -14 - rank)) + 10.2765560994
+	} else if (rank <= 100) {
+		maxPoints = 36.18203535684543 * (Math.pow(2, Math.log(50) * (50.947 - rank) / 99)) + 0.5599125586
+	}
+
+	return progress == 100 ? maxPoints : maxPoints * 0.1 * Math.pow(5, (progress - REQUIREMENT) / (100 - REQUIREMENT))
 }
 
 async function Setup() {

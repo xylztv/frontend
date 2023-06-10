@@ -1,7 +1,7 @@
 import { token, tokenDev } from "./config.js";
 
 const fetch_url = `https://sheets.googleapis.com/v4/spreadsheets/12iBLpB-CSAIV8iFrbjjzxJKMzMMbRoAoLz1gOCrnFTo/values/Blad2!A3:D1000?key=${token}`
-const nong_fetch_url = `https://sheets.googleapis.com/v4/spreadsheets/1R1hyDMdNR6c7i3fUFTvyM894_FrCNwAakPXWM1DgtVI/values/Blad1!C4:H53?key=${token}`
+const nong_fetch_url = `https://sheets.googleapis.com/v4/spreadsheets/1R1hyDMdNR6c7i3fUFTvyM894_FrCNwAakPXWM1DgtVI/values/Blad1!C4:H103?key=${token}`
 
 Setup()
 

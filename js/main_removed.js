@@ -1,6 +1,6 @@
 import { token, tokenDev } from "./config.js";
 
-const fetch_url = `https://sheets.googleapis.com/v4/spreadsheets/1R1hyDMdNR6c7i3fUFTvyM894_FrCNwAakPXWM1DgtVI/values/Blad1!K33:P1000?key=${token}`;
+const fetch_url = `https://sheets.googleapis.com/v4/spreadsheets/1R1hyDMdNR6c7i3fUFTvyM894_FrCNwAakPXWM1DgtVI/values/Blad1!K36:P1000?key=${token}`;
 
 
 const template_list = `

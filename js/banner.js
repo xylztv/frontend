@@ -1,6 +1,6 @@
 import { token, tokenDev } from "./config.js";
 
-const fetch_url = `https://sheets.googleapis.com/v4/spreadsheets/1R1hyDMdNR6c7i3fUFTvyM894_FrCNwAakPXWM1DgtVI/values/Blad1!K4:O31?key=${token}`
+const fetch_url = `https://sheets.googleapis.com/v4/spreadsheets/1R1hyDMdNR6c7i3fUFTvyM894_FrCNwAakPXWM1DgtVI/values/Blad1!K4:O33?key=${token}`
 let levels = []
 
 document.querySelector(".banner_close").addEventListener("click", function() {
