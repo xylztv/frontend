@@ -19,18 +19,29 @@
     border-radius: 4px;
     padding: 0 16px;
     box-sizing: border-box;
-    transition: color 0.25s;
-    box-shadow:
+    transition: filter 0.5s, transform 0.5s;
+    animation-name: loadingAnim;
+    animation-duration: 1.5s;
+    animation-timing-function: ease-in-out;
+    /*box-shadow:
     1px 2px 2px 0px rgba(255, 209, 44, 0.7),
     2px 3px 4px 0px rgba(255, 184, 51, 0.7),
     3px 5px 8px 0px rgba(255, 131, 22, 0.7),
     3px 5px 16px 0px rgba(250, 75, 11, 0.7);
-    /* box-shadow: rgba(240, 124, 46, 0.4) 5px 5px, rgba(240, 124, 46, 0.3) 10px 10px, rgba(240, 124, 46, 0.2) 15px 15px, rgba(240, 124, 46, 0.1) 20px 20px, rgba(240, 124, 46, 0.05) 25px 25px; */
+    box-shadow: rgba(240, 124, 46, 0.4) 5px 5px, rgba(240, 124, 46, 0.3) 10px 10px, rgba(240, 124, 46, 0.2) 15px 15px, rgba(240, 124, 46, 0.1) 20px 20px, rgba(240, 124, 46, 0.05) 25px 25px;*/
+    box-shadow : 0px 0px 15px 5px rgba(110, 70, 45, 0.3);
 }
 
 .list-item:hover{
-    background-color: #f8efe494;
+    filter : brightness(75%);
     cursor: pointer;
+    transform : scale(1.1);
+}
+
+@keyframes loadingAnim {
+    0% {transform : translateY(50px); filter : opacity(0)}
+    25% {transform : translateY(50px); filter : opacity(0)}
+    100% {transform : translateY(0px); filter : opacity(100%)}
 }
 
 .list-number {
@@ -96,6 +107,10 @@
     cursor: pointer;
 }
 
+.level-id {
+    user-select: none;
+}
+
 .level-id:before,
 .level-author:before,
 .level-verifier:before {
@@ -132,6 +147,7 @@
     border-radius: 4px;
     box-sizing: border-box;
     z-index: 999;
+    /*
     overflow: auto;
     box-shadow:
         1px 2px 2px 0px rgba(255, 209, 44, 0.7),
@@ -139,6 +155,8 @@
         3px 5px 8px 0px rgba(255, 131, 22, 0.7),
         3px 5px 16px 0px rgba(250, 75, 11, 0.7);
     /* box-shadow: rgba(240, 124, 46, 0.4) 5px 5px, rgba(240, 124, 46, 0.3) 10px 10px, rgba(240, 124, 46, 0.2) 15px 15px, rgba(240, 124, 46, 0.1) 20px 20px, rgba(240, 124, 46, 0.05) 25px 25px; */
+    box-shadow :
+    0px 0px 16px 8px rgba(80, 66, 55, 0.5);
 }
 
 .popup-box h1 {

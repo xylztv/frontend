@@ -107,3 +107,5 @@ async function copyText(event) {
         console.error('Failed to copy:', err);
     }
 }
+
+window.ondragstart = function() {return false}; // prevent dragging images/icons

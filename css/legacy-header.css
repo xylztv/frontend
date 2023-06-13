@@ -10,10 +10,21 @@
     text-transform: uppercase; /* Transform the text to uppercase */
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Adjusted text shadow for better readability */
     transition: color 0.3s ease; /* Add a smooth transition effect for text color */
+    user-select: none;
+    animation-name: fadeRight;
+    animation-duration: 2s;
+    animation-timing-function: ease-in-out;
 }
 
-.legacy-header:hover {
-    color: #ffcc00; /* Vibrant text color on hover */
+/*.legacy-header:hover {
+    color: #ffcc00; /* Vibrant text color on hover 
+}*/
+/*This is misleading and makes the user think the header is a link, so I removed it.*/
+
+@keyframes fadeRight {
+    0% {filter : opacity(0); transform : translateX(150px);}
+    35% {filter : opacity(0); transform : translateX(150px);}
+    100% {filter : opacity(100%); transform : translateX(none);}
 }
 
 .legacy-header span {

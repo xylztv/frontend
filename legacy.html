@@ -79,6 +79,7 @@
     <meta name="msapplication-config" content="images/browserconfig.xml">
 </head>
 <body>
+    <a id="top" style="position:absolute;top : -100px;"></a>
     <div class="parallax">
         <div class="parallax-layer" id="bg0"></div>
         <div class="parallax-layer" id="bg1"></div>
@@ -163,10 +164,12 @@
         <div class="footer-text">
             © 2023 XYLZ. All rights reserved.
         </div>
+        <button id="btn-toTop" onclick = "document.location = '#top'">Back to Top</button>
     </div>
 </body>
 <script type="module" src="js/main_legacy.js" defer></script>
 <script type="module" src="js/parallax.js" defer></script>
+<!--
 <script>
     $(document).on("mouseenter", ".list-item, .twitch-icon, .youtube-icon, .discord-icon, .twitter-icon, #submit-button, .submit-record-button", function() {
         TweenMax.to(this, 0.5, {scale: 1.1, ease: Power2.easeOut});
@@ -175,4 +178,5 @@
         TweenMax.to(this, 0.5, {scale: 1, ease: Power2.easeOut});
     });
 </script>
+-->
 </html>

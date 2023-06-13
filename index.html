@@ -71,7 +71,8 @@
         <meta name="msapplication-config" content="images/browserconfig.xml">
     </head>
     <meta name="viewport" content="width=device-width, initial-scale=1" /> 
-    <body>
+    <body onload="window.location = '#top'">
+        <a id="top" style="position:absolute;top : -100px;"></a>
         <div class="parallax">
             <div class="parallax-layer" id="bg0"></div>
             <div class="parallax-layer" id="bg1"></div>
@@ -107,6 +108,7 @@
                 <button class="button-54" role="button" onclick="window.location.href='https://xylz.tv/leaderboard.html'">Leaderboard</button>    
             </div>
         </div>
+
         <div class="banner">
             <div class="banner_content">
                 <div class="banner_text">
@@ -154,6 +156,7 @@
                         <li>Certain hacks permitted (FPS Bypass 50-360, Icon Hack, RGB Icons). No FPS abuse, macros, NoClip/NoSpike, Speedhacks, Semi-Auto, secretly nerfing levels, refresh rate impossibilities, or cutting completions.</li>
                     </ol>
                 </div>
+                
                 <div class="sidebar-item" style="text-align: center;">
                     <em>If you have any questions, or you think a level is unfairly placed, please send your concerns to the Discord.</em>
                 </div>
@@ -168,13 +171,14 @@
             <div class="footer-text">
                 © 2023 XYLZ. All rights reserved.
             </div>
+            <button id="btn-toTop" onclick = "document.location = '#top'">Back to Top</button>
         </div>
     </body>
     <script type="module" src="js/main.js" defer></script>
     <script type="module" src="js/banner.js" defer></script>
     <script type="module" src="js/popup.js" defer></script>
     <script type="module" src="js/parallax.js"></script>
-    <script defer>
+    <!--<script defer>
         $(document).on("mouseenter", ".list-item, .twitch-icon, .youtube-icon, .discord-icon, .twitter-icon, #submit-button, .submit-record-button", function() {
             TweenMax.to(this, 0.5, {scale: 1.1, ease: Power2.easeOut});
         });
@@ -183,4 +187,5 @@
         });
         $(document).on("")
     </script>
+    -->
 </html>
