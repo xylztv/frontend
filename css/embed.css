@@ -1,11 +1,12 @@
-.banner {
+.embed {
+    display: none;
     background: #7542ff;
     position: absolute;
     width: 100%;
     z-index: 2;
 }
 
-.banner_content {
+.embed_content {
     padding: 12px;
     max-width: 1000px;
     margin: 0 auto;
@@ -13,19 +14,19 @@
     align-items: center;
 }
 
-.banner_text {
+.embed_text {
     flex-grow: 1;
     cursor: pointer;
 }
 
-.banner_close {
+.embed_close {
     background: none;
     border: none;
     cursor: pointer;
 }
 
-.banner_text,
-.banner_close > span {
+.embed_text,
+.embed_close > span {
     color: #ffffff;
     text-align: center;
 }
