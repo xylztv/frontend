@@ -1,12 +1,10 @@
-import { token, tokenDev } from "./config.js";
+const fetch_url = "https://xylz.tv/rest/records";
+const nong_fetch_url = "https://xylz.tv/rest/nong";
 
-const fetch_url = `https://sheets.googleapis.com/v4/spreadsheets/12iBLpB-CSAIV8iFrbjjzxJKMzMMbRoAoLz1gOCrnFTo/values/Blad2!A3:D1000?key=${token}`
-const nong_fetch_url = `https://sheets.googleapis.com/v4/spreadsheets/1R1hyDMdNR6c7i3fUFTvyM894_FrCNwAakPXWM1DgtVI/values/Blad1!C4:H103?key=${token}`
+Setup();
 
-Setup()
-
-let completions = []
-let nongs = []
+let completions = [];
+let nongs = [];
 
 async function fetchData(url) {
     // Storing response
@@ -32,21 +30,19 @@ async function checkNONG(data) {
 }
 
 async function addRecordItems(data) {
-    console.log(data)
-    let i = 0
-    data.values.forEach(recordItem => {
-        completions[i] = {id: recordItem[0], link: recordItem[1], name: recordItem[2], runPercentage: recordItem[3]}
-        i++
+    let i = 0;
+    data.forEach(recordItem => {
+        completions[i] = {id: recordItem.level_id, link: recordItem.link, name: recordItem.player, runPercentage: recordItem.percent};
+        i++;
     });
 }
 
 async function addNONG(data) {
-    console.log(data)
     let i = 0
-    data.values.forEach(listItem => {
-        if (!listItem[5]) return
-        nongs[i] = {id: listItem[0], nong: listItem[5]}
-        i++
+    data.forEach(listItem => {
+        if (!listItem.link) return;
+        nongs[i] = {id: listItem.id, nong: listItem.link};
+        i++;
     });
 }
 

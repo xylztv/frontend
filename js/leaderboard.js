@@ -1,7 +1,5 @@
-import { token, tokenDev } from "./config.js";
-
-const fetch_url_records = `https://sheets.googleapis.com/v4/spreadsheets/12iBLpB-CSAIV8iFrbjjzxJKMzMMbRoAoLz1gOCrnFTo/values/Blad2!A3:D1000?key=${token}`;
-const fetch_url_challenges = `https://sheets.googleapis.com/v4/spreadsheets/1R1hyDMdNR6c7i3fUFTvyM894_FrCNwAakPXWM1DgtVI/values/Blad1!C4:G103?key=${token}`;
+const fetch_url_records = "https://xylz.tv/rest/records";
+const fetch_url_challenges = "https://xylz.tv/rest/mainlist";
 const REQUIREMENT = 60
 
 async function fetchData(url) {
@@ -10,17 +8,17 @@ async function fetchData(url) {
 	if (!response.ok) {
 		throw new Error("Failed to fetch data.");
 	}
-	return data.values; // Return data directly
+	return data; // Return data directly
 }
 
 async function GetRecords() {
 	return fetchData(fetch_url_records).then(data => {
 		return data.map(recordInfo => {
 			return {
-				id: recordInfo[0],
-				link: recordInfo[1],
-				player: recordInfo[2],
-				progress: recordInfo[3]
+				id: recordInfo.level_id,
+				link: recordInfo.link,
+				player: recordInfo.player,
+				progress: recordInfo.percent
 			}
 		})
 	})
@@ -31,15 +29,15 @@ async function GetChallenges() {
 		let obj = {}
 
 		data.forEach((challengeInfo, i) => {
-			obj[challengeInfo[0]] = {
-				name: challengeInfo[1],
-				author: challengeInfo[2],
-				verifier: challengeInfo[3],
-				link: challengeInfo[4],
-				rank: i + 1
+			obj[challengeInfo.id] = {
+				name: challengeInfo.title,
+				author: challengeInfo.creator,
+				verifier: challengeInfo.verifier,
+				link: challengeInfo.link,
+				rank: challengeInfo.ranking
 			}
 		})
-
+        
 		return obj
 	})
 }

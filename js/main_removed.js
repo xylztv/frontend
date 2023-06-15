@@ -1,7 +1,4 @@
-import { token, tokenDev } from "./config.js";
-
-const fetch_url = `https://sheets.googleapis.com/v4/spreadsheets/1R1hyDMdNR6c7i3fUFTvyM894_FrCNwAakPXWM1DgtVI/values/Blad1!K36:P1000?key=${token}`;
-
+const fetch_url = "https://xylz.tv/rest/removed_levels";
 
 const template_list = `
 <div class="list-item">
@@ -63,24 +60,31 @@ function getThumbnails(IDs) {
 }
 
 async function addListItems(data) {
+    data.sort((a, b) => {
+        if (a.ranking > b.ranking) 
+            return 1;
+        else 
+            return -1;
+    });
+    
     let middle = document.getElementsByClassName("middle");
-    let IDs = data.values.map((listItem) => getVideoID(listItem[4]));
+    let IDs = data.map((listItem) => getVideoID(listItem.link));
 
     await Promise.all(getThumbnails(IDs)).then(thumbnails => {
-        data.values.forEach((listItem, index) => {
+        data.forEach((listItem, index) => {
             middle[0].insertAdjacentHTML("beforeend",`
                 <div class="list-item">
                     <div class="list-thumbnail">
-                        <a href="${listItem[4]}" target="_blank">
+                        <a href="${listItem.link}" target="_blank">
                             <img class="list-image" src="${thumbnails[index]}" alt="Level thumbnail">
                         </a>
                     </div>
                     <div class="list-info">
-                        <p class="level-name">${listItem[1]}</p>
+                        <p class="level-name">${listItem.title}</p>
                         <div class="level-info">
-                            <p class="level-id">${listItem[0]}</p>
-                            <p class="level-author">${listItem[2]}</p>
-                            <p class="level-verifier">${listItem[3]}</p>
+                            <p class="level-id">${listItem.id}</p>
+                            <p class="level-author">${listItem.creator}</p>
+                            <p class="level-verifier">${listItem.verifier}</p>
                         </div>
                     </div>
                 </div>`
