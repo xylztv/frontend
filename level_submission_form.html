@@ -210,18 +210,78 @@ function validateYouTubeLink() {
 }
 
 
-      function onLevelIdPaste(event) {
-        //check if level id field is empty and don't run getLevelInfo() if it is
-        if (document.getElementById("levelId").value === "") {
-          const fields = document.querySelectorAll("#levelInfoFields, #lengthFields, #verifierFields, #creatorFields, #youtubeLinkFields");
-        fields.forEach((field) => {
-          field.classList.add("hidden");
-        });
-          return;
-        }
-        //if level id is empty then hide the fields
-        setTimeout(getLevelInfo, 0);
+function onLevelIdPaste(event) {
+  // Check if level id field is empty and don't run getLevelInfo() if it is
+  const levelId = document.getElementById("levelId").value;
+  if (levelId === "") {
+    const fields = document.querySelectorAll("#levelInfoFields, #lengthFields, #verifierFields, #creatorFields, #youtubeLinkFields");
+    fields.forEach((field) => {
+      field.classList.add("hidden");
+    });
+    return;
+  }
+
+  // Check if level id is a valid number
+  if (!/^\d+$/.test(levelId)) {
+    toastr.error("Level ID should only contain numbers.");
+    return;
+  }
+
+  // Check if level id is in /rest/mainlist
+  const mainlistUrl = `${API_URL}/rest/mainlist`;
+  fetch(mainlistUrl)
+    .then((response) => response.json())
+    .then((mainlistData) => {
+      if (mainlistData.error) {
+        // Handle error if any
+        console.error(mainlistData.error);
+        return;
       }
+
+      // Check if level id exists in mainlist
+      const isLevelInMainlist = mainlistData.some((level) => level.id === levelId);
+
+      if (isLevelInMainlist) {
+        // Handle duplicate ID case for mainlist
+        toastr.error("This level is already on the main list.");
+      } else {
+        // Level id is not in mainlist, check if it's in /rest/pending
+        const pendingUrl = `${API_URL}/rest/pending`;
+        fetch(pendingUrl)
+          .then((response) => response.json())
+          .then((pendingData) => {
+            if (pendingData.error) {
+              // Handle error if any
+              console.error(pendingData.error);
+              return;
+            }
+
+            // Check if level id exists in pending list
+            const isLevelInPending = pendingData.some((level) => level.id === levelId);
+
+            if (isLevelInPending) {
+              // Handle duplicate ID case for pending list
+              toastr.error("This level is already submitted.");
+            } else {
+              // Level id is unique, proceed with getLevelInfo()
+              getLevelInfo();
+            }
+          })
+          .catch((error) => {
+            // Handle fetch error for pending list
+            console.error(error);
+          });
+      }
+    })
+    .catch((error) => {
+      // Handle fetch error for mainlist
+      console.error(error);
+    });
+}
+
+
+
+
 
       function onYouTubeLinkPaste(event) {
         setTimeout(validateYouTubeLink, 0);
