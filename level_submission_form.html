@@ -20,49 +20,13 @@
     <meta property="twitter:site:id" content="@_hyperbit">
     <meta property="twitter:creator" content="@_hyperbit">
     <meta property="twitter:creator:id" content="@_hyperbit">
-
-    <!--cool imports lol-->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" media="print" onload="this.media='all'">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.22/datatables.min.css" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" integrity="sha512-5hE2vfqDj56RtZd2E2Qwzi2vj8V7uGfWdFVhHUZtjvqWzf5HGfT7GtYPIQwOjQg5fh3jHm4c5uvI8Bx5IzwjAQ==" crossorigin="anonymous" media="print" onload="this.media='all'">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js" defer></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous" defer></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous" defer></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.22/datatables.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js" defer></script>
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org/",
-        "@type": "Person",
-        "name": "Hyperbit",
-        "url": "https://hyperbit.me/",
-        "image": "https://hyperbit.me/images/hyperbit.png",
-        "sameAs": [
-            "https://github.com/hyperbit0",
-            "https://hyperbit.me/",
-            "https://twitter.com/_hyperbit",
-            "https://www.youtube.com/channel/UCswdLSNnpviRsrJUQm-ybaQ"
-        ],
-        "jobTitle": "CEO",
-        "worksFor": {
-            "@type": "Organization",
-            "name": "Hyperbit Inc."
-        }
-    }
-    </script>
-    <!-- Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
-    <link rel="manifest" href="images/site.webmanifest">
-    <link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#5bbad5">
     <link rel="shortcut icon" href="images/favicon.ico">
-    <meta name="msapplication-TileColor" content="#DA532C">
-    <meta name="msapplication-config" content="images/browserconfig.xml">
+    
+
+    <!-- Cool imports -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.22/datatables.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <style>
@@ -72,6 +36,7 @@
         padding: 20px;
         border: 1px solid #ccc;
         border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
       .tick-icon {
         color: green;
@@ -98,7 +63,10 @@
         <form id="levelForm">
           <div class="form-group">
             <label for="levelId">Level ID:</label>
-            <input type="text" class="form-control" id="levelId" name="levelId" onpaste="onLevelIdPaste(event)">
+            <input type="text" class="form-control" id="levelId" name="levelId" onpaste="onLevelIdInput(event)">
+            <div id="loadingIcon" class="hidden">
+              <i class="fas fa-spinner fa-spin"></i> Loading...
+            </div>
           </div>
           <div class="form-group hidden" id="levelInfoFields">
             <label for="levelName">Level Name:</label>
@@ -143,11 +111,15 @@
             </div>
             <div id="youtubeLinkError" class="invalid-feedback">Please enter a valid YouTube link.</div>
           </div>
-          <input type="submit" class="btn btn-primary" id="submitButton" value="Submit">
+          <input type="submit" class="btn btn-primary hidden" id="submitButton" value="Submit">
         </form>
       </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="/js/config.js"></script>
     <script>
@@ -162,7 +134,9 @@
       }
 
       async function getLevelInfo() {
+        const loadingIcon = document.getElementById("loadingIcon");
         const levelId = document.getElementById("levelId").value;
+
         const response = await fetch(`${API_URL}/addlevel`, {
           method: "POST",
           headers: {
@@ -171,14 +145,18 @@
           body: JSON.stringify({ "levelId": levelId })
         });
 
+        loadingIcon.classList.add("hidden"); // Hide the loading icon
+
         if (response.ok) {
           const data = await response.json();
           document.getElementById("levelName").value = data.levelName;
           document.getElementById("length").value = data.length;
           document.getElementById("verifier").value = data.uploader;
           document.getElementById("creator").value = data.uploader;
-          
-          onCreatorInput()
+
+          document.getElementById("submitButton").classList.remove("hidden"); // Show the submit button
+
+          onCreatorInput();
           onVerifierInput();
 
           const lengthIcon = document.getElementById("lengthIcon");
@@ -191,157 +169,147 @@
           // Display an error message to the user
         }
       }
-      
+
       async function submitFormData() {
-  const levelId = document.getElementById("levelId").value;
-  const levelName = document.getElementById("levelName").value;
-  const verifier = document.getElementById("verifier").value;
-  const creator = document.getElementById("creator").value;
-  const youtubeLink = document.getElementById("youtubeLink").value;
+        const levelId = document.getElementById("levelId").value;
+        const levelName = document.getElementById("levelName").value;
+        const verifier = document.getElementById("verifier").value;
+        const creator = document.getElementById("creator").value;
+        const youtubeLink = document.getElementById("youtubeLink").value;
 
-  // Additional checks
-  const isYouTubeLinkValid = validateYouTubeLink();
-  const isVerifierValid = await validateUsername("verifier", verifier);
-  const isCreatorValid = await validateUsername("creator", creator);
-  const isLengthValid = document.getElementById("lengthIcon").innerHTML.includes("tick-icon");
+        // Additional checks
+        const isYouTubeLinkValid = validateYouTubeLink();
+        const isVerifierValid = await validateUsername("verifier", verifier);
+        const isCreatorValid = await validateUsername("creator", creator);
+        const isLengthValid = document.getElementById("lengthIcon").innerHTML.includes("tick-icon");
 
-  console.log("YouTube Link Valid:", isYouTubeLinkValid);
-  console.log("Verifier Valid:", isVerifierValid);
-  console.log("Creator Valid:", isCreatorValid);
-  console.log("Length Valid:", isLengthValid);
+        console.log("YouTube Link Valid:", isYouTubeLinkValid);
+        console.log("Verifier Valid:", isVerifierValid);
+        console.log("Creator Valid:", isCreatorValid);
+        console.log("Length Valid:", isLengthValid);
 
-  if (isYouTubeLinkValid && isVerifierValid && isCreatorValid && isLengthValid) {
-    const url = `${API_URL}/rest/mainlist`;
+        if (isYouTubeLinkValid && isVerifierValid && isCreatorValid && isLengthValid) {
+          const url = `${API_URL}/rest/mainlist`;
 
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        id: levelId,
-        name: levelName,
-        verifier: verifier,
-        creator: creator,
-        link: youtubeLink
-      })
-    })
-      .then((response) => {
-        if (response.ok) {
-          // Level added to the pending list successfully
-          toastr.success('Level submitted successfully!', 'Success');
-          console.log("Level added to the pending list.");
+          fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              id: levelId,
+              name: levelName,
+              verifier: verifier,
+              creator: creator,
+              link: youtubeLink
+            })
+          })
+            .then((response) => {
+              if (response.ok) {
+                // Level added to the pending list successfully
+                toastr.success('Level submitted successfully!', 'Success');
+                console.log("Level added to the pending list.");
+              } else {
+                console.error("Error:", response.status);
+                // Display an error message to the user
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              // Display an error message to the user
+            });
         } else {
-          console.error("Error:", response.status);
-          // Display an error message to the user
+          // Display an error message to the user indicating the invalid fields
+          toastr.error('Please fill in all required fields correctly.', 'Error');
         }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        // Display an error message to the user
-      });
-  } else {
-    // Display an error message to the user indicating the invalid fields
-    toastr.error('Please fill in all required fields correctly.', 'Error');
-  }
-}
-
-
-function validateYouTubeLink() {
-  const youtubeLink = document.getElementById("youtubeLink").value;
-  const youtubeLinkElement = document.getElementById("youtubeLink");
-  const youtubeLinkIcon = document.getElementById("youtubeLinkIcon");
-  const youtubeLinkError = document.getElementById("youtubeLinkError");
-
-  const youtubeRegex = /^(https?:\/\/)?(www\.)?youtube.com\/watch\?v=([\w-]{11})(?:&[\w\-=]*)?$/;
-  const isValidLink = youtubeRegex.test(youtubeLink);
-
-  if (youtubeLink === "") {
-    isYouTubeLinkPresent = false;
-  } else {
-    isYouTubeLinkPresent = true;
-  }
-
-  youtubeLinkElement.classList.remove("is-invalid");
-  youtubeLinkError.style.display = isYouTubeLinkPresent && !isValidLink ? "block" : "none";
-  youtubeLinkIcon.innerHTML = isValidLink ? "<i class='tick-icon fas fa-check'></i>" : "<i class='cross-icon fas fa-times'></i>";
-
-  return isYouTubeLinkPresent && isValidLink; // Return the validation result
-}
-
-
-function onLevelIdPaste(event) {
-  // Check if level id field is empty and don't run getLevelInfo() if it is
-  const levelId = document.getElementById("levelId").value;
-  if (levelId === "") {
-    const fields = document.querySelectorAll("#levelInfoFields, #lengthFields, #verifierFields, #creatorFields, #youtubeLinkFields");
-    fields.forEach((field) => {
-      field.classList.add("hidden");
-    });
-    return;
-  }
-
-  // Check if level id is a valid number
-  if (!/^\d+$/.test(levelId)) {
-    toastr.error("Level ID should only contain numbers.");
-    return;
-  }
-
-  // Check if level id is in /rest/mainlist
-  const mainlistUrl = `${API_URL}/rest/mainlist`;
-  fetch(mainlistUrl)
-    .then((response) => response.json())
-    .then((mainlistData) => {
-      if (mainlistData.error) {
-        // Handle error if any
-        console.error(mainlistData.error);
-        return;
       }
 
-      // Check if level id exists in mainlist
-      const isLevelInMainlist = mainlistData.some((level) => level.id === levelId);
+      function validateYouTubeLink() {
+        const youtubeLink = document.getElementById("youtubeLink").value;
+        const youtubeLinkElement = document.getElementById("youtubeLink");
+        const youtubeLinkIcon = document.getElementById("youtubeLinkIcon");
+        const youtubeLinkError = document.getElementById("youtubeLinkError");
 
-      if (isLevelInMainlist) {
-        // Handle duplicate ID case for mainlist
-        toastr.error("This level is already on the main list.");
-      } else {
-        // Level id is not in mainlist, check if it's in /rest/pending
-        const pendingUrl = `${API_URL}/rest/pending`;
-        fetch(pendingUrl)
+        const youtubeRegex = /^(https?:\/\/)?(www\.)?youtube.com\/watch\?v=([\w-]{11})(?:&[\w\-=]*)?$/;
+        const isValidLink = youtubeRegex.test(youtubeLink);
+
+        if (youtubeLink === "") {
+          isYouTubeLinkPresent = false;
+        } else {
+          isYouTubeLinkPresent = true;
+        }
+
+        youtubeLinkElement.classList.remove("is-invalid");
+        youtubeLinkError.style.display = isYouTubeLinkPresent && !isValidLink ? "block" : "none";
+        youtubeLinkIcon.innerHTML = isValidLink ? "<i class='tick-icon fas fa-check'></i>" : "<i class='cross-icon fas fa-times'></i>";
+
+        return isYouTubeLinkPresent && isValidLink; // Return the validation result
+      }
+
+      function onLevelIdInput() {
+        const loadingIcon = document.getElementById("loadingIcon");
+        const levelId = document.getElementById("levelId").value;
+
+        if (levelId === "") {
+          const fields = document.querySelectorAll("#levelInfoFields, #lengthFields, #verifierFields, #creatorFields, #youtubeLinkFields");
+          fields.forEach((field) => {
+            field.classList.add("hidden");
+          });
+          loadingIcon.classList.add("hidden"); // Hide the loading icon
+          return;
+        }
+
+        if (!/^\d+$/.test(levelId)) {
+          toastr.error("Level ID should only contain numbers.");
+          loadingIcon.classList.add("hidden"); // Hide the loading icon
+          return;
+        }
+
+        const mainlistUrl = `${API_URL}/rest/mainlist`;
+        fetch(mainlistUrl)
           .then((response) => response.json())
-          .then((pendingData) => {
-            if (pendingData.error) {
-              // Handle error if any
-              console.error(pendingData.error);
+          .then((mainlistData) => {
+            if (mainlistData.error) {
+              console.error(mainlistData.error);
               return;
             }
 
-            // Check if level id exists in pending list
-            const isLevelInPending = pendingData.some((level) => level.id === levelId);
+            const isLevelInMainlist = mainlistData.some((level) => level.id === levelId);
 
-            if (isLevelInPending) {
-              // Handle duplicate ID case for pending list
-              toastr.error("This level is already submitted.");
+            if (isLevelInMainlist) {
+              toastr.error("This level is already on the main list.");
+              loadingIcon.classList.add("hidden"); // Hide the loading icon
             } else {
-              // Level id is unique, proceed with getLevelInfo()
-              getLevelInfo();
+              const pendingUrl = `${API_URL}/rest/pending`;
+              fetch(pendingUrl)
+                .then((response) => response.json())
+                .then((pendingData) => {
+                  if (pendingData.error) {
+                    console.error(pendingData.error);
+                    loadingIcon.classList.add("hidden"); // Hide the loading icon
+                    return;
+                  }
+
+                  const isLevelInPending = pendingData.some((level) => level.id === levelId);
+
+                  if (isLevelInPending) {
+                    toastr.error("This level is already submitted.");
+                    loadingIcon.classList.add("hidden"); // Hide the loading icon
+                  } else {
+                    getLevelInfo();
+                  }
+                })
+                .catch((error) => {
+                  loadingIcon.classList.add("hidden"); // Hide the loading icon
+                  console.error(error);
+                });
             }
           })
           .catch((error) => {
-            // Handle fetch error for pending list
+            loadingIcon.classList.add("hidden"); // Hide the loading icon
             console.error(error);
           });
       }
-    })
-    .catch((error) => {
-      // Handle fetch error for mainlist
-      console.error(error);
-    });
-}
-
-
-
-
 
       function onYouTubeLinkPaste(event) {
         setTimeout(validateYouTubeLink, 0);
@@ -354,42 +322,41 @@ function onLevelIdPaste(event) {
       });
 
       function validateUsername(inputId, username) {
-  return fetch(`${API_URL}/validateUsername?username=${username}`)
-    .then((response) => response.json())
-    .then((data) => {
-      const isValid = data.isValid;
-      const errorMessage = data.errorMessage;
+        return fetch(`${API_URL}/validateUsername?username=${username}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const isValid = data.isValid;
+            const errorMessage = data.errorMessage;
 
-      const inputElement = document.getElementById(inputId);
-      const usernameError = document.getElementById(`${inputId}Error`);
-      const usernameIcon = document.getElementById(`${inputId}Icon`);
+            const inputElement = document.getElementById(inputId);
+            const usernameError = document.getElementById(`${inputId}Error`);
+            const usernameIcon = document.getElementById(`${inputId}Icon`);
 
-      inputElement.classList.toggle("is-invalid", !isValid);
-      usernameError.textContent = errorMessage;
-      usernameError.style.display = !isValid ? "block" : "none";
-      usernameIcon.innerHTML = isValid ? "<i class='tick-icon fas fa-check'></i>" : "<i class='cross-icon fas fa-times'></i>";
+            inputElement.classList.toggle("is-invalid", !isValid);
+            usernameError.textContent = errorMessage;
+            usernameError.style.display = !isValid ? "block" : "none";
+            usernameIcon.innerHTML = isValid ? "<i class='tick-icon fas fa-check'></i>" : "<i class='cross-icon fas fa-times'></i>";
 
-      return isValid; // Return the validation result
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      return false; // Return false in case of an error
-    });
-}
-const debounce = (fn, wait) => {
-  let timeout;
-  return (...args) => {
-    console.log(timeout)
-    if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      fn(...args);
-      console.log("run")
-    }, wait);
-  };
-};
+            return isValid; // Return the validation result
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            return false; // Return false in case of an error
+          });
+      }
+      const debounce = (fn, wait) => {
+        let timeout;
+        return (...args) => {
+          if (timeout) clearTimeout(timeout);
+          timeout = setTimeout(() => {
+            fn(...args);
+          }, wait);
+        };
+      };
 
-const debouncedVerifierInput = debounce(() => onVerifierInput(), 1000)
-const debouncedCreatorInput = debounce(() => onCreatorInput(), 1000)
+      const debouncedVerifierInput = debounce(() => onVerifierInput(), 1000);
+      const debouncedCreatorInput = debounce(() => onCreatorInput(), 1000);
+
       function onVerifierInput() {
         const verifierInput = document.getElementById("verifier");
         const verifierUsername = verifierInput.value;
@@ -403,9 +370,21 @@ const debouncedCreatorInput = debounce(() => onCreatorInput(), 1000)
 
         validateUsername("creator", creatorUsername);
       }
+
       document.getElementById("verifier").addEventListener("input", debouncedVerifierInput);
       document.getElementById("creator").addEventListener("input", debouncedCreatorInput);
-      document.getElementById("levelId").addEventListener("input", debounce(() => onLevelIdPaste(event), 1000));
+      document.getElementById("levelId").addEventListener("input", debounce(onLevelIdInput, 1000));
+
+      document.getElementById("levelId").addEventListener("input", () => {
+        const levelIdInput = document.getElementById("levelId");
+        const loadingIcon = document.getElementById("loadingIcon");
+
+        if (levelIdInput.value.trim() !== "") {
+          loadingIcon.classList.remove("hidden");
+        } else {
+          loadingIcon.classList.add("hidden");
+        }
+      });
     </script>
   </body>
 </html>
