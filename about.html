@@ -54,6 +54,7 @@
         <link rel="shortcut icon" href="images/favicon.ico">
         <meta name="msapplication-TileColor" content="#DA532C">
         <meta name="msapplication-config" content="images/browserconfig.xml">
+        <script type="module" src="js/authCheck.js"></script>
     </head>
     <body style="background : rgb(255, 195, 30);">
         <a id="top" style="position:absolute;top : -100px;"></a>
@@ -79,9 +80,21 @@
                 </a>
             </div>
             <div class="right-section">
-                <button class="button-54" role="button" onclick="window.location.href='https://xylz.tv'">Mainlist</button> 
-                <button class="button-54" role="button" onclick="window.location.href='https://xylz.tv/legacy.html'">Legacy</button>
-                <button class="button-54" role="button" onclick="window.location.href='https://xylz.tv/removed.html'">Removed</button>     
+                <div id="loggedOutButtons" class="no-wrap">
+                    <li class="nav-item no-wrap">
+                        <a class="nav-link" href="/signup.html">Sign Up</a>
+                    </li>
+                    <li class="nav-item no-wrap">
+                        <a class="nav-link" href="/signin.html">Sign In</a>
+                    </li>  
+                </div>
+                <div id="loggedInButton" style="display: none;">
+                    <a class="nav-link" href="/account.html">Account</a>
+                </div>
+                <button class="button-54" role="button" onclick="window.location.href='/about.html'">About</button>
+                <button class="button-54" role="button" onclick="window.location.href='legacy.html'">legacy</button>
+                <button class="button-54" role="button" onclick="window.location.href='/removed.html'">Removed</button>    
+                <button class="button-54" role="button" onclick="window.location.href='/leaderboard.html'">Leaderboard</button>  
             </div>
         </div>
         <div class="content-row">
@@ -118,5 +131,6 @@
             </div>
             <button id="btn-toTop" onclick = "document.location = '#top'">Back to Top</button>
         </div>
+        
     </body>
 </html>

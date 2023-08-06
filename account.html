@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Account Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <h3>Account Details</h3>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span><i class="fas fa-user mr-2"></i>Username:</span>
+                            <span>
+                                <span id="usernameDisplay"></span>
+                                <span id="adminTag" class="badge badge-primary ml-2" style="display: none;">Admin</span>
+                            </span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mb-3">
+                            <span><i class="fas fa-envelope mr-2"></i>Email:</span>
+                            <span id="emailDisplay">Coming soon</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span><i class="fas fa-calendar-alt mr-2"></i>Joined:</span>
+                            <span id="joinDateDisplay"></span>
+                        </div>
+                        <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#changePasswordModal">Change Password</button>
+                        <button class="btn btn-danger btn-block mt-2" id="logoutBtn">Log Out</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- The Modal -->
+<div class="modal" id="changePasswordModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+  
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Change Password</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+  
+        <!-- Modal body -->
+        <div class="modal-body">
+          <form id="changePasswordForm">
+              <div class="form-group">
+                  <label for="currentPassword">Current Password:</label>
+                  <input type="password" id="currentPassword" class="form-control">
+              </div>
+              <div class="form-group">
+                  <label for="newPassword">New Password:</label>
+                  <input type="password" id="newPassword" class="form-control">
+              </div>
+              <div class="form-group">
+                  <label for="confirmNewPassword">Confirm New Password:</label>
+                  <input type="password" id="confirmNewPassword" class="form-control">
+              </div>
+              <button type="submit" class="btn btn-primary">Change Password</button>
+          </form>
+        </div>
+  
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        </div>
+  
+      </div>
+    </div>
+  </div>
+  
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script type="module">
+        import { API_URL } from "./js/config.js";
+        // Fetch user details from the backend and populate the fields
+        fetch(`${API_URL}/rest/users`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('userToken')}` // Assuming you're storing the token as 'userToken' in localStorage
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+    document.getElementById('usernameDisplay').innerText = data.username;
+    if (data.is_admin) {
+        document.getElementById('adminTag').style.display = 'inline';
+    }
+    const isoDate = data.joinDate; // Assuming the backend returns the join date in ISO format
+    const date = new Date(isoDate);
+    const formattedDate = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}`;
+
+    document.getElementById('joinDateDisplay').innerText = formattedDate;
+})
+
+        .catch(error => {
+            console.error('Error fetching user details:', error);
+            toastr.error('Failed to fetch account details.');
+        });
+    
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+        localStorage.removeItem('userToken');
+        toastr.success('Logged out successfully.');
+        window.location.href = '/';
+    });
+
+    // Handle change password form submission
+    document.getElementById('changePasswordForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+        if (newPassword !== confirmNewPassword) {
+            toastr.error('New passwords do not match.');
+            return;
+        }
+
+        fetch(`${API_URL}/rest/change-password`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+            },
+            body: JSON.stringify({
+                currentPassword: currentPassword,
+                newPassword: newPassword
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                toastr.success(data.message);
+                $('#changePasswordModal').modal('hide'); // Close the modal
+            } else {
+                toastr.error(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error changing password:', error);
+            toastr.error('Failed to change password. Please try again.');
+        });
+    });
+    </script>
+    
+</body>
+</html>

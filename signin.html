@@ -50,6 +50,7 @@
             .then(data => {
                 if (data.token) {
                     localStorage.setItem('userToken', data.token);
+                    localStorage.setItem('justLoggedIn', 'true');
                     toastr.success('Signed in successfully.');
                     // Optionally, redirect to a dashboard or main page
                     window.location.href = '/';

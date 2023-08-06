@@ -59,6 +59,7 @@
         <link rel="stylesheet" href="css/middle.css">
         <link rel="stylesheet" href="css/footer.css">
         <link rel="stylesheet" href="css/background.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
         <!-- Icons -->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
@@ -102,13 +103,25 @@
                 </a>
             </div>
             <div class="right-section">
-                <button class="button-54" role="button" onclick="window.location.href='https://xylz.tv/about.html'">About</button>
-                <button class="button-54" role="button" onclick="window.location.href='https://xylz.tv/legacy.html'">legacy</button>
-                <button class="button-54" role="button" onclick="window.location.href='https://xylz.tv/removed.html'">Removed</button>    
-                <button class="button-54" role="button" onclick="window.location.href='https://xylz.tv/leaderboard.html'">Leaderboard</button>    
+                <div id="loggedOutButtons">
+                    <li class="nav-item no-wrap">
+                        <a class="nav-link" href="/signup.html">Sign Up</a>
+                    </li>
+                    <li class="nav-item no-wrap">
+                        <a class="nav-link" href="/signin.html">Sign In</a>
+                    </li>  
+                </div>
+                <div id="loggedInButton" style="display: none;">
+                    <a class="nav-link" href="/account.html">Account</a>
+                </div>
+                
+                <button class="button-54" role="button" onclick="window.location.href='/about.html'">About</button>
+                <button class="button-54" role="button" onclick="window.location.href='legacy.html'">legacy</button>
+                <button class="button-54" role="button" onclick="window.location.href='/removed.html'">Removed</button>    
+                <button class="button-54" role="button" onclick="window.location.href='/leaderboard.html'">Leaderboard</button>  
             </div>
         </div>
-
+<!--<script defer>
         <div class="embed">
             <div class="embed_content">
                 <div class="embed_text">
@@ -119,10 +132,10 @@
                 </button>
             </div>
         </div>
-        
+    </script>-->
         <div class="content-row">
             <div class="sidebar">
-                <a id="submit-button" href="https://forms.gle/qezR9hhRqDb1LJdYA" target="_blank">
+                <a id="submit-button" href="/level_submission_form.html" target="_blank">
                     Submit a level
                 </a>
                 <div class="sidebar-item">
@@ -188,6 +201,14 @@
     <script type="module" src="js/embed.js" defer></script>
     <script type="module" src="js/popup.js" defer></script>
     <script type="module" src="js/parallax.js"></script>
+    <script type="module" src="js/authCheck.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <style>
+        #toast-container > .toast {
+            margin-top: 60px; /* Adjust this value based on the height of your header */
+        }
+    </style>
+    
     <!--<script defer>
         $(document).on("mouseenter", ".list-item, .twitch-icon, .youtube-icon, .discord-icon, .twitter-icon, #submit-button, .submit-record-button", function() {
             TweenMax.to(this, 0.5, {scale: 1.1, ease: Power2.easeOut});

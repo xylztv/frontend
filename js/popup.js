@@ -73,7 +73,7 @@ async function Setup() {
 
         runsHTML += `
         <div style="display: flex; justify-content: space-between; width: 100%;">
-            <a href="https://forms.gle/pKK2ktWhmjXSVVhR6" target="_blank"><button class="btn btn-info submit-record-button">Submit Record</button></a>`
+            <a href="/record_submission_form.html" target="_blank"><button class="btn btn-info submit-record-button">Submit Record</button></a>`
 
         // check if nong exists
         let nongData = nongs.find(e => e.id == levelID)

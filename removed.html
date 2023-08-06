@@ -109,10 +109,21 @@
                 </a>
         </div>
         <div class="right-section">
-            <button class="button-54" role="button" onclick="window.location.href='https://xylz.tv/about.html'">About</button>
-            <button class="button-54" role="button" onclick="window.location.href='https://xylz.tv/legacy.html'">legacy</button>
-            <button class="button-54" role="button" onclick="window.location.href='https://xylz.tv'">Mainlist</button> 
-            <button class="button-54" role="button" onclick="window.location.href='https://xylz.tv/leaderboard.html'">Leaderboard</button>  
+            <div id="loggedOutButtons" class="no-wrap">
+                <li class="nav-item no-wrap">
+                    <a class="nav-link" href="/signup.html">Sign Up</a>
+                </li>
+                <li class="nav-item no-wrap">
+                    <a class="nav-link" href="/signin.html">Sign In</a>
+                </li>  
+            </div>
+            <div id="loggedInButton" style="display: none;">
+                <a class="nav-link" href="/account.html">Account</a>
+            </div>
+            <button class="button-54" role="button" onclick="window.location.href='/about.html'">About</button>
+            <button class="button-54" role="button" onclick="window.location.href='legacy.html'">legacy</button>
+            <button class="button-54" role="button" onclick="window.location.href='/removed.html'">Removed</button>    
+            <button class="button-54" role="button" onclick="window.location.href='/leaderboard.html'">Leaderboard</button>  
         </div>
     </div>
     <div class="content-row">
@@ -153,7 +164,6 @@
             </div>
         </div>
         <div class="middle">
-            <!-- Here's the new header for the legacy list -->
             <div class="removed-header">
                 <h1>Removed Levels</h1>
             </div>
@@ -168,6 +178,7 @@
 </body>
 <script type="module" src="js/main_removed.js" defer></script>
 <script type="module" src="js/parallax.js" defer></script>
+<script type="module" src="js/authCheck.js"></script>
 <!--
 <script>
     $(document).on("mouseenter", ".list-item, .twitch-icon, .youtube-icon, .discord-icon, .twitter-icon, #submit-button, .submit-record-button", function() {
