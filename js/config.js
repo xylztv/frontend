@@ -1,1 +1,1 @@
-const API_URL = "https://xylz.tv";
+export const API_URL = "https://xylz.tv";

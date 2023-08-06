@@ -1,5 +1,6 @@
-const fetch_url_records = "https://xylz.tv/rest/records";
-const fetch_url_challenges = "https://xylz.tv/rest/mainlist";
+import { API_URL } from "./config.js";
+const fetch_url_records = `${API_URL}/rest/records`;
+const fetch_url_challenges = `${API_URL}/rest/mainlist`
 const REQUIREMENT = 60
 
 async function fetchData(url) {

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign In</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <h3>Sign In</h3>
+                <form id="signInForm">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign In</button>
+                </form>
+            </div>
+        </div>
+    </div>
+  
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script type="module">
+        import { API_URL } from './js/config.js';
+        document.getElementById('signInForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+
+            fetch(`${API_URL}/rest/sign-in`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.token) {
+                    localStorage.setItem('userToken', data.token);
+                    toastr.success('Signed in successfully.');
+                    // Optionally, redirect to a dashboard or main page
+                    window.location.href = '/';
+                } else {
+                    toastr.error('There was an error signing in.');
+                }
+            })
+            .catch(() => {
+                toastr.error('There was an error signing in.');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -54,6 +54,15 @@
       .form-group:not(:first-child) {
         margin-top: 10px;
       }
+      .input-group .input-group-text {
+        margin: 0;
+        padding: 0.375rem 0.75rem; /* Default Bootstrap padding */
+        height: auto;
+      }
+      *:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
     </style>
   </head>
   <body>
@@ -83,28 +92,31 @@
           </div>
           <div class="form-group hidden" id="verifierFields">
             <label for="verifier">Verifier:</label>
-            <div class="input-group">
-              <input type="text" class="form-control" id="verifier" name="verifier">
-              <div class="input-group-append">
-                <span id="verifierIcon" class="input-group-text"></span>
-              </div>
+            <div class="input-group mb-3">
+                <button type="button" id="addVerifier" class="btn btn-primary hidden">+</button>
+                <input type="text" class="form-control" id="verifier" name="verifier">
+                <div class="input-group-append">
+                    <span id="verifierIcon" class="input-group-text"></span>
+                </div>
             </div>
             <div id="verifierError" class="invalid-feedback"></div>
-          </div>
-          <div class="form-group hidden" id="creatorFields">
+        </div>
+        
+        <div class="form-group hidden" id="creatorFields">
             <label for="creator">Creator:</label>
-            <div class="input-group">
-              <input type="text" class="form-control" id="creator" name="creator">
-              <div class="input-group-append">
-                <span id="creatorIcon" class="input-group-text"></span>
-              </div>
+            <div class="input-group mb-3">
+                <button type="button" id="addCreator" class="btn btn-primary">+</button>
+                <input type="text" class="form-control" id="creator" name="creator">
+                <div class="input-group-append">
+                    <span id="creatorIcon" class="input-group-text"></span>
+                </div>
             </div>
             <div id="creatorError" class="invalid-feedback"></div>
-          </div>
+        </div>
           <div class="form-group hidden" id="youtubeLinkFields">
             <label for="youtubeLink">YouTube Verification Link:</label>
             <div class="input-group">
-              <input type="text" class="form-control" id="youtubeLink" name="youtubeLink" onpaste="onYouTubeLinkPaste(event)" oninput="validateYouTubeLink()">
+              <input type="text" class="form-control" id="youtubeLink" name="youtubeLink">
               <div class="input-group-append">
                 <span id="youtubeLinkIcon" class="input-group-text"></span>
               </div>
@@ -121,270 +133,7 @@
     <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="/js/config.js"></script>
-    <script>
-      let isYouTubeLinkPresent = false;
-
-      function showFields() {
-        const fields = document.querySelectorAll("#levelInfoFields, #lengthFields, #verifierFields, #creatorFields, #youtubeLinkFields");
-        fields.forEach((field) => {
-          field.classList.remove("hidden");
-          field.style.animation = "fadeIn 0.3s forwards";
-        });
-      }
-
-      async function getLevelInfo() {
-        const loadingIcon = document.getElementById("loadingIcon");
-        const levelId = document.getElementById("levelId").value;
-
-        const response = await fetch(`${API_URL}/addlevel`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ "levelId": levelId })
-        });
-
-        loadingIcon.classList.add("hidden"); // Hide the loading icon
-
-        if (response.ok) {
-          const data = await response.json();
-          document.getElementById("levelName").value = data.levelName;
-          document.getElementById("length").value = data.length;
-          document.getElementById("verifier").value = data.uploader;
-          document.getElementById("creator").value = data.uploader;
-
-          document.getElementById("submitButton").classList.remove("hidden"); // Show the submit button
-
-          onCreatorInput();
-          onVerifierInput();
-
-          const lengthIcon = document.getElementById("lengthIcon");
-          lengthIcon.innerHTML = data.length === "Short" || data.length === "Tiny" ? "<i class='tick-icon fas fa-check'></i>" : "<i class='cross-icon fas fa-times'></i>";
-
-          validateYouTubeLink();
-          showFields();
-        } else {
-          console.error("Error:", response.status);
-          // Display an error message to the user
-        }
-      }
-
-      async function submitFormData() {
-        const levelId = document.getElementById("levelId").value;
-        const levelName = document.getElementById("levelName").value;
-        const verifier = document.getElementById("verifier").value;
-        const creator = document.getElementById("creator").value;
-        const youtubeLink = document.getElementById("youtubeLink").value;
-
-        // Additional checks
-        const isYouTubeLinkValid = validateYouTubeLink();
-        const isVerifierValid = await validateUsername("verifier", verifier);
-        const isCreatorValid = await validateUsername("creator", creator);
-        const isLengthValid = document.getElementById("lengthIcon").innerHTML.includes("tick-icon");
-
-        console.log("YouTube Link Valid:", isYouTubeLinkValid);
-        console.log("Verifier Valid:", isVerifierValid);
-        console.log("Creator Valid:", isCreatorValid);
-        console.log("Length Valid:", isLengthValid);
-
-        if (isYouTubeLinkValid && isVerifierValid && isCreatorValid && isLengthValid) {
-          const url = `${API_URL}/rest/mainlist`;
-
-          fetch(url, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              id: levelId,
-              name: levelName,
-              verifier: verifier,
-              creator: creator,
-              link: youtubeLink
-            })
-          })
-            .then((response) => {
-              if (response.ok) {
-                // Level added to the pending list successfully
-                toastr.success('Level submitted successfully!', 'Success');
-                console.log("Level added to the pending list.");
-              } else {
-                console.error("Error:", response.status);
-                // Display an error message to the user
-              }
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-              // Display an error message to the user
-            });
-        } else {
-          // Display an error message to the user indicating the invalid fields
-          toastr.error('Please fill in all required fields correctly.', 'Error');
-        }
-      }
-
-      function validateYouTubeLink() {
-        const youtubeLink = document.getElementById("youtubeLink").value;
-        const youtubeLinkElement = document.getElementById("youtubeLink");
-        const youtubeLinkIcon = document.getElementById("youtubeLinkIcon");
-        const youtubeLinkError = document.getElementById("youtubeLinkError");
-
-        const youtubeRegex = /^(https?:\/\/)?(www\.)?youtube.com\/watch\?v=([\w-]{11})(?:&[\w\-=]*)?$/;
-        const isValidLink = youtubeRegex.test(youtubeLink);
-
-        if (youtubeLink === "") {
-          isYouTubeLinkPresent = false;
-        } else {
-          isYouTubeLinkPresent = true;
-        }
-
-        youtubeLinkElement.classList.remove("is-invalid");
-        youtubeLinkError.style.display = isYouTubeLinkPresent && !isValidLink ? "block" : "none";
-        youtubeLinkIcon.innerHTML = isValidLink ? "<i class='tick-icon fas fa-check'></i>" : "<i class='cross-icon fas fa-times'></i>";
-
-        return isYouTubeLinkPresent && isValidLink; // Return the validation result
-      }
-
-      function onLevelIdInput() {
-        const loadingIcon = document.getElementById("loadingIcon");
-        const levelId = document.getElementById("levelId").value;
-
-        if (levelId === "") {
-          const fields = document.querySelectorAll("#levelInfoFields, #lengthFields, #verifierFields, #creatorFields, #youtubeLinkFields");
-          fields.forEach((field) => {
-            field.classList.add("hidden");
-          });
-          loadingIcon.classList.add("hidden"); // Hide the loading icon
-          return;
-        }
-
-        if (!/^\d+$/.test(levelId)) {
-          toastr.error("Level ID should only contain numbers.");
-          loadingIcon.classList.add("hidden"); // Hide the loading icon
-          return;
-        }
-
-        const mainlistUrl = `${API_URL}/rest/mainlist`;
-        fetch(mainlistUrl)
-          .then((response) => response.json())
-          .then((mainlistData) => {
-            if (mainlistData.error) {
-              console.error(mainlistData.error);
-              return;
-            }
-
-            const isLevelInMainlist = mainlistData.some((level) => level.id === levelId);
-
-            if (isLevelInMainlist) {
-              toastr.error("This level is already on the main list.");
-              loadingIcon.classList.add("hidden"); // Hide the loading icon
-            } else {
-              const pendingUrl = `${API_URL}/rest/pending`;
-              fetch(pendingUrl)
-                .then((response) => response.json())
-                .then((pendingData) => {
-                  if (pendingData.error) {
-                    console.error(pendingData.error);
-                    loadingIcon.classList.add("hidden"); // Hide the loading icon
-                    return;
-                  }
-
-                  const isLevelInPending = pendingData.some((level) => level.id === levelId);
-
-                  if (isLevelInPending) {
-                    toastr.error("This level is already submitted.");
-                    loadingIcon.classList.add("hidden"); // Hide the loading icon
-                  } else {
-                    getLevelInfo();
-                  }
-                })
-                .catch((error) => {
-                  loadingIcon.classList.add("hidden"); // Hide the loading icon
-                  console.error(error);
-                });
-            }
-          })
-          .catch((error) => {
-            loadingIcon.classList.add("hidden"); // Hide the loading icon
-            console.error(error);
-          });
-      }
-
-      function onYouTubeLinkPaste(event) {
-        setTimeout(validateYouTubeLink, 0);
-      }
-
-      document.getElementById("levelForm").addEventListener("submit", (event) => {
-        event.preventDefault();
-        validateYouTubeLink();
-        submitFormData();
-      });
-
-      function validateUsername(inputId, username) {
-        return fetch(`${API_URL}/validateUsername?username=${username}`)
-          .then((response) => response.json())
-          .then((data) => {
-            const isValid = data.isValid;
-            const errorMessage = data.errorMessage;
-
-            const inputElement = document.getElementById(inputId);
-            const usernameError = document.getElementById(`${inputId}Error`);
-            const usernameIcon = document.getElementById(`${inputId}Icon`);
-
-            inputElement.classList.toggle("is-invalid", !isValid);
-            usernameError.textContent = errorMessage;
-            usernameError.style.display = !isValid ? "block" : "none";
-            usernameIcon.innerHTML = isValid ? "<i class='tick-icon fas fa-check'></i>" : "<i class='cross-icon fas fa-times'></i>";
-
-            return isValid; // Return the validation result
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-            return false; // Return false in case of an error
-          });
-      }
-      const debounce = (fn, wait) => {
-        let timeout;
-        return (...args) => {
-          if (timeout) clearTimeout(timeout);
-          timeout = setTimeout(() => {
-            fn(...args);
-          }, wait);
-        };
-      };
-
-      const debouncedVerifierInput = debounce(() => onVerifierInput(), 1000);
-      const debouncedCreatorInput = debounce(() => onCreatorInput(), 1000);
-
-      function onVerifierInput() {
-        const verifierInput = document.getElementById("verifier");
-        const verifierUsername = verifierInput.value;
-
-        validateUsername("verifier", verifierUsername);
-      }
-
-      function onCreatorInput() {
-        const creatorInput = document.getElementById("creator");
-        const creatorUsername = creatorInput.value;
-
-        validateUsername("creator", creatorUsername);
-      }
-
-      document.getElementById("verifier").addEventListener("input", debouncedVerifierInput);
-      document.getElementById("creator").addEventListener("input", debouncedCreatorInput);
-      document.getElementById("levelId").addEventListener("input", debounce(onLevelIdInput, 1000));
-
-      document.getElementById("levelId").addEventListener("input", () => {
-        const levelIdInput = document.getElementById("levelId");
-        const loadingIcon = document.getElementById("loadingIcon");
-
-        if (levelIdInput.value.trim() !== "") {
-          loadingIcon.classList.remove("hidden");
-        } else {
-          loadingIcon.classList.add("hidden");
-        }
-      });
-    </script>
+    <script type="module" src="/js/config.js"></script>
+    <script type="module" src="/js/level-submission.js"></script>
   </body>
 </html>

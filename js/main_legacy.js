@@ -1,4 +1,5 @@
-const fetch_url = "https://xylz.tv/rest/legacy_levels";
+import { API_URL } from "./config.js";
+const fetch_url = `${API_URL}/rest/legacy_levels`;
 
 const template_list = `
 <div class="list-item">

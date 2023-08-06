@@ -1,5 +1,6 @@
-const fetch_url = "https://xylz.tv/rest/records";
-const nong_fetch_url = "https://xylz.tv/rest/nong";
+import { API_URL } from "./config.js";
+const fetch_url = `${API_URL}/rest/records`;
+const nong_fetch_url = `${API_URL}/rest/nong`;
 
 Setup();
 

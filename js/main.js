@@ -1,4 +1,5 @@
-const fetch_url = "https://xylz.tv/rest/mainlist";
+import { API_URL } from "./config.js";
+const fetch_url = `${API_URL}/rest/mainlist`;
 const template_list = `
 <div class="list-item">
     <div class="list-number">#1</div>
