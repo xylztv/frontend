@@ -1,0 +1,9 @@
+.expanded-section {
+  display: none;
+  width: 90vw; /* 90% of the viewport width */
+  max-width: 90vw;
+  height: 80vh; /* 80% of the viewport height */
+  margin: 5vh auto; /* centering it vertically */
+  overflow-y: auto;
+  transition: all 0.3s ease-in-out; /* smooth transition */
+}

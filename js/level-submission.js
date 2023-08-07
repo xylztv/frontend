@@ -136,10 +136,21 @@ async function getLevelInfo() {
 }
 
 async function submitFormData() {
+  const submitButton = document.getElementById("submitButton");
+submitButton.disabled = true;
   const levelId = document.getElementById("levelId").value;
   const levelName = document.getElementById("levelName").value;
   const verifier = document.getElementById("verifier").value;
   const youtubeLink = document.getElementById("youtubeLink").value;
+  const token = localStorage.getItem('userToken');
+    const pendingUrl = `${API_URL}/rest/pending-levels?token=${token}`;
+    const pendingLevels = await fetch(pendingUrl).then(res => res.json());
+
+    if (pendingLevels.some(level => level.id === levelId)) {
+        toastr.error("This level is already submitted.");
+        submitButton.disabled = false;  // Re-enable the submit button
+        return;
+    }
 
   // Gather all creators from the dynamically added input fields and join them with a comma
   const creatorInputs = document.querySelectorAll('#creatorFields input[name="creator"]');
@@ -216,41 +227,22 @@ function onLevelIdInput() {
         return;
     }
 
-    const mainlistUrl = `${API_URL}/rest/mainlist`;
-    fetch(mainlistUrl)
-    .then((response) => response.json())
-    .then((mainlistData) => {
-        if (mainlistData.error) {
-            console.error(mainlistData.error);
-            isLevelIdValid = false;
-            updateSubmitButtonVisibility();
-            return;
-        }
-
-        const isLevelInMainlist = mainlistData.some((level) => level.id === levelId);
-
+    // Check if the level is in the mainlist
+    fetch(`${API_URL}/rest/mainlist`)
+    .then(response => response.json())
+    .then(mainlistData => {
+        const isLevelInMainlist = mainlistData.some(level => level.id === levelId);
         if (isLevelInMainlist) {
             toastr.error("This level is already on the main list.");
             loadingIcon.classList.add("hidden");
             isLevelIdValid = false;
             updateSubmitButtonVisibility();
         } else {
-            const token = localStorage.getItem('userToken');
-            const pendingUrl = `${API_URL}/rest/pending-levels?token=${token}`;
-            fetch(pendingUrl)
-            .then((response) => response.json())
-            .then((pendingData) => {
-                if (pendingData.error) {
-                    console.error(pendingData.error);
-                    loadingIcon.classList.add("hidden");
-                    isLevelIdValid = false;
-                    updateSubmitButtonVisibility();
-                    return;
-                }
-
-                const isLevelInPending = pendingData.some((level) => level.id === levelId);
-
-                if (isLevelInPending) {
+            // Check if the level is in the pending list using the new endpoint
+            fetch(`${API_URL}/rest/is-level-pending?levelId=${levelId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.isPending) {
                     toastr.error("This level is already submitted.");
                     loadingIcon.classList.add("hidden");
                     isLevelIdValid = false;
@@ -260,7 +252,7 @@ function onLevelIdInput() {
                     getLevelInfo();
                 }
             })
-            .catch((error) => {
+            .catch(error => {
                 loadingIcon.classList.add("hidden");
                 console.error(error);
                 isLevelIdValid = false;
@@ -268,7 +260,7 @@ function onLevelIdInput() {
             });
         }
     })
-    .catch((error) => {
+    .catch(error => {
         loadingIcon.classList.add("hidden");
         console.error(error);
         isLevelIdValid = false;

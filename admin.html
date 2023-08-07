@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin-top: 50px;
+        }
+        .btn {
+            margin: 20px;
+        }
+        .container {
+    text-align: center;
+    width: 100%; /* Ensure it takes the full width */
+    box-sizing: border-box; /* This ensures padding and borders are included in the element's total width and height */
+}
+
+#expandedSection {
+    display: none;
+    width: 100%;
+}
+
+.table-responsive {
+    width: 100%; /* Ensure it takes the full width */
+    margin: 10px 0; /* Add some spacing between tables if they wrap */
+    overflow-x: visible;
+}
+        #sectionTitle {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .level-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.placeHereButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+<div class="container" id="adminPanel">
+    <h1>Admin Panel</h1>
+    <button class="btn btn-primary" id="levelsButton">Levels</button>
+    <button class="btn btn-primary" id="usersButton">Users</button>
+    <button class="btn btn-primary" id="recordsButton">Records</button>
+</div>
+
+<div class="container" id="expandedSection">
+    <h1 id="sectionTitle"></h1>
+    <button class="btn btn-secondary" id="backButton">Back</button>
+    <!-- The content for each section will be dynamically loaded here -->
+    <button class="btn btn-success" id="saveChangesButton">Save Changes</button>
+    <select id="listTypeDropdown">
+        <option value="mainlist">Main List</option>
+        <option value="legacy_levels">Legacy Levels</option>
+        <option value="removed_levels">Removed Levels</option>
+    </select>
+    
+    <div style="display: flex; justify-content: space-between;">
+        <div class="table-responsive">
+            <table id="levelsTable" class="display">
+                <thead>
+                    <tr>
+                        <th>Ranking</th>
+                        <th>Thumbnail</th>
+                        <th>Title</th>
+                        <th>ID</th>
+                        <th>Creator</th>
+                        <th>Verifier</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        
+        
+        <div class="table-responsive">
+            <h1>Pending</h1>
+            <table id="pendingLevelsTable" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>ID</th>
+                        <th>Creator</th>
+                        <th>Verifier</th>
+                        <th>Link</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    
+
+  
+</div>
+
+<div class="container" id="notAdminMessage" style="display: none;">
+  <h2>You do not have permission to access this page.</h2>
+</div>
+<!-- The Generic Modal -->
+<div class="modal" id="genericModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="genericModalTitle"></h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body" id="genericModalBody">
+                <!-- Content will be injected here -->
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="genericModalPrimaryBtn">Save</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- Edit Level Modal -->
+<div class="modal" id="editModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="editModalTitle">Edit Level</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form id="editLevelForm">
+                    <div class="form-group">
+                        <label for="editModalName">Name:</label>
+                        <input type="text" class="form-control" id="editModalName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editModalID">ID:</label>
+                        <input type="text" class="form-control" id="editModalID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editModalCreator">Creator:</label>
+                        <input type="text" class="form-control" id="editModalCreator" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editModalVerifier">Verifier:</label>
+                        <input type="text" class="form-control" id="editModalVerifier" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editModalLink">YouTube Link:</label>
+                        <input type="url" class="form-control" id="editModalLink" required>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="editModalSaveBtn">Save Changes</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- Remove Level Confirmation Modal -->
+<div class="modal" id="removeModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Remove Level</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <p id="removeModalMessage"></p>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="removeModalConfirmBtn">Remove</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+<script type="module" src="/js/admin.js"></script>
+
+</body>
+</html>
