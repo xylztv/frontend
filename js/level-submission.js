@@ -143,14 +143,14 @@ submitButton.disabled = true;
   const verifier = document.getElementById("verifier").value;
   const youtubeLink = document.getElementById("youtubeLink").value;
   const token = localStorage.getItem('userToken');
-    const pendingUrl = `${API_URL}/rest/pending-levels?token=${token}`;
-    const pendingLevels = await fetch(pendingUrl).then(res => res.json());
+    //const pendingUrl = `${API_URL}/rest/pending-levels?token=${token}`;
+    //const pendingLevels = await fetch(pendingUrl).then(res => res.json());
 
-    if (pendingLevels.some(level => level.id === levelId)) {
-        toastr.error("This level is already submitted.");
-        submitButton.disabled = false;  // Re-enable the submit button
-        return;
-    }
+    //if (pendingLevels.some(level => level.id === levelId)) {
+    //    toastr.error("This level is already submitted.");
+    //    submitButton.disabled = false;  // Re-enable the submit button
+    //    return;
+    //}
 
   // Gather all creators from the dynamically added input fields and join them with a comma
   const creatorInputs = document.querySelectorAll('#creatorFields input[name="creator"]');
