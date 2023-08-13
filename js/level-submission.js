@@ -2,6 +2,9 @@ import { API_URL } from "./config.js";
 
 let isYouTubeLinkPresent = false;
 let isLevelIdValid = false;
+const headers = {
+    'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+};
 
 const debounce = (fn, wait) => {
     let timeout;
@@ -142,15 +145,6 @@ submitButton.disabled = true;
   const levelName = document.getElementById("levelName").value;
   const verifier = document.getElementById("verifier").value;
   const youtubeLink = document.getElementById("youtubeLink").value;
-  const token = localStorage.getItem('userToken');
-    //const pendingUrl = `${API_URL}/rest/pending-levels?token=${token}`;
-    //const pendingLevels = await fetch(pendingUrl).then(res => res.json());
-
-    //if (pendingLevels.some(level => level.id === levelId)) {
-    //    toastr.error("This level is already submitted.");
-    //    submitButton.disabled = false;  // Re-enable the submit button
-    //    return;
-    //}
 
   // Gather all creators from the dynamically added input fields and join them with a comma
   const creatorInputs = document.querySelectorAll('#creatorFields input[name="creator"]');
@@ -174,20 +168,21 @@ for (let creator of creatorList) {
   const isLengthValid = document.getElementById("lengthIcon").innerHTML.includes("tick-icon");
 
   if (isYouTubeLinkValid && isVerifierValid && allCreatorsValid && isLengthValid) {
-      const queryParams = new URLSearchParams({
-          id: levelId,
-          name: levelName,
-          verifier: verifier,
-          creator: creators,
-          link: youtubeLink,
-          token: localStorage.getItem('userToken')
-      });
-
-      const url = `${API_URL}/rest/add-level?${queryParams.toString()}`;
-
-      fetch(url, {
-          method: "POST"
-      })
+    const queryParams = new URLSearchParams({
+        id: levelId,
+        name: levelName,
+        verifier: verifier,
+        creator: creators,
+        link: youtubeLink
+    });
+    
+    const url = `${API_URL}/rest/add-level?${queryParams.toString()}`;
+    
+    fetch(url, {
+        method: "POST",
+        headers: headers
+    })
+    
       .then((response) => {
           if (response.ok) {
               toastr.success('Level submitted successfully!', 'Success');

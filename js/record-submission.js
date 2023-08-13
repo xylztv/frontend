@@ -1,5 +1,7 @@
 import { API_URL } from "./config.js";
-
+const headers = {
+    'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+};
 const debounce = (fn, wait) => {
     let timeout;
     return (...args) => {
@@ -69,19 +71,20 @@ document.getElementById('recordForm').addEventListener('submit', async (e) => {
   const isPercentageValid = validatePercentage();
 
   if (isPlayerValid && isYouTubeLinkValid && isPercentageValid) {
-      const queryParams = new URLSearchParams({
-          level_id: levelId,
-          player: playerName,
-          percentage: percentage,
-          link: youtubeLinkRecord,
-          token: localStorage.getItem('userToken') 
-      });
-
-      const url = `${API_URL}/rest/add-record?${queryParams.toString()}`;
-
-      fetch(url, {
-          method: "POST"
-      })
+    const queryParams = new URLSearchParams({
+        level_id: levelId,
+        player: playerName,
+        percentage: percentage,
+        link: youtubeLinkRecord
+    });
+    
+    const url = `${API_URL}/rest/add-record?${queryParams.toString()}`;
+    
+    fetch(url, {
+        method: "POST",
+        headers: headers
+    })
+    
       .then(async (response) => {
           const responseData = await response.json();
           if (response.ok) {

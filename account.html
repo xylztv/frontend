@@ -84,13 +84,13 @@
         fetch(`${API_URL}/rest/users`, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('userToken')}` // Assuming you're storing the token as 'userToken' in localStorage
+                'Authorization': `Bearer ${localStorage.getItem('userToken')}`
             }
         })
         .then(response => response.json())
         .then(data => {
     document.getElementById('usernameDisplay').innerText = data.username;
-    if (data.is_admin) {
+    if (data.permission_level > 1) {
         document.getElementById('adminTag').style.display = 'inline';
     }
     const isoDate = data.joinDate; // Assuming the backend returns the join date in ISO format

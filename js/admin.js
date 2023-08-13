@@ -19,16 +19,6 @@ document.addEventListener('DOMContentLoaded', function() {
         handleLevelsSection();
     });
 
-    usersButton.addEventListener('click', function() {
-        showExpandedSection('Users');
-        handleUsersSection();
-    });
-
-    recordsButton.addEventListener('click', function() {
-        showExpandedSection('Records');
-        handleRecordsSection();
-    });
-
     backButton.addEventListener('click', function() {
         hideExpandedSection();
     });
@@ -87,7 +77,7 @@ function saveChangesToBackend() {
             // Update the initialOrder to reflect the current order
             const levelsContainer = document.getElementById('levelsTable').querySelector('tbody');
             initialOrder = Array.from(levelsContainer.children).map(row => row.querySelector('.editButton').dataset.levelId);
-            fetchMainListLevels(); // Refresh the levels list
+            fetchMainListLevels(endpoint); // Refresh the levels list
 
         } else {
             toastr.error('Error saving changes.'); // Toastr error notification
@@ -95,6 +85,7 @@ function saveChangesToBackend() {
     })
     .catch(error => {
         console.error('Error saving changes:', error);
+        console.log(endpoint)
         toastr.error('Error saving changes.'); // Toastr error notification
     });
 }
@@ -239,6 +230,7 @@ function updateRankingsAfterRemoval() {
             })
             .catch(error => {
                 console.error('Error updating levels order:', error);
+                console.log(endpoint)
                 toastr.error('Error updating levels order.');
             });
         }
@@ -311,7 +303,7 @@ function checkAdminStatus() {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.is_admin) {
+        if (data.permission_level > 0) {
             displayAdminPanel();
         } else {
             displayNotAdminMessage();
@@ -372,7 +364,7 @@ function updateDisplayedRankings() {
         rankingCell.textContent = `#${index + 1}`;
     });
 }
-function fetchMainListLevels() {
+function fetchMainListLevels(endpoint) {
     //reusing function to fetch from whatever list needed
     fetch(`${API_URL}${endpoint}`)
     .then(response => response.json())
@@ -384,8 +376,11 @@ function fetchMainListLevels() {
     });
 }
 function displayLevels(data) {
-    const levelsContainer = document.getElementById('levelsTable').querySelector('tbody');
-    levelsContainer.innerHTML = ''; // Clear any previous data
+    const levelsTable = document.getElementById('levelsTable');
+    const levelsContainer = levelsTable.querySelector('tbody');
+
+    // Clear the content of the tbody
+    levelsContainer.innerHTML = '';
 
     // Sort the data based on the ranking
     data.sort((a, b) => a.ranking - b.ranking);
@@ -411,12 +406,15 @@ function displayLevels(data) {
                 <td>${listItem.creator}</td>
                 <td>${listItem.verifier}</td>
                 <td>
-    <button class="btn btn-light editButton" data-level-id="${listItem.id}">
-        <i class="fas fa-pencil-alt"></i>
-    </button>
-    <button class="btn btn-danger removeButton" data-level-id="${listItem.id}">
-        <i class="fas fa-trash-alt"></i>
-    </button>
+                <div class="button-container">
+                <button class="btn btn-light editButton" data-level-id="${listItem.id}">
+                    <i class="fas fa-pencil-alt"></i>
+                </button>
+                <button class="btn btn-danger removeButton" data-level-id="${listItem.id}">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+            
 </td>
     
             </tr>
@@ -468,8 +466,12 @@ function handlePendingLevelsSection() {
     fetchPendingLevels();
 
     function fetchPendingLevels() {
-        const token = localStorage.getItem('userToken');
-        fetch(`${API_URL}/rest/pending-levels?token=${token}`)
+        fetch(`${API_URL}/rest/pending-levels`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+            }
+        })
         .then(response => response.json())
         .then(data => {
             displayPendingLevels(data);
@@ -478,8 +480,9 @@ function handlePendingLevelsSection() {
             console.error('Error fetching pending levels:', error);
         });
     }
+    
     function displayPendingLevels(data) {
-        const pendingLevelsContainer = document.getElementById('pendingLevelsTable').querySelector('tbody');
+        const pendingLevelsContainer = document.getElementById('levelsTable').querySelector('tbody');
         pendingLevelsContainer.innerHTML = ''; // Clear any previous data
     
         data.forEach(listItem => {
@@ -491,9 +494,12 @@ function handlePendingLevelsSection() {
                     <td>${listItem.verifier}</td>
                     <td><a href="${listItem.link}" target="_blank">Verification Video</a></td>
                     <td>
-                        <button class="btn btn-success acceptButton" data-level-id="${listItem.id}">Accept</button>
-                        <button class="btn btn-danger declineButton" data-level-id="${listItem.id}">Decline</button>
-                    </td>
+    <div class="button-container">
+        <button class="btn btn-success acceptButton" data-level-id="${listItem.id}">Accept</button>
+        <button class="btn btn-danger declineButton" data-level-id="${listItem.id}">Decline</button>
+    </div>
+</td>
+
                 </tr>
             `);
         });
@@ -518,35 +524,46 @@ function handlePendingLevelsSection() {
         openPlacementModal(levelId);
     }
     function openPlacementModal(levelId) {
-        // Populate the modal with the main list
-        const mainListContainer = document.createElement('div');
-        initialOrder.forEach((listItemId, index) => {
-            const levelName = levelNames[listItemId];
-            mainListContainer.insertAdjacentHTML("beforeend", `
-                <div class="level-ent ry">
-                    <span>#${index + 1} - ${levelName}</span>
-                    <button class="btn btn-light placeHereButton" data-index="${index}">Place Here</button>
-                </div>
-            `);
-        });
+        // Fetch the main list data
+        fetch(`${API_URL}/rest/mainlist`)
+        .then(response => response.json())
+        .then(mainListData => {
+            const mainListContainer = document.createElement('div');
+            
+            // Sort the main list data based on the ranking
+            mainListData.sort((a, b) => a.ranking - b.ranking);
     
-        document.getElementById('genericModalBody').innerHTML = '';
-        document.getElementById('genericModalBody').appendChild(mainListContainer);
-        document.getElementById('genericModalTitle').innerText = 'Choose Placement for Level';
-    
-        // Add event listeners to the "Place Here" buttons
-        document.querySelectorAll('.placeHereButton').forEach(button => {
-            button.addEventListener('click', function() {
-                const placementIndex = parseInt(this.dataset.index);
-                finalizeAcceptance(levelId, placementIndex + 1); // +1 because we want to place it after the chosen index
-                $('#genericModal').modal('hide'); // Close the modal
+            mainListData.forEach((listItem, index) => {
+                mainListContainer.insertAdjacentHTML("beforeend", `
+                    <div class="level-entry">
+                        <span>#${index + 1} - ${listItem.title}</span>
+                        <button class="btn btn-light placeHereButton" data-index="${index}">Place Here</button>
+                    </div>
+                `);
             });
-        });
-        // Hide the primary button
-document.getElementById('genericModalPrimaryBtn').style.display = 'none';
     
-        // Open the modal
-        $('#genericModal').modal('show');
+            document.getElementById('genericModalBody').innerHTML = '';
+            document.getElementById('genericModalBody').appendChild(mainListContainer);
+            document.getElementById('genericModalTitle').innerText = 'Choose Placement for Level';
+    
+            // Add event listeners to the "Place Here" buttons
+            document.querySelectorAll('.placeHereButton').forEach(button => {
+                button.addEventListener('click', function() {
+                    const placementIndex = parseInt(this.dataset.index);
+                    finalizeAcceptance(levelId, placementIndex + 1); // +1 because we want to place it after the chosen index
+                    $('#genericModal').modal('hide'); // Close the modal
+                });
+            });
+    
+            // Hide the primary button
+            document.getElementById('genericModalPrimaryBtn').style.display = 'none';
+    
+            // Open the modal
+            $('#genericModal').modal('show');
+        })
+        .catch(error => {
+            console.error('Error fetching main list levels:', error);
+        });
     }
     
     
@@ -565,13 +582,13 @@ document.getElementById('genericModalPrimaryBtn').style.display = 'none';
             id: levelId,
             passed: "false",
             ranking: "1", // This value doesn't matter when declining
-            token: token
         });
     
         fetch(`${API_URL}/rest/pending-levels?${params.toString()}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('userToken')}`
             }
         })
         .then(response => response.json())
@@ -622,13 +639,14 @@ document.getElementById('genericModalPrimaryBtn').style.display = 'none';
         .then(data => {
             if (data.success) {
                 toastr.success('Levels order updated successfully!');
-                fetchMainListLevels(); // Refresh the levels list
+                fetchMainListLevels(endpoint); // Refresh the levels list
             } else {
                 toastr.error('Error updating levels order.');
             }
         })
         .catch(error => {
             console.error('Error updating levels order:', error);
+            console.log(endpoint)
             toastr.error('Error updating levels order.');
         });
     }
@@ -668,9 +686,6 @@ document.getElementById('genericModalPrimaryBtn').style.display = 'none';
 }
 
 // Call the function when the Levels button is clicked
-document.getElementById('levelsButton').addEventListener('click', function() {
-    handlePendingLevelsSection();
-});
 function fetchLegacyLevels() {
     fetch(`${API_URL}/rest/legacy_levels`)
     .then(response => response.json())
@@ -692,39 +707,46 @@ function fetchRemovedLevels() {
         console.error('Error fetching removed levels:', error);
     });
 }
-function hidePendingLevelsSection() {
-    document.getElementById('pendingLevelsTable').style.display = 'none';
-}
 
 
 function handleLevelsSection() {
     const listType = document.getElementById('listTypeDropdown').value;
-    
-    // Hide or show the pending levels table based on the list type
-    const pendingLevelsContainer = document.getElementById('pendingLevelsTable').closest('.table-responsive');
-    if (listType === 'mainlist') {
-        pendingLevelsContainer.style.display = 'block';
-        handlePendingLevelsSection(); // Fetch and display pending levels
-    } else {
-        pendingLevelsContainer.style.display = 'none';
-    }
+    // Hide the switcher between "Main list", "Legacy levels", and "Removed levels"
+  const listTypeDropdown = document.getElementById('listTypeDropdown');
+  listTypeDropdown.style.display = 'block';
 
     // Fetch the appropriate list based on the dropdown value
     let endpoint;
+    let headers = [];
     switch (listType) {
         case 'mainlist':
             endpoint = '/rest/mainlist';
+            headers = ['Ranking', 'Thumbnail', 'Title', 'ID', 'Creator', 'Verifier', 'Actions'];
             break;
         case 'legacy_levels':
             endpoint = '/rest/legacy_levels';
+            headers = ['Ranking', 'Thumbnail', 'Title', 'ID', 'Creator', 'Verifier', 'Actions'];
             break;
         case 'removed_levels':
             endpoint = '/rest/removed_levels';
+            headers = ['Ranking','Thumbnail', 'Title', 'ID', 'Creator', 'Verifier', 'Actions'];
+            break;
+        case 'pending_levels':
+            endpoint = '/rest/pending-levels';
+            headers = ['Title', 'ID', 'Creator', 'Verifier', 'Link', 'Actions'];
             break;
         default:
             console.error('Unknown list type:', listType);
             return;
     }
+    const thead = document.querySelector('#levelsTable thead tr');
+    thead.innerHTML = headers.map(header => `<th>${header}</th>`).join('');
+    const table = document.getElementById('levelsTable');
+    if (listType === 'pending_levels') {
+        handlePendingLevelsSection();
+        return;
+    }
+
 
     fetch(`${API_URL}${endpoint}`)
     .then(response => response.json())
@@ -734,12 +756,4 @@ function handleLevelsSection() {
     .catch(error => {
         console.error(`Error fetching ${listType} levels:`, error);
     });
-}
-
-function handleUsersSection() {
-    // TODO: Implement the Users section functionality
-}
-
-function handleRecordsSection() {
-    // TODO: Implement the Records section functionality
 }

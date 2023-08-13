@@ -13,8 +13,11 @@
             margin-top: 50px;
         }
         .btn {
-            margin: 20px;
+            margin: 10px;
         }
+        .button-container {
+    display: flex;
+}
         .container {
     text-align: center;
     width: 100%; /* Ensure it takes the full width */
@@ -23,12 +26,38 @@
 
 #expandedSection {
     display: none;
-    width: 100%;
+    width: 100vw; /* Set the width to 100% of the viewport width */
+    height: 100vh; /* Set the height to 100% of the viewport height */
+
+}
+#listTypeDropdown {
+    width: 200px; /* Set a fixed width */
+    border: 1px solid #ced4da; /* Border color */
+    border-radius: 4px; /* Rounded corners */
+    padding: 5px 10px; /* Padding for text */
+    font-size: 16px; /* Font size */
+    color: #495057; /* Text color */
+    background-color: #fff; /* Background color */
+    appearance: none; /* Remove default appearance */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; /* Smooth transition for hover effects */
+}
+
+#listTypeDropdown:hover {
+    border-color: #80bdff; /* Border color on hover */
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Add a shadow on hover */
+}
+
+#listTypeDropdown:focus {
+    border-color: #80bdff; /* Border color on focus */
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Add a shadow on focus */
 }
 
 .table-responsive {
     width: 100%; /* Ensure it takes the full width */
-    margin: 10px 0; /* Add some spacing between tables if they wrap */
+    margin: 100px 0; /* Add some spacing between tables if they wrap */
     overflow-x: visible;
 }
         #sectionTitle {
@@ -63,7 +92,7 @@
     <button class="btn btn-primary" id="recordsButton">Records</button>
 </div>
 
-<div class="container" id="expandedSection">
+<div class="container container-fluid" id="expandedSection">
     <h1 id="sectionTitle"></h1>
     <button class="btn btn-secondary" id="backButton">Back</button>
     <!-- The content for each section will be dynamically loaded here -->
@@ -72,37 +101,15 @@
         <option value="mainlist">Main List</option>
         <option value="legacy_levels">Legacy Levels</option>
         <option value="removed_levels">Removed Levels</option>
+        <option value="pending_levels">Pending Levels</option>
     </select>
     
+
     <div style="display: flex; justify-content: space-between;">
-        <div class="table-responsive">
-            <table id="levelsTable" class="display">
+        <div class="table-responsive" style="width: 100%;">
+            <table id="levelsTable" class="table table-striped table-bordered table-hover display">
                 <thead>
                     <tr>
-                        <th>Ranking</th>
-                        <th>Thumbnail</th>
-                        <th>Title</th>
-                        <th>ID</th>
-                        <th>Creator</th>
-                        <th>Verifier</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-        
-        
-        <div class="table-responsive">
-            <h1>Pending</h1>
-            <table id="pendingLevelsTable" class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>ID</th>
-                        <th>Creator</th>
-                        <th>Verifier</th>
-                        <th>Link</th>
-                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -115,7 +122,7 @@
 </div>
 
 <div class="container" id="notAdminMessage" style="display: none;">
-  <h2>You do not have permission to access this page.</h2>
+  <h2>You do not have permission to access this page, silly goose.</h2>
 </div>
 <!-- The Generic Modal -->
 <div class="modal" id="genericModal">
@@ -213,6 +220,44 @@
         </div>
     </div>
 </div>
+<!-- Edit User Modal -->
+<div class="modal" id="editUserModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Edit User</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form id="editUserForm">
+                    <div class="form-group">
+                        <label for="editModalUsername">Username:</label>
+                        <input type="text" class="form-control" id="editModalUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editModalGDe">GD User:</label>
+                        <input type="text" class="form-control" id="editModalGDe">
+                    </div>
+                    <div class="form-group">
+                        <label for="editModalIsAdmin">Permission Level:</label>
+                        <input type="number" id="editModalPermissionLevel" min="0" max="2">
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="editUserModalSaveBtn">Save Changes</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 
 
@@ -224,6 +269,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 <script type="module" src="/js/admin.js"></script>
+<script type="module" src="/js/admin/users.js"></script>
+<script type="module" src="/js/admin/records.js"></script>
 
 </body>
 </html>
