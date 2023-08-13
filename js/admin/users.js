@@ -1,15 +1,17 @@
 import { API_URL } from "../config.js";
 let users = [];  // This will store the fetched users
 function saveUserChanges() {
+  const editModalOldUsername = document.getElementById('editModalOldUsername').value;
   const editModalUsername = document.getElementById('editModalUsername').value;
   const editModalGDe = document.getElementById('editModalGDe').value;
   const editModalPermissionLevel = document.getElementById('editModalPermissionLevel').value;
 
   const updatedUser = {
-      username: editModalUsername,
-      gdusername: editModalGDe,
-      permission_level: parseInt(editModalPermissionLevel, 10)
-  };
+    oldUsername: editModalOldUsername,
+    username: editModalUsername,
+    gdusername: editModalGDe,
+    permission_level: parseInt(editModalPermissionLevel, 10)
+};
 
   // Send the updated user data to the server
   const userToken = localStorage.getItem('userToken');
@@ -69,6 +71,9 @@ function showEditUserModal(user) {
   const editModalUsername = document.getElementById('editModalUsername');
   const editModalGDe = document.getElementById('editModalGDe');
   const editModalPermissionLevel = document.getElementById('editModalPermissionLevel');
+  // store username
+  const editModalOldUsername = document.getElementById('editModalOldUsername');
+  editModalOldUsername.value = user.username;
 
   editModalUsername.value = user.username;
   editModalGDe.value = user.gdusername || '';
