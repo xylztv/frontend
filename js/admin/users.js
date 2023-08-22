@@ -37,9 +37,9 @@ function saveUserChanges() {
   });
 }
 document.addEventListener('DOMContentLoaded', function () {
-  const saveChangesButton = document.getElementById('editUserModalSaveBtn');
+  const modalSaveChangesButton = document.getElementById('editUserModalSaveBtn');
 
-saveChangesButton.addEventListener('click', function() {
+  modalSaveChangesButton.addEventListener('click', function() {
     saveUserChanges();
 });
   const usersButton = document.getElementById('usersButton');
@@ -51,18 +51,64 @@ saveChangesButton.addEventListener('click', function() {
   function showExpandedSection(title) {
     adminPanel.style.display = 'none';
     expandedSection.style.display = 'block';
+    recordTypeDropdown.style.display = 'none';
+    saveChangesButton.style.display = 'none';
     sectionTitle.textContent = title;
   }
   // Event delegation for dynamically created Edit buttons
-const usersTable = document.getElementById('levelsTable');
-usersTable.addEventListener('click', function (e) {
-    if (e.target.classList.contains('editUserBtn')) {
-      const username = e.target.getAttribute('data-username');
-      const user = users.find(u => u.username === username);
-      showEditUserModal(user);
+  const usersTable = document.getElementById('levelsTable');
+  usersTable.addEventListener('click', function (e) {
+      if (e.target.classList.contains('editUserBtn')) {
+        const username = e.target.getAttribute('data-username');
+        const user = users.find(u => u.username === username);
+        showEditUserModal(user);
+      } else if (e.target.classList.contains('deleteUserBtn')) {
+          const username = e.target.getAttribute('data-username');
+          showDeleteUserModal(username);
+      }  
+  });  
+});
+function showDeleteUserModal(username) {
+  const deleteModal = document.getElementById('deleteUserModal');
+  const deleteModalUsername = document.getElementById('deleteModalUsername');
+  const deleteUserModalConfirmBtn = document.getElementById('deleteUserModalConfirmBtn');
+
+  deleteModalUsername.textContent = username;
+
+  deleteUserModalConfirmBtn.addEventListener('click', function () {
+    deleteUser(username);
+    $(deleteModal).modal('hide');
+  });
+
+  // Show the modal
+  $(deleteModal).modal('show');
+}
+
+function deleteUser(username) {
+  const userToken = localStorage.getItem('userToken');
+  fetch(`${API_URL}/rest/admin/deleteUser`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${userToken}`
+    },
+    body: JSON.stringify({ username })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      toastr.success('User deleted successfully!');
+      handleUsersSection();
+    } else {
+      toastr.error('Error deleting user.');
     }
-});
-});
+  })
+  .catch(error => {
+    console.error("Error deleting user:", error);
+    toastr.error('Error deleting user.');
+  });
+}
+
 
 function showEditUserModal(user) {
   const editModal = document.getElementById('editUserModal');
@@ -130,7 +176,11 @@ function renderUsersTable(users) {
       <td>${user.gdusername || "N/A"}</td>
       <td>${user.permission_level}</td>
       <td>${new Date(user.joinDate).toLocaleDateString()}</td>
-      <td><button class="btn btn-info editUserBtn" data-username="${user.username}">Edit</button></td>
+      <td>
+  <button class="btn btn-info editUserBtn" data-username="${user.username}">Edit</button>
+  <button class="btn btn-danger deleteUserBtn" data-username="${user.username}">Delete</button>
+</td>
+
     `;
     tbody.appendChild(row);
 });

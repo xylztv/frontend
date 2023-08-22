@@ -44,17 +44,40 @@
     cursor: pointer; /* Change cursor to pointer on hover */
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; /* Smooth transition for hover effects */
 }
+#recordTypeDropdown {
+    width: 200px; /* Set a fixed width */
+    border: 1px solid #ced4da; /* Border color */
+    border-radius: 4px; /* Rounded corners */
+    padding: 5px 10px; /* Padding for text */
+    font-size: 16px; /* Font size */
+    color: #495057; /* Text color */
+    background-color: #fff; /* Background color */
+    appearance: none; /* Remove default appearance */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; /* Smooth transition for hover effects */
+}
+#recordTypeDropdown:hover {
+    border-color: #80bdff; /* Border color on hover */
+    outline: 0;
+    box-shadow: 0 0 0 0.01rem rgba(0, 123, 255, 0.25); /* Add a shadow on hover */
+}
+
+#recordTypeDropdown:focus {
+    border-color: #80bdff; /* Border color on focus */
+    outline: 0;
+    box-shadow: 0 0 0 0.01rem rgba(0, 123, 255, 0.25); /* Add a shadow on hover */
+}
 
 #listTypeDropdown:hover {
     border-color: #80bdff; /* Border color on hover */
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Add a shadow on hover */
+    box-shadow: 0 0 0 0.01rem rgba(0, 123, 255, 0.25); /* Add a shadow on hover */
 }
 
 #listTypeDropdown:focus {
     border-color: #80bdff; /* Border color on focus */
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Add a shadow on focus */
+    box-shadow: 0 0 0 0.01rem rgba(0, 123, 255, 0.25); /* Add a shadow on hover */
 }
 
 .table-responsive {
@@ -105,6 +128,10 @@
         <option value="removed_levels">Removed Levels</option>
         <option value="pending_levels">Pending Levels</option>
     </select>
+    <select id="recordTypeDropdown">
+        <option value="records">Records</option>
+        <option value="pending_records">Pending Records</option>
+    </select>
     
 
     <div style="display: flex; justify-content: space-between;">
@@ -127,7 +154,7 @@
   <h2>You do not have permission to access this page, silly goose.</h2>
 </div>
 <!-- The Generic Modal -->
-<div class="modal" id="genericModal">
+<div class="modal fade" id="genericModal">
     <div class="modal-dialog">
         <div class="modal-content">
 
@@ -152,7 +179,7 @@
     </div>
 </div>
 <!-- Edit Level Modal -->
-<div class="modal" id="editModal">
+<div class="modal fade" id="editModal">
     <div class="modal-dialog">
         <div class="modal-content">
 
@@ -198,7 +225,7 @@
     </div>
 </div>
 <!-- Remove Level Confirmation Modal -->
-<div class="modal" id="removeModal">
+<div class="modal fade" id="removeModal">
     <div class="modal-dialog">
         <div class="modal-content">
 
@@ -222,8 +249,50 @@
         </div>
     </div>
 </div>
+<!-- Delete User Modal -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteUserModalLabel">Delete</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete <strong id="deleteModalUsername"></strong>?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="deleteUserModalConfirmBtn">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reviewModalTitle">Review Record</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h6 id="levelTitle"></h6>
+          <iframe id="youtubeEmbed" width="100%" height="315" frameborder="0" allowfullscreen></iframe>
+          <div id="recordInfo"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" onclick="denyRecord()">Deny</button>
+          <button type="button" class="btn btn-success" onclick="acceptRecord()">Accept</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
 <!-- Edit User Modal -->
-<div class="modal" id="editUserModal">
+<div class="modal fade" id="editUserModal">
     <div class="modal-dialog">
         <div class="modal-content">
 

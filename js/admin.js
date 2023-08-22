@@ -7,8 +7,6 @@ let initialOrder = []; // This will store the initial order of the levels
 
 document.addEventListener('DOMContentLoaded', function() {
     const levelsButton = document.getElementById('levelsButton');
-    const usersButton = document.getElementById('usersButton');
-    const recordsButton = document.getElementById('recordsButton');
     const backButton = document.getElementById('backButton');
     const adminPanel = document.getElementById('adminPanel');
     const expandedSection = document.getElementById('expandedSection');
@@ -26,7 +24,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function showExpandedSection(title) {
         adminPanel.style.display = 'none';
         expandedSection.style.display = 'block';
+        recordTypeDropdown.style.display = 'none';
         sectionTitle.textContent = title;
+        saveChangesButton.style.display = 'inline-block';
     }
 
     function hideExpandedSection() {
@@ -186,7 +186,7 @@ function openRemoveModal(levelId) {
 
 function updateRankingsAfterRemoval() {
     const listType = document.getElementById('listTypeDropdown').value;
-    const offset = listType === 'legacy_levels' ? 100 : 0; // Add this line
+    const offset = listType === 'legacy_levels' ? 100 : 0;
 
     fetch(`${API_URL}/rest/${listType}`)
     .then(response => response.json())
@@ -711,7 +711,6 @@ function fetchRemovedLevels() {
 
 function handleLevelsSection() {
     const listType = document.getElementById('listTypeDropdown').value;
-    // Hide the switcher between "Main list", "Legacy levels", and "Removed levels"
   const listTypeDropdown = document.getElementById('listTypeDropdown');
   listTypeDropdown.style.display = 'block';
 

@@ -6,11 +6,25 @@
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/friendly-challenge@0.9.12/widget.module.min.js" async defer></script>
+<script nomodule src="https://cdn.jsdelivr.net/npm/friendly-challenge@0.9.12/widget.min.js" async defer></script>
+
 
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
 
 </head>
+<style>
+    .frc-captcha {
+        display: inline-block;
+    }
+    
+    .btn.btn-primary {
+    display: inline-block;
+    float: right;
+}
+    </style>
+    
 <body>
     <div class="container">
         <div class="row">
@@ -29,6 +43,7 @@
                         <label for="confirmPassword">Confirm Password</label>
                         <input type="password" id="confirmPassword" name="confirmPassword" class="form-control">
                     </div>
+                    <div class="frc-captcha" data-sitekey="FCMIDAN66Q0QOPBN"></div>
                     <button type="submit" class="btn btn-primary">Sign Up</button>
                 </form>
             </div>
@@ -38,40 +53,83 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script type="module">
       import { API_URL } from './js/config.js';
-        document.getElementById('signUpForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+      document.getElementById('signUpForm').addEventListener('submit', function(event) {
+    event.preventDefault();
 
-            var username = document.getElementById('username').value;
-            var password = document.getElementById('password').value;
-            var confirmPassword = document.getElementById('confirmPassword').value;
+    var username = document.getElementById('username').value.trim();
+    var password = document.getElementById('password').value;
+    var confirmPassword = document.getElementById('confirmPassword').value;
 
-            if (password !== confirmPassword) {
-                toastr.error('Passwords do not match.');
-                return;
-            }
+    // Check for spaces in the username
+    if (username.includes(" ")) {
+        toastr.error('Username should not contain spaces.');
+        return;
+    }
 
-            fetch(`${API_URL}/rest/sign-up`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: username,
-                    password: password
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.token) {
-                    toastr.success('Signed up successfully.');
-                } else {
-                    toastr.error('There was an error signing up.');
-                }
-            })
-            .catch(() => {
-                toastr.error('There was an error signing up.');
-            });
-        });
+
+    // Check for empty fields
+    if (!username || !password || !confirmPassword) {
+        toastr.error('All fields are required.');
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        toastr.error('Passwords do not match.');
+        return;
+    }
+
+    // Check if the CAPTCHA input exists within the captcha element
+    var friendlyCaptchaInput = document.querySelector(".frc-captcha input");
+    if (!friendlyCaptchaInput || !friendlyCaptchaInput.value) {
+        toastr.error('Please complete the captcha.');
+        return;
+    }
+
+    var friendlyCaptchaSolution = friendlyCaptchaInput.value;
+
+    fetch(`${API_URL}/rest/sign-up`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            username: username,
+            password: password,
+            friendlyCaptchaSolution: friendlyCaptchaSolution
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.token) {
+            toastr.success('Signed up successfully.');
+        } else {
+            toastr.error('There was an error signing up.');
+        }
+    })
+    .catch(() => {
+        toastr.error('There was an error signing up.');
+    });
+});
+
+// Add an event to check fields and enable/disable Sign Up button accordingly
+function checkFormState() {
+    var username = document.getElementById('username').value.trim();
+    var password = document.getElementById('password').value;
+    var confirmPassword = document.getElementById('confirmPassword').value;
+    var signUpButton = document.querySelector('#signUpForm button[type="submit"]');
+
+    var friendlyCaptchaInput = document.querySelector(".frc-captcha input");
+    var isCaptchaComplete = friendlyCaptchaInput && friendlyCaptchaInput.value;
+
+    // Enable the button if all conditions are met
+    signUpButton.disabled = !username || password !== confirmPassword || !isCaptchaComplete;
+}
+
+document.getElementById('username').addEventListener('input', checkFormState);
+document.getElementById('password').addEventListener('input', checkFormState);
+document.getElementById('confirmPassword').addEventListener('input', checkFormState);
+
+
     </script>
 </body>
 </html>
