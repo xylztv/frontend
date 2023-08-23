@@ -66,9 +66,7 @@ document.getElementById('recordForm').addEventListener('submit', async (e) => {
     const youtubeLinkRecord = document.getElementById('youtubeLinkRecord').value;
     const percentage = document.getElementById('percentage').value + '%';
 
-    const isPlayerValid = await debounce(async () => {
-        return await validateUsername("playerName", playerName);
-    });
+    const isPlayerValid = await validateUsername("playerName", playerName);
     const isYouTubeLinkValid = validateYouTubeLink();
     const isPercentageValid = validatePercentage();
 
