@@ -54,7 +54,49 @@ button-54:mouseover
 .button-54:focus{
     outline: none;
 }
-
+/* Define the new class */
+.nav-link-button {
+    font-size: 18px;
+    color: #e1e1e1;
+    font-family: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    position: relative;
+    border: none;
+    background: none;
+    text-transform: uppercase;
+    transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition-duration: 400ms;
+    transition-property: color;
+    text-decoration: none;
+  }
+  
+  /* Apply the same hover and focus styles to the new class */
+  .nav-link-button:focus,
+  .nav-link-button:hover {
+    color: #fff;
+  }
+  
+  .nav-link-button:focus:after,
+  .nav-link-button:hover:after {
+    width: 100%;
+    left: 0%;
+  }
+  
+  .nav-link-button:after {
+    content: "";
+    pointer-events: none;
+    bottom: -2px;
+    left: 50%;
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    background-color: #fff;
+    transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition-duration: 400ms;
+    transition-property: width, left;
+  }
+  
 @media (min-width: 768px) {
     .button-54 {
         padding: 0.25em 0.75em;
@@ -172,7 +214,7 @@ button-54:mouseover
 }
 
 .right-section a:hover {
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 @media screen and (max-width: 1344px) {

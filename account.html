@@ -9,14 +9,72 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+
+    <style>
+        /* CSS styles... */
+        .admin-button {
+            display: inline-block;
+            border-radius: 4px;
+            background-color: #3d405b;
+            border: none;
+            color: #FFFFFF;
+            text-align: center;
+            font-size: 17px;
+            padding: 16px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            height: auto;
+            width: auto;
+            transition: all 0.5s;
+            cursor: pointer;
+            margin: 5px;
+            margin-left: auto; /* This will push the button to the right */
+        }
+
+        .admin-button span {
+            cursor: pointer;
+            display: inline-block;
+            position: relative;
+            transition: 0.5s;
+        }
+
+        .admin-button span:after {
+            content: '»';
+            position: absolute;
+            opacity: 0;
+            top: 0;
+            right: -15px;
+            transition: 0.5s;
+        }
+
+        .admin-button:hover span {
+            padding-right: 15px;
+        }
+
+        .admin-button:hover span:after {
+            opacity: 1;
+            right: 0;
+        }
+        .admin-button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
         <div class="row">
             <div class="col-md-6 offset-md-3">
-                <h3>Account Details</h3>
+                <div class="admin-button-container">
+                    <h3>Account Details</h3>
+                    <button class="admin-button" id="adminPanelBtn">
+                        <span>Admin panel</span>
+                    </button>
+                </div>
                 <div class="card">
                     <div class="card-body">
+                        
                         <div class="d-flex justify-content-between mb-3">
                             <span><i class="fas fa-user mr-2"></i>Username:</span>
                             <span>
@@ -94,6 +152,8 @@
     document.getElementById('usernameDisplay').innerText = data.username;
     if (data.permission_level > 1) {
         document.getElementById('adminTag').style.display = 'inline';
+        document.getElementById('adminPanelBtn').style.display = 'block';
+
     }
     const isoDate = data.joinDate; // Assuming the backend returns the join date in ISO format
     const date = new Date(isoDate);
@@ -141,7 +201,7 @@
         .then(data => {
             if (data.success) {
                 toastr.success(data.message);
-                $('#changePasswordModal').modal('hide'); // Close the modal
+                $('#changePasswordModal').modal('hide');
             } else {
                 toastr.error(data.message);
             }
@@ -150,6 +210,9 @@
             console.error('Error changing password:', error);
             toastr.error('Failed to change password. Please try again.');
         });
+    });
+    document.getElementById('adminPanelBtn').addEventListener('click', function() {
+        window.location.href = '/admin.html';
     });
     </script>
     

@@ -15,36 +15,109 @@
 
 </head>
 <style>
+    body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        .form {
+            background-color: #fff;
+            padding: 1rem;
+            max-width: 350px;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-title {
+            font-size: 1.25rem;
+            line-height: 1.75rem;
+            font-weight: 600;
+            text-align: center;
+            color: #000;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        .input-container input, .form button {
+            outline: none;
+            border: 1px solid #e5e7eb;
+            margin: 8px 0;
+        }
+
+        .input-container input {
+            background-color: #fff;
+            padding: 1rem;
+            padding-right: 3rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            width: 300px;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .submit {
+            display: block;
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+            padding-left: 1.25rem;
+            padding-right: 1.25rem;
+            background-color: #4F46E5;
+            color: #ffffff;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            font-weight: 500;
+            width: 100%;
+            border-radius: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .signup-link {
+            color: #6B7280;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            text-align: center;
+        }
+
+        .signup-link a {
+            text-decoration: underline;
+        }
     .frc-captcha {
         display: inline-block;
+        width: 94%;
     }
     
     .btn.btn-primary {
     display: inline-block;
-    float: right;
+
 }
     </style>
     
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-md-6 offset-md-3">
-                <h3>Sign Up</h3>
-                <form id="signUpForm">
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" class="form-control">
+            <div class="col-md-6 offset-md-4">
+                <form class="form" id="signUpForm">
+                    <p class="form-title">Sign Up</p>
+                    <div class="input-container">
+                        <input type="text" id="username" placeholder="Enter username" class="form-control">
                     </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" class="form-control">
+                    <div class="input-container">
+                        <input type="password" id="password" placeholder="Enter password" class="form-control">
                     </div>
-                    <div class="form-group">
-                        <label for="confirmPassword">Confirm Password</label>
-                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-control">
+                    <div class="input-container">
+                        <input type="password" id="confirmPassword" placeholder="Confirm password" class="form-control">
                     </div>
                     <div class="frc-captcha" data-sitekey="FCMIDAN66Q0QOPBN"></div>
-                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                    <button type="submit" class="submit btn btn-primary">Sign Up</button>
+                    <p class="signup-link">
+                        Already have an account?
+                        <a href="/signin.html">Sign in</a>
+                    </p>
                 </form>
             </div>
         </div>

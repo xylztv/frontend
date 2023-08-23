@@ -1,20 +1,28 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const userToken = localStorage.getItem('userToken');
-  const justLoggedIn = localStorage.getItem('justLoggedIn');
-
-  if (userToken) {
+    const userToken = localStorage.getItem('userToken');
+    const justLoggedIn = localStorage.getItem('justLoggedIn');
+  
+    if (userToken) {
       // User is logged in
       console.log("logged in");
       if (justLoggedIn) {
-          toastr.success('Successfully logged in!');
-          localStorage.removeItem('justLoggedIn'); // Remove the flag after showing the message
+        toastr.success('Successfully logged in!');
+        localStorage.removeItem('justLoggedIn'); // Remove the flag after showing the message
       }
-      document.getElementById('loggedOutButtons').style.display = 'none';
+      // Hide elements with the .loggedOutButtons class
+      const loggedOutButtons = document.querySelectorAll('.loggedOutButtons');
+      for (const button of loggedOutButtons) {
+        button.style.display = 'none';
+      }
       document.getElementById('loggedInButton').style.display = 'block';
-  } else {
+    } else {
       // User is not logged in
       console.log("not logged in");
-      document.getElementById('loggedOutButtons').style.display = 'block';
+      // Show elements with the .loggedOutButtons class
+      const loggedOutButtons = document.querySelectorAll('.loggedOutButtons');
+      for (const button of loggedOutButtons) {
+        button.style.display = 'block';
+      }
       document.getElementById('loggedInButton').style.display = 'none';
-  }
-});
+    }
+  });
