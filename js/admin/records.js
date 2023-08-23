@@ -175,15 +175,31 @@ function openReviewModal(encodedRecord) {
     currentRecord = record;
     console.log(currentRecord);
     const level = mainlistLevels.find(level => level.id === record.level_id);
-    document.getElementById('levelTitle').textContent = level ? level.title : "Unknown Level";
-    document.getElementById('youtubeEmbed').src = `https://www.youtube.com/embed/${getYouTubeVideoId(record.link)}`;
-    document.getElementById('recordInfo').textContent = `
+    
+    const levelTitleElement = document.getElementById('levelTitle');
+    const youtubeEmbedElement = document.getElementById('youtubeEmbed');
+    const recordInfoElement = document.getElementById('recordInfo');
+
+    if (level) {
+        levelTitleElement.textContent = level.title;
+        levelTitleElement.style.color = ''; // Reset the color
+        levelTitleElement.style.fontWeight = ''; // Reset the font weight
+    } else {
+        levelTitleElement.textContent = "This level has been removed/is no longer on the mainlist.";
+        levelTitleElement.style.color = 'red'; // Set color to red
+        levelTitleElement.style.fontWeight = 'bold'; // Set font weight to bold
+    }
+
+    youtubeEmbedElement.src = `https://www.youtube.com/embed/${getYouTubeVideoId(record.link)}`;
+    recordInfoElement.textContent = `
         Player: ${record.player || "N/A"}
         Percentage: ${record.percent || "N/A"}
         Publisher: ${record.publisher || "Unknown"}
     `;
+    youtubeEmbedElement.src = '';
     $('#reviewModal').modal('show');
 }
+
 function loadPendingRecords(token) {
   fetch(`${API_URL}/rest/pending-records`, {
       headers: {
@@ -263,6 +279,8 @@ function acceptRecord() {
     .then(result => {
         if (result.success) {
             toastr.success(result.message || "Record accepted successfully.");
+            const youtubeEmbedElement = document.getElementById('youtubeEmbed');
+            youtubeEmbedElement.src = '';
             $('#reviewModal').modal('hide');
             loadPendingRecords(token);
         } else {
@@ -300,6 +318,8 @@ function denyRecord() {
     .then(result => {
         if (result.success) {
             toastr.success(result.message || "Record denied successfully.");
+            const youtubeEmbedElement = document.getElementById('youtubeEmbed');
+            youtubeEmbedElement.src = '';
             $('#reviewModal').modal('hide');
             loadPendingRecords(token);
         } else {
