@@ -78,7 +78,12 @@ function deleteRecord(encodedRecord) {
     const deleteModalUsername = document.getElementById('deleteModalUsername');
     const deleteUserModalConfirmBtn = document.getElementById('deleteUserModalConfirmBtn');
     
-    deleteModalUsername.textContent = levelInfo.title;  // Assuming record has a 'username' property
+    // Update the deleteModalUsername only if levelInfo exists
+    if (levelInfo) {
+        deleteModalUsername.textContent = levelInfo.title;
+    } else {
+        deleteModalUsername.textContent = "Unknown Record";
+    }
 
     // Clear previous event listeners
     const clonedConfirmBtn = deleteUserModalConfirmBtn.cloneNode(true);
@@ -144,27 +149,30 @@ function displayPlayerDetailedRecords(player) {
         const levelInfoA = mainlistLevels.find(level => level.id === a.level_id);
         const levelInfoB = mainlistLevels.find(level => level.id === b.level_id);
     
-        const rankingA = levelInfoA ? levelInfoA.ranking : Infinity;  // Assign a default value of Infinity for levels not found on the mainlist.
+        const rankingA = levelInfoA ? levelInfoA.ranking : Infinity;
         const rankingB = levelInfoB ? levelInfoB.ranking : Infinity;
     
-        return rankingA - rankingB;  // This will sort in ascending order based on ranking.
+        return rankingA - rankingB;
     });
+    
+    const unknownLevelsOnly = records.every(record => !mainlistLevels.some(level => level.id === record.level_id));
     
     records.forEach(record => {
         const levelInfo = mainlistLevels.find(level => level.id === record.level_id);
     
-        // If the levelInfo exists, then create and append the row, else skip
-        if (levelInfo) {
+        // If the levelInfo exists or if there are only unknown levels, then create and append the row
+        if (levelInfo || unknownLevelsOnly) {
             let recordRow = document.createElement('tr');
             recordRow.innerHTML = `
-    <td>${levelInfo.title}</td>
-    <td>${record.percent}</td>
-    <td><a href="${record.link}" target="_blank">View</a></td>
-    <td><button class="btn btn-danger" onclick="deleteRecord('${encodeJSON(record)}')">Delete</button></td>
-`;
+                <td>${levelInfo ? levelInfo.title : "Unknown Level"}</td>
+                <td>${record.percent}</td>
+                <td><a href="${record.link}" target="_blank">View</a></td>
+                <td><button class="btn btn-danger" onclick="deleteRecord('${encodeJSON(record)}')">Delete</button></td>
+            `;
             tbody.appendChild(recordRow);
         }
     });
+    
     
 }
 function encodeJSON(obj) {

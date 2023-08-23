@@ -59,50 +59,55 @@ function validateYouTubeLink() {
 }
 
 document.getElementById('recordForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const levelId = document.getElementById('levelDropdown').value;
-  const playerName = document.getElementById('playerName').value;
-  const youtubeLinkRecord = document.getElementById('youtubeLinkRecord').value;
-  const percentage = document.getElementById('percentage').value + '%';
+    const levelId = document.getElementById('levelDropdown').value;
+    const playerName = document.getElementById('playerName').value;
+    const youtubeLinkRecord = document.getElementById('youtubeLinkRecord').value;
+    const percentage = document.getElementById('percentage').value + '%';
 
-  const isPlayerValid = await validateUsername("playerName", playerName);
-  const isYouTubeLinkValid = validateYouTubeLink();
-  const isPercentageValid = validatePercentage();
-
-  if (isPlayerValid && isYouTubeLinkValid && isPercentageValid) {
-    const queryParams = new URLSearchParams({
-        level_id: levelId,
-        player: playerName,
-        percentage: percentage,
-        link: youtubeLinkRecord
+    const isPlayerValid = await debounce(async () => {
+        return await validateUsername("playerName", playerName);
     });
-    
-    const url = `${API_URL}/rest/add-record?${queryParams.toString()}`;
-    
-    fetch(url, {
-        method: "POST",
-        headers: headers
-    })
-    
-      .then(async (response) => {
-          const responseData = await response.json();
-          if (response.ok) {
-              toastr.success('Record submitted successfully!', 'Success');
-          } else if (responseData.error === "Invalid Token") {
-              toastr.error('You must be logged in to submit records', 'Error');
-          } else {
-              toastr.error('Error submitting record.', 'Error');
-          }
-      })
-      .catch((error) => {
-          console.error("Error:", error);
-          toastr.error('Error submitting record.', 'Error');
-      });
-  } else {
-      toastr.error('Please fill in all required fields correctly.', 'Error');
-  }
+    const isYouTubeLinkValid = validateYouTubeLink();
+    const isPercentageValid = validatePercentage();
+
+    if (isPlayerValid && isYouTubeLinkValid && isPercentageValid) {
+        const queryParams = new URLSearchParams({
+            level_id: levelId,
+            player: playerName,
+            percentage: percentage,
+            link: youtubeLinkRecord
+        });
+
+        const url = `${API_URL}/rest/add-record?${queryParams.toString()}`;
+
+        fetch(url, {
+            method: "POST",
+            headers: headers
+        })
+
+            .then(async (response) => {
+                const responseData = await response.json();
+                if (response.ok) {
+                    toastr.success('Record submitted successfully!', 'Success');
+                } else if (responseData.error === "Invalid Token") {
+                    toastr.error('You must be logged in to submit records', 'Error');
+                } else if (responseData.error === "Record already exists") { // Check if the error is due to a duplicate record
+                    toastr.warning('Record already exists', 'Warning'); // Display a toastr warning
+                } else {
+                    toastr.error('Error submitting record.', 'Error');
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                toastr.error('Error submitting record.', 'Error');
+            });
+    } else {
+        toastr.error('Please fill in all required fields correctly.', 'Error');
+    }
 });
+
 
 function getYoutubeThumbnailUrl(youtubeLink) {
     const videoIdRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/;
