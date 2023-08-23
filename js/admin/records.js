@@ -196,7 +196,6 @@ function openReviewModal(encodedRecord) {
         Percentage: ${record.percent || "N/A"}
         Publisher: ${record.publisher || "Unknown"}
     `;
-    youtubeEmbedElement.src = '';
     $('#reviewModal').modal('show');
 }
 
