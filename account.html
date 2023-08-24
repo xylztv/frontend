@@ -13,7 +13,7 @@
     <style>
         /* CSS styles... */
         .admin-button {
-            display: inline-block;
+            display: none;
             border-radius: 4px;
             background-color: #3d405b;
             border: none;
@@ -152,10 +152,10 @@
     document.getElementById('usernameDisplay').innerText = data.username;
     if (data.permission_level > 1) {
         document.getElementById('adminTag').style.display = 'inline';
-        document.getElementById('adminPanelBtn').style.display = 'block';
+        document.getElementById('adminPanelBtn').style.display = 'inline-block';
 
     }
-    const isoDate = data.joinDate; // Assuming the backend returns the join date in ISO format
+    const isoDate = data.joinDate;
     const date = new Date(isoDate);
     const formattedDate = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}`;
 
