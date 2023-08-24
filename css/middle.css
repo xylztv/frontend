@@ -386,7 +386,7 @@
     }
 
     .list-item {
-        height: 64px;
+        height: 82px;
         column-gap: 4px;
         padding: 0 2px;
         min-width: 0px;
@@ -412,6 +412,8 @@
     
     .level-name {
         font-size: 12px;
+        padding: 0px 0px;
+        padding-top: 2px;
     }
     
     .level-id,
@@ -427,7 +429,7 @@
     }
 
     .list-image {
-        height: 64px;
+        height: 100%;
     }
 
     .level-verifier {

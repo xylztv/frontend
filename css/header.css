@@ -161,7 +161,7 @@ button-54:mouseover
 }
 
 .main-icon {
-    height: 40px;
+    height: 30px;
     margin: 8px;
 }
 
@@ -216,18 +216,143 @@ button-54:mouseover
 .right-section a:hover {
     text-decoration: none;
 }
+#checkbox {
+    display: none;
+}
 
-@media screen and (max-width: 1344px) {
+.hamburger-menu{
+    display: none;
+}
+  
+.toggle {
+    position: relative;
+    width: 40px;
+    cursor: pointer;
+    margin: auto;
+    height: calc(4px * 3 + 11px * 2);
+}
+  
+.bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 4px;
+    border-radius: calc(4px / 2);
+    background: #7b52b9;
+    color: inherit;
+    opacity: 1;
+    transition: none 0.35s cubic-bezier(.5,-0.35,.35,1.5) 0s;
+}
+  
+  /***** Spin Animation *****/
+  
+  .bar--top {
+    bottom: calc(50% + 11px + 4px/ 2);
+    transition-property: bottom,transform;
+    transition-delay: calc(0s + 0.35s),0s;
+  }
+  
+  .bar--middle {
+    top: calc(50% - 4px/ 2);
+    transition-property: opacity;
+    transition-delay: calc(0s + 0.35s);
+  }
+  
+  .bar--bottom {
+    top: calc(50% + 11px + 4px/ 2);
+    transition-property: top,transform;
+    transition-delay: calc(0s + 0.35s),0s;
+  }
+  
+  #checkbox:checked + .toggle .bar--top {
+    bottom: calc(50% - 4px/ 2);
+    transform: rotate(135deg);
+    transition-delay: 0s,calc(0s + 0.35s);
+  }
+  
+  #checkbox:checked + .toggle .bar--middle {
+    opacity: 0;
+    transition-duration: 0s;
+    transition-delay: calc(0s + 0.35s);
+  }
+  
+  #checkbox:checked + .toggle .bar--bottom {
+    top: calc(50% - 4px/ 2);
+    transform: rotate(225deg);
+    transition-delay: 0s,calc(0s + 0.35s);
+  }
+  .menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #333;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#checkbox:checked + .toggle + .menu {
+    display: block;
+}
+
+.menu > li {
+    padding: 10px;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.menu > li:hover {
+    background-color: #444;
+}
+@media screen and (max-width: 1600px) {
     .header {
         min-width: 0px;
-        padding: 0 16px;
+        padding: 19px 16px;
         column-gap: 16px;
         justify-content: none;
     }
 }
 
-@media screen and (max-width: 992px) {
+@media screen and (max-width: 1693px) {
     .right-section {
+        display: inline-flex;
+    }
+    .middle-section{
+        display: none;
+        margin-right: 10px;
+    }
+}
+@media screen and (max-width: 900px) {
+}
+@media screen and (max-width: 800px) {
+    .right-section{
+        display: none;
+    }
+    .left-section{
+        display: flex;
+    }
+    .middle-section{
+        display: flex;
+        z-index: -10000;
+    }
+    .toggle {
+        position: relative;
+        width: 40px;
+        cursor: pointer;
+        margin: 0px;
+        display: flex;
+        height: calc(4px * 3 + 11px * 2);
+        justify-self: right;
+      }
+      .hamburger-menu{
+        display: flex;
+    }
+}
+@media screen and (max-width: 415px) {
+    .middle-section{
         display: none;
     }
 }

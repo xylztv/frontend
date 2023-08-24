@@ -104,7 +104,7 @@
                 </a>
             </div>
             <div class="right-section">
-                <div id="loggedInButton">
+                <div class="loggedInButton">
                     <a class="nav-link-button" href="/account.html">Account</a>
                 </div>
                 <li class="loggedOutButtons no-wrap">
@@ -118,6 +118,24 @@
                 <button class="button-54" role="button" onclick="window.location.href='/removed.html'">Removed</button>    
                 <button class="button-54" role="button" onclick="window.location.href='/leaderboard.html'">Leaderboard</button>  
             </div>
+            <div class="hamburger-menu">
+                <input type="checkbox" id="checkbox">
+                <label for="checkbox" class="toggle">
+                    <div class="bar bar--top"></div>
+                    <div class="bar bar--middle"></div>
+                    <div class="bar bar--bottom"></div>
+                </label>
+                <ul class="menu">
+                    <li role="button" onclick="window.location.href='/leaderboard.html'">Leaderboard</li>
+                    <li role="button" onclick="window.location.href='/removed.html'">Removed</li>
+                    <li role="button" onclick="window.location.href='/legacy.html'">Legacy</li>
+                    <li role="button" class="loggedInButton" onclick="window.location.href='/level_submission_form.html'">Submit Level</li>
+                    <li role="button" class="loggedInButton" onclick="window.location.href='/record_submission_form.html'">Submit Record</li>
+                    <li role="button" class="loggedOutButtons" onclick="window.location.href='/signin.html'">Sign in</li>
+                    <li role="button" class="loggedOutButtons" onclick="window.location.href='/signup.html'">Sign Up</li>
+                    <li role="button" class="loggedInButton" onclick="window.location.href='/account.html'">Account</li>
+                </ul>
+            </div>            
         </div>
 <!--<script defer>
         <div class="embed">
@@ -225,18 +243,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <style>
         #toast-container > .toast {
-            margin-top: 60px; /* Adjust this value based on the height of your header */
+            margin-top: 60px;
         }
     </style>
-    
-    <!--<script defer>
-        $(document).on("mouseenter", ".list-item, .twitch-icon, .youtube-icon, .discord-icon, .twitter-icon, #submit-button, .submit-record-button", function() {
-            TweenMax.to(this, 0.5, {scale: 1.1, ease: Power2.easeOut});
-        });
-        $(document).on("mouseleave", ".list-item, .twitch-icon, .youtube-icon, .discord-icon, .twitter-icon, #submit-button, .submit-record-button", function() {
-            TweenMax.to(this, 0.5, {scale: 1, ease: Power2.easeOut});
-        });
-        $(document).on("")
-    </script>
-    -->
 </html>

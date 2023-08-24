@@ -11,18 +11,24 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       // Hide elements with the .loggedOutButtons class
       const loggedOutButtons = document.querySelectorAll('.loggedOutButtons');
+      const loggedInButtons = document.querySelectorAll('.loggedInButton');
       for (const button of loggedOutButtons) {
         button.style.display = 'none';
       }
-      document.getElementById('loggedInButton').style.display = 'block';
+      for (const button of loggedInButtons){
+        button.style.display = 'block';
+      }
     } else {
       // User is not logged in
       console.log("not logged in");
       // Show elements with the .loggedOutButtons class
       const loggedOutButtons = document.querySelectorAll('.loggedOutButtons');
+      const loggedInButtons = document.querySelectorAll('.loggedInButton');
       for (const button of loggedOutButtons) {
         button.style.display = 'block';
       }
-      document.getElementById('loggedInButton').style.display = 'none';
+      for (const button of loggedInButtons){
+        button.style.display = 'none';
+      }
     }
   });

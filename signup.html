@@ -8,6 +8,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/friendly-challenge@0.9.12/widget.module.min.js" async defer></script>
 <script nomodule src="https://cdn.jsdelivr.net/npm/friendly-challenge@0.9.12/widget.min.js" async defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" /> 
 
 
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
@@ -98,6 +99,51 @@
     </style>
     
 <body>
+    <div class="header">
+        <a id="home-link" href="index.html">
+            <div class="left-section">
+                <img class="main-icon" src="icons/xylzicon.png">
+                <div class="main-title">xylz</div>
+            </div>
+        </a>
+        <div class="middle-section">
+            <a href="https://www.twitch.tv/xylzz_" target="_blank">
+                <img src="icons/logo--twitch.svg" alt="Twitch icon" class="twitch-icon">
+            </a>
+            <a href="https://www.youtube.com/xylzz" target="_blank">
+                <img src="icons/logo--youtube.svg" alt="Youtube icon" class="youtube-icon">
+            </a>
+            <a href="https://discord.com/invite/HMjWaGh" target="_blank">
+                <img src="icons/logo--discord.svg" alt="Discord icon" class="discord-icon">
+            </a>
+            <a href="https://twitter.com/Xylz97751031" target="_blank">
+                <img src="icons/logo--twitter.svg" alt="Twitter icon" class="twitter-icon">
+            </a>
+        </div>
+        <div class="right-section">
+            <button class="button-54" role="button" onclick="window.location.href='/about.html'">About</button>
+            <button class="button-54" role="button" onclick="window.location.href='legacy.html'">legacy</button>
+            <button class="button-54" role="button" onclick="window.location.href='/removed.html'">Removed</button>    
+            <button class="button-54" role="button" onclick="window.location.href='/leaderboard.html'">Leaderboard</button>  
+        </div>
+        <div class="hamburger-menu">
+            <input type="checkbox" id="checkbox">
+            <label for="checkbox" class="toggle">
+                <div class="bar bar--top"></div>
+                <div class="bar bar--middle"></div>
+                <div class="bar bar--bottom"></div>
+            </label>
+            <ul class="menu">
+                <li role="button" onclick="window.location.href='/leaderboard.html'">Leaderboard</li>
+                <li role="button" onclick="window.location.href='/removed.html'">Removed</li>
+                <li role="button" onclick="window.location.href='/legacy.html'">Legacy</li>
+                <li role="button" onclick="window.location.href='/about.html'">About</li>
+                <li role="button" class="loggedOutButtons" onclick="window.location.href='/signin.html'">Sign in</li>
+                <li role="button" class="loggedOutButtons" onclick="window.location.href='/signup.html'">Sign Up</li>
+                <li role="button" class="loggedInButton" onclick="window.location.href='/account.html'">Account</li>
+            </ul>
+        </div>            
+    </div>
     <div class="container">
         <div class="row">
             <div class="col-md-6 offset-md-4">
@@ -204,5 +250,12 @@ document.getElementById('confirmPassword').addEventListener('input', checkFormSt
 
 
     </script>
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/header.css">
+        <link rel="stylesheet" href="css/embed.css">
+        <link rel="stylesheet" href="css/sidebar.css">
+        <link rel="stylesheet" href="css/middle.css">
+        <link rel="stylesheet" href="css/footer.css">
+        <script type="module" src="js/authCheck.js"></script>
 </body>
 </html>

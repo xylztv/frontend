@@ -88,41 +88,58 @@
         <div class="parallax-layer" id="bg3"></div>
     </div>
     <div class="header">
-    <a id="home-link" href="index.html">
-        <div class="left-section">
-            <img class="main-icon" src="icons/xylzicon.png">
-            <div class="main-title">xylz</div>
+        <a id="home-link" href="index.html">
+            <div class="left-section">
+                <img class="main-icon" src="icons/xylzicon.png">
+                <div class="main-title">xylz</div>
+            </div>
+        </a>
+        <div class="middle-section">
+            <a href="https://www.twitch.tv/xylzz_" target="_blank">
+                <img src="icons/logo--twitch.svg" alt="Twitch icon" class="twitch-icon">
+            </a>
+            <a href="https://www.youtube.com/xylzz" target="_blank">
+                <img src="icons/logo--youtube.svg" alt="Youtube icon" class="youtube-icon">
+            </a>
+            <a href="https://discord.com/invite/HMjWaGh" target="_blank">
+                <img src="icons/logo--discord.svg" alt="Discord icon" class="discord-icon">
+            </a>
+            <a href="https://twitter.com/Xylz97751031" target="_blank">
+                <img src="icons/logo--twitter.svg" alt="Twitter icon" class="twitter-icon">
+            </a>
         </div>
-    </a>
-    <div class="middle-section">
-        <a href="https://www.twitch.tv/xylzz_" target="_blank">
-            <img src="icons/logo--twitch.svg" alt="Twitch icon" class="twitch-icon">
-        </a>
-        <a href="https://www.youtube.com/xylzz" target="_blank">
-            <img src="icons/logo--youtube.svg" alt="Youtube icon" class="youtube-icon">
-        </a>
-        <a href="https://discord.com/invite/HMjWaGh" target="_blank">
-            <img src="icons/logo--discord.svg" alt="Discord icon" class="discord-icon">
-        </a>
-        <a href="https://twitter.com/Xylz97751031" target="_blank">
-            <img src="icons/logo--twitter.svg" alt="Twitter icon" class="twitter-icon">
-        </a>
-    </div>
-    <div class="right-section">
-        <div id="loggedInButton">
-            <a class="nav-link-button" href="/account.html">Account</a>
+        <div class="right-section">
+            <div class="loggedInButton">
+                <a class="nav-link-button" href="/account.html">Account</a>
+            </div>
+            <li class="loggedOutButtons no-wrap">
+                <a class="nav-link-button" href="/signup.html">Sign Up</a>
+            </li>
+            <li class="loggedOutButtons no-wrap">
+                <a class="nav-link-button" href="/signin.html">Sign In</a>
+            </li>
+            <button class="button-54" role="button" onclick="window.location.href='legacy.html'">legacy</button>
+            <button class="button-54" role="button" onclick="window.location.href='/removed.html'">Removed</button>    
+            <button class="button-54" role="button" onclick="window.location.href='/leaderboard.html'">Leaderboard</button>  
         </div>
-        <li class="loggedOutButtons no-wrap">
-            <a class="nav-link-button" href="/signup.html">Sign Up</a>
-        </li>
-        <li class="loggedOutButtons no-wrap">
-            <a class="nav-link-button" href="/signin.html">Sign In</a>
-        </li>
-        <button class="button-54" role="button" onclick="window.location.href='/about.html'">About</button>
-        <button class="button-54" role="button" onclick="window.location.href='legacy.html'">legacy</button>
-        <button class="button-54" role="button" onclick="window.location.href='/removed.html'">Removed</button>    
-        <button class="button-54" role="button" onclick="window.location.href='/leaderboard.html'">Leaderboard</button>  
-    </div>
+        <div class="hamburger-menu">
+            <input type="checkbox" id="checkbox">
+            <label for="checkbox" class="toggle">
+                <div class="bar bar--top"></div>
+                <div class="bar bar--middle"></div>
+                <div class="bar bar--bottom"></div>
+            </label>
+            <ul class="menu">
+                <li role="button" onclick="window.location.href='/leaderboard.html'">Leaderboard</li>
+                <li role="button" onclick="window.location.href='/removed.html'">Removed</li>
+                <li role="button" onclick="window.location.href='/legacy.html'">Legacy</li>
+                <li role="button" class="loggedInButton" onclick="window.location.href='/level_submission_form.html'">Submit Level</li>
+                <li role="button" class="loggedInButton" onclick="window.location.href='/record_submission_form.html'">Submit Record</li>
+                <li role="button" class="loggedOutButtons" onclick="window.location.href='/signin.html'">Sign in</li>
+                <li role="button" class="loggedOutButtons" onclick="window.location.href='/signup.html'">Sign Up</li>
+                <li role="button" class="loggedInButton" onclick="window.location.href='/account.html'">Account</li>
+            </ul>
+        </div>            
     </div>
     <div class="content-row">
         <div class="sidebar">
