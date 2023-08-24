@@ -196,7 +196,7 @@
         .then(response => response.json())
         .then(data => {
     document.getElementById('usernameDisplay').innerText = data.username;
-    if (data.permission_level > 1) {
+    if (data.permission_level >= 1) {
         document.getElementById('adminTag').style.display = 'inline';
         document.getElementById('adminPanelBtn').style.display = 'inline-block';
 
