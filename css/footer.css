@@ -159,3 +159,10 @@
     transform: scale(0.9);
     fill: #333333;
 }
+
+@media screen and (max-width: 450px) {
+  .github-btn,
+  #btn-toTop {
+    display: none;
+  }
+}
