@@ -71,6 +71,23 @@ async function addListItems(data) {
     let middle = document.getElementsByClassName("middle");
     let IDs = data.map((listItem) => getVideoID(listItem.link));
     const loader = document.querySelector('.loader');
+
+    // Preload thumbnail images using the Image object
+    const thumbnailPromises = getThumbnails(IDs).map((thumbnailSrc) => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = thumbnailSrc;
+            img.onload = resolve;
+            img.onerror = reject;
+        });
+    });
+
+    // Wait for all thumbnails to be preloaded
+    try {
+        await Promise.all(thumbnailPromises);
+    } catch (error) {
+        console.error("Error preloading thumbnails:", error);
+    }
     await Promise.all(getThumbnails(IDs)).then(thumbnails => {
         data.forEach((listItem, index) => {
             middle[0].insertAdjacentHTML("beforeend",`
