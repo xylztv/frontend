@@ -70,7 +70,7 @@ async function addListItems(data) {
 
     let middle = document.getElementsByClassName("middle");
     let IDs = data.map((listItem) => getVideoID(listItem.link));
-
+    const loader = document.querySelector('.loader');
     await Promise.all(getThumbnails(IDs)).then(thumbnails => {
         data.forEach((listItem, index) => {
             middle[0].insertAdjacentHTML("beforeend",`
@@ -92,6 +92,7 @@ async function addListItems(data) {
                 </div>`
             );
         });
+        loader.classList.add('hidden');
     }).catch((e) => console.log("Error fetching thumbnails: ", e))
 }
 

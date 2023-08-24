@@ -302,12 +302,13 @@ async function Setup() {
 	})
 
 	// Animation timeline
-	let tl = gsap.timeline({ defaults: { opacity: 0, ease: `0.2, 0, 0.38, 0.9` }})
-	tl.from(`.row`, { duration: 1, y: -30 })
-	tl.from(`#search-input`, { duration: 1 }, 0.5)
-	tl.from(`#leaderboard-table`, { duration: 0.5, x: 30 }, 0.2)
-	tl.from(`thead`, { duration: 0.3, y: -50 }, 0.2)
-	tl.from(`tr`, { duration: 0.2, y: 50, stagger: 0.05 }, 0.1)
+let tl = gsap.timeline({ defaults: { opacity: 0, ease: "0.2, 0, 0.38, 0.9" }});
+tl.from(".row", { duration: 0.5, y: -20 });
+tl.from("#search-input", { duration: 0.5 }, 0.3);
+tl.from("#leaderboard-table", { duration: 0.3, x: 20 }, 0.1);
+tl.from("thead", { duration: 0.2, y: -30 }, 0.1);
+tl.from("tr", { duration: 0.1, y: 30, stagger: 0.03 }, 0.05);
+
 }
 
 Setup()

@@ -19,9 +19,9 @@
     border-radius: 4px;
     padding: 0 16px;
     box-sizing: border-box;
-    transition: filter 0.5s, transform 0.5s;
+    transition: filter 0.5s, transform 0.3s;
     animation-name: loadingAnim;
-    animation-duration: 1.5s;
+    animation-duration: 0.6s;
     animation-timing-function: ease-in-out;
     /*box-shadow:
     1px 2px 2px 0px rgba(255, 209, 44, 0.7),
