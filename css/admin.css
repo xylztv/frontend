@@ -7,3 +7,6 @@
   overflow-y: auto;
   transition: all 0.3s ease-in-out; /* smooth transition */
 }
+.no-wrap {
+  white-space: nowrap;
+}
