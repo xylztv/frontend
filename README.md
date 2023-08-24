@@ -9,7 +9,7 @@
        |___/                                         |___/                    
 ```
 
-Welcome to the repository for Xylz.tv's GitHub Page!
+Welcome to the repository for xylz.tv!
 
 ## Contact
 
