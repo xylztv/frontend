@@ -89,7 +89,7 @@ document.getElementById('recordForm').addEventListener('submit', async (e) => {
                 const responseData = await response.json();
                 if (response.ok) {
                     toastr.success('Record submitted successfully!', 'Success');
-                } else if (responseData.error === "Invalid Token") {
+                } else if (responseData.error === 3) {
                     toastr.error('You must be logged in to submit records', 'Error');
                 } else if (responseData.error === "Record already exists") { // Check if the error is due to a duplicate record
                     toastr.warning('Record already exists', 'Warning'); // Display a toastr warning

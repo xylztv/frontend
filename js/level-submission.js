@@ -182,21 +182,30 @@ for (let creator of creatorList) {
         method: "POST",
         headers: headers
     })
-    
-      .then((response) => {
-          if (response.ok) {
-              toastr.success('Level submitted successfully!', 'Success');
-              console.log("Level added to the pending list.");
-          } else {
-              console.error("Error:", response.status);
-          }
-      })
-      .catch((error) => {
-          console.error("Error:", error);
-      });
-  } else {
-      toastr.error('Please fill in all required fields correctly.', 'Error');
-  }
+        .then(async (response) => {
+            const responseData = await response.json();
+            if (response.ok) {
+                toastr.success('Level submitted successfully!', 'Success');
+                console.log("Level added to the pending list.");
+            } else {
+                console.error("Error:", response.status);
+
+                if (responseData.error === 3) {
+                    toastr.error('You must be logged in to submit records', 'Error');
+                } else if (responseData.error === "Record already exists") {
+                    toastr.warning('Record already exists', 'Warning');
+                } else {
+                    toastr.error('Error submitting record.', 'Error');
+                }
+            }
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            toastr.error('Error submitting record.', 'Error');
+        });
+} else {
+    toastr.error('Please fill in all required fields correctly.', 'Error');
+}
 }
 
 function onLevelIdInput() {
