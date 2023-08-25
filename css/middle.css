@@ -317,20 +317,19 @@
     .list-image {
         height: 96px;
     }
-
+}
+@media screen and (max-width: 560px) {
     .level-verifier {
         display: none;
     }
-}
-
 @media screen and (max-width: 535px) {
     .middle {
-      padding: 16px 8px;
-      row-gap: 24px;
+        padding: 8px 4px;
+        row-gap: 24px;
     }
 
     .list-item {
-        height: 80px;
+        height: 82px;
         column-gap: 4px;
         padding: 0 2px;
         min-width: 0px;
@@ -339,8 +338,8 @@
 
     .list-info {
         flex: 1;
-        padding: 8px 8px;
-        row-gap: 10px;
+        padding: 4px 4px;
+        row-gap: 2px;
     }
     
     .level-info {
@@ -491,4 +490,4 @@
     .level-verifier {
         display: none;
     }
-}
+}}

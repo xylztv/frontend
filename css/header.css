@@ -325,9 +325,7 @@ button-54:mouseover
         margin-right: 10px;
     }
 }
-@media screen and (max-width: 900px) {
-}
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 1345px) {
     .right-section{
         display: none;
     }
