@@ -10,39 +10,57 @@ async function fetchData(url) {
     return response.json();
 }
 
-async function preloadThumbnails(data) {
-    const promises = data.map(async item => {
-        const videoID = getVideoID(item.link);
-        const thumbnailURL = `https://img.youtube.com/vi/${videoID}/mqdefault.jpg`;
-        const img = new Image();
-        img.src = thumbnailURL;
-        await img.decode();
-    });
-
-    await Promise.all(promises);
+async function updateFirstPlaceholdersWithActualData(data) {
+    const middle = document.querySelector(".middle");
+    const placeholders = middle.querySelectorAll(".placeholder");
+    for (let i = 0; i < Math.min(5, data.length); i++) {
+        const placeholder = placeholders[i];
+        const item = data.find(entry => entry.ranking === i + 1); // Find item with the appropriate ranking
+        if (item) {
+            const listItem = createListItem(item);
+            placeholder.replaceWith(listItem);
+        }
+    }
 }
 
 async function addListItems(data) {
     const middle = document.querySelector(".middle");
-    await preloadThumbnails(data);
-
     const fragment = document.createDocumentFragment();
     data.sort((a, b) => a.ranking - b.ranking);
-    data.forEach(item => {
+    data.slice(5).forEach(item => {
         fragment.appendChild(createListItem(item));
     });
 
     middle.appendChild(fragment);
     assignCopyButtons();
+
+    // Remove the animation class from placeholders
+    const placeholders = middle.querySelectorAll(".placeholder");
+    placeholders.forEach(placeholder => {
+        placeholder.classList.remove("animation-class");
+    });
+}
+
+async function updatePlaceholdersWithActualData(data) {
+    const middle = document.querySelector(".middle");
+    const placeholders = middle.querySelectorAll(".placeholder");
+    placeholders.forEach((placeholder, index) => {
+        const item = data[index];
+        const listItem = createListItem(item);
+        placeholder.replaceWith(listItem);
+    });
+
+    assignCopyButtons();
 }
 
 function createListItem(item) {
     const videoID = getVideoID(item.link);
-    const thumbnailURL = `https://img.youtube.com/vi/${videoID}/mqdefault.jpg`;
+    const thumbnailURL = item.link ? `https://img.youtube.com/vi/${videoID}/mqdefault.jpg` : 'white-placeholder-image-url';
     const listItem = document.createElement('div');
     listItem.classList.add('list-item');
+    const rankingText = item.ranking ? `#${item.ranking}` : '';
     listItem.innerHTML = `
-        <div class="list-number">#${item.ranking}</div>
+        <div class="list-number">${rankingText}</div>
         <div class="list-thumbnail">
             <a href="${item.link}" target="_blank">
             <img class="list-image" src="${thumbnailURL}" alt="Level thumbnail" loading="lazy">
@@ -93,8 +111,22 @@ function getVideoID(url) {
 
 // Initial loading and processing
 (async () => {
+    const middle = document.querySelector(".middle");
+
+    // Add empty list items as placeholders with animation class and ranking value
+    for (let i = 1; i <= 5; i++) {
+        const placeholder = createListItem({ ranking: i, link: '', title: '', id: '', creator: '', verifier: '' });
+        placeholder.classList.add("placeholder", "animation-class");
+        middle.appendChild(placeholder);
+    }
+
     try {
         const data = await fetchData(fetch_url);
+
+        // Update the first placeholders with actual data
+        updateFirstPlaceholdersWithActualData(data);
+
+        // Add the remaining levels
         addListItems(data);
     } catch (error) {
         console.error("Failed to fetch data:", error);
