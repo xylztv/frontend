@@ -1,129 +1,76 @@
 import { API_URL } from "./config.js";
+
 const fetch_url = `${API_URL}/rest/mainlist`;
-const template_list = `
-<div class="list-item">
-    <div class="list-number">#1</div>
-    <div class="list-thumbnail">
-        <a href="https://www.youtube.com/watch?v=GSCG9yohUm4" target="_blank">
-            <img class="list-image" src="https://img.youtube.com/vi/GSCG9yohUm4/maxresdefault.jpg" alt="Level thumbnail">
-        </a>
-    </div>
-    <div class="list-info">
-        <p class="level-name" id="popupEvent">Xylz Challenge II</p>
-        <div class="level-info">
-            <p class="level-id" onClick="copyText(event)">87793135</p>
-            <p class="level-author">GameCatch</p>
-            <p class="level-verifier">GameCatch</p>
-        </div>
-    </div>
-</div>`
 
-
-
-// Defining async function
 async function fetchData(url) {
     const response = await fetch(url);
-    let data = await response.json();
-    if (!response) {
-        console.log(data);
+    if (!response.ok) {
         throw new Error("Failed to fetch data.");
     }
-    return data
+    return response.json();
 }
 
+async function preloadThumbnails(data) {
+    const promises = data.map(async item => {
+        const videoID = getVideoID(item.link);
+        const thumbnailURL = `https://img.youtube.com/vi/${videoID}/mqdefault.jpg`;
+        const img = new Image();
+        img.src = thumbnailURL;
+        await img.decode();
+    });
 
-// Calling that async function
-const data = fetchData(fetch_url)
-.then(data => addListItems(data))
-.then(assignCopyButtons)
-
-function getVideoID(url) {
-    try {
-        var ID = '';
-        url = url.replace(/(>|<)/gi,'').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-        if(url[2] !== undefined) {
-            ID = url[2].split(/[^0-9a-z_\-]/i);
-            ID = ID[0];
-        }
-        else {
-            ID = url;
-        }
-        return ID;
-    } catch (err) {
-        console.error('Failed to get video ID:', err);
-    }
-}
-
-function getThumbnails(IDs) {
-    return IDs.map((id, index) => {
-        return `https://img.youtube.com/vi/${id}/mqdefault.jpg`
-    })
+    await Promise.all(promises);
 }
 
 async function addListItems(data) {
-    data.sort((a, b) => {
-        if (a.ranking > b.ranking) 
-            return 1;
-        else 
-            return -1;
+    const middle = document.querySelector(".middle");
+    await preloadThumbnails(data);
+
+    const fragment = document.createDocumentFragment();
+    data.sort((a, b) => a.ranking - b.ranking);
+    data.forEach(item => {
+        fragment.appendChild(createListItem(item));
     });
 
-    let middle = document.getElementsByClassName("middle");
-    let IDs = data.map((listItem) => getVideoID(listItem.link));
-    const loader = document.querySelector('.loader');
+    middle.appendChild(fragment);
+    assignCopyButtons();
+}
 
-    // Preload thumbnail images using the Image object
-    const thumbnailPromises = getThumbnails(IDs).map((thumbnailSrc) => {
-        return new Promise((resolve, reject) => {
-            const img = new Image();
-            img.src = thumbnailSrc;
-            img.onload = resolve;
-            img.onerror = reject;
-        });
-    });
-
-    // Wait for all thumbnails to be preloaded
-    try {
-        await Promise.all(thumbnailPromises);
-    } catch (error) {
-        console.error("Error preloading thumbnails:", error);
-    }
-    await Promise.all(getThumbnails(IDs)).then(thumbnails => {
-        data.forEach((listItem, index) => {
-            middle[0].insertAdjacentHTML("beforeend",`
-                <div class="list-item">
-                    <div class="list-number">#${listItem.ranking}</div>
-                    <div class="list-thumbnail">
-                        <a href="${listItem.link}" target="_blank">
-                            <img class="list-image" src="${thumbnails[index]}" alt="Level thumbnail">
-                        </a>
-                    </div>
-                    <div class="list-info">
-                        <p class="level-name">${listItem.title}</p>
-                        <div class="level-info">
-                            <p class="level-id">${listItem.id}</p>
-                            <p class="level-author">${listItem.creator}</p>
-                            <p class="level-verifier">${listItem.verifier}</p>
-                        </div>
-                    </div>
-                </div>`
-            );
-        });
-        loader.classList.add('hidden');
-    }).catch((e) => console.log("Error fetching thumbnails: ", e))
+function createListItem(item) {
+    const videoID = getVideoID(item.link);
+    const thumbnailURL = `https://img.youtube.com/vi/${videoID}/mqdefault.jpg`;
+    const listItem = document.createElement('div');
+    listItem.classList.add('list-item');
+    listItem.innerHTML = `
+        <div class="list-number">#${item.ranking}</div>
+        <div class="list-thumbnail">
+            <a href="${item.link}" target="_blank">
+            <img class="list-image" src="${thumbnailURL}" alt="Level thumbnail" loading="lazy">
+            </a>
+        </div>
+        <div class="list-info">
+            <p class="level-name">${item.title}</p>
+            <div class="level-info">
+                <p class="level-id">${item.id}</p>
+                <p class="level-author">${item.creator}</p>
+                <p class="level-verifier">${item.verifier}</p>
+            </div>
+        </div>
+    `;
+    return listItem;
 }
 
 function assignCopyButtons() {
-    let copyButtons = document.getElementsByClassName("level-id");
-
-    for (let i = 0 ; i < copyButtons.length; i++) {
-        copyButtons[i].addEventListener('click', copyText) ; 
-    }
+    const middle = document.querySelector(".middle");
+    middle.addEventListener('click', event => {
+        if (event.target.classList.contains('level-id')) {
+            copyText(event);
+        }
+    });
 }
 
 async function copyText(event) {
-    let id = event.target.innerHTML;
-
+    const id = event.target.textContent;
     try {
         await navigator.clipboard.writeText(id);
         console.log('Content copied to clipboard:', id);
@@ -134,4 +81,22 @@ async function copyText(event) {
     }
 }
 
-window.ondragstart = function() {return false}; // prevent dragging images/icons
+function getVideoID(url) {
+    try {
+        const match = url.match(/(?:vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)([^?&]+)/i);
+        return match ? match[1] : url;
+    } catch (err) {
+        console.error('Failed to get video ID:', err);
+        return url;
+    }
+}
+
+// Initial loading and processing
+(async () => {
+    try {
+        const data = await fetchData(fetch_url);
+        addListItems(data);
+    } catch (error) {
+        console.error("Failed to fetch data:", error);
+    }
+})();
