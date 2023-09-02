@@ -57,37 +57,46 @@
     margin: 14px 0px;
     padding: 0px 8px;
 }
+
+/* Existing code... */
+
 @keyframes discord {
-	0% {height:70px; width:300px;}
-	 100% {height:500px;width:300px;}
+    0% {
+        height: 70px;
+        width: 300px;
+    }
+    100% {
+        height: 500px;
+        width: 300px;
+    }
 }
+
 @keyframes discord-c {
-	0% {height:500px;width:300px;}
-    100% {height:70px; width:300px;}
+    0% {
+        height: 500px;
+        width: 300px;
+    }
+    100% {
+        height: 70px;
+        width: 300px;
+    }
 }
+
 .discord {
-	animation-name: discord-c;
-	animation-duration: 2s;
-	animation-play-state: pause;
-	float:left;
-    height:70px;
-	width:300px;
-   
-	
+    animation-name: discord-c;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+    float: left;
+    height: 70px;
+    width: 300px;
 }
 
 .discord:hover {
-	height:500px;
-	width:300px;
-	float:left;
-	animation-name: discord;
-	animation-duration: 2s;
-	animation-play-state: pause;
+    height: 500px;
+    width: 300px;
+    float: left;
+    animation-name: discord;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards; /* Retain styles of the last keyframe */
 }
-	
 
-@media screen and (max-width: 1344px) {
-    .sidebar {
-        display: none;
-    }
-}
