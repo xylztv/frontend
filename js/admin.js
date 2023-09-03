@@ -604,11 +604,11 @@ function handlePendingLevelsSection() {
 
     async function declinePendingLevel(levelId) {
         const confirmation = window.confirm("Are you sure you want to decline this level? This cannot be undone.");
-        
+            
         if (!confirmation) {
             return; // Exit the function if the user clicks "Cancel"
         }
-    
+        
         const token = localStorage.getItem('userToken');
          
         const params = new URLSearchParams({
@@ -616,20 +616,24 @@ function handlePendingLevelsSection() {
             passed: "false",
             ranking: "1", // This value doesn't matter when declining
         });
-    
+        
         // Start by getting the nongLink by sending a request to /rest/nong
         let nongResponse = await fetch(`${API_URL}/rest/nong?levelId=${levelId}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('userToken')}`
             }
         });
-        let nongData = await nongResponse.json();
-        console.log(nongData)
-        let nongLink = nongData.link;
     
-        // Remove the file extension from nongLink
-        let nongLinkWithoutExtension = nongLink.slice(0, nongLink.lastIndexOf('.'));
-    
+        let nongLinkWithoutExtension = '';
+        if (nongResponse.ok) {
+            let nongData = await nongResponse.json();
+            console.log(nongData)
+            let nongLink = nongData.link;
+        
+            // Remove the file extension from nongLink
+            nongLinkWithoutExtension = nongLink.slice(0, nongLink.lastIndexOf('.'));
+        }
+        
         fetch(`${API_URL}/rest/pending-levels?${params.toString()}`, {
             method: 'POST',
             headers: {
@@ -642,26 +646,28 @@ function handlePendingLevelsSection() {
             if (data.success) {
                 toastr.success('Level declined successfully!');
                 fetchPendingLevels(); // Refresh the pending levels list
-    
+        
                 // Now send the POST request to /rest/delete-nong with nongId and nongLinkWithoutExtension as query parameters
-                let response = await fetch(`${API_URL}/rest/delete-nong?id=${levelId}&link=${nongLinkWithoutExtension}`, { 
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('userToken')}`
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        toastr.success('Nong deleted successfully!');
-                    } else {
+                if (nongLinkWithoutExtension) {
+                    let response = await fetch(`${API_URL}/rest/delete-nong?id=${levelId}&link=${nongLinkWithoutExtension}`, { 
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            toastr.success('Nong deleted successfully!');
+                        } else {
+                            toastr.error('Error deleting nong.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting nong:', error);
                         toastr.error('Error deleting nong.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error deleting nong:', error);
-                    toastr.error('Error deleting nong.');
-                });
+                    });
+                }
             } else {
                 toastr.error('Error declining level.');
             }
