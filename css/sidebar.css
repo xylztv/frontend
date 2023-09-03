@@ -58,8 +58,6 @@
     padding: 0px 8px;
 }
 
-/* Existing code... */
-
 @keyframes discord {
     0% {
         height: 70px;
@@ -100,3 +98,8 @@
     animation-fill-mode: forwards; /* Retain styles of the last keyframe */
 }
 
+@media only screen and (max-width: 775px) {
+    .sidebar {
+        display: none;
+    }
+}
