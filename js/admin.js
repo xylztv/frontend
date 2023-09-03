@@ -129,7 +129,7 @@ function saveLevelChanges(levelId) {
 }
 
 
-function openEditModal(levelId) {
+async function openEditModal(levelId) {
     // Retrieve the data from the existing data
     const levelData = {
         title: levelNames[levelId],
@@ -151,11 +151,29 @@ function openEditModal(levelId) {
     document.getElementById('editModalSaveBtn').addEventListener('click', function() {
         saveLevelChanges(levelId);
     });
-
+    try {
+        let response = await fetch(`${API_URL}/rest/all-nongs`);
+        let nongs = await response.json();
+        
+        let nong = nongs.find(n => n.id === Number(levelId));
+        if (nong){
+            document.querySelector('#nongLabel').style.display = 'block';
+            document.querySelector('#editModalNong').src = API_URL + '/rest/get-audio/' + nong.link;
+            document.querySelector('#editModalNong').style.display = 'block';
+            document.querySelector('#deleteNongButton').style.display = 'block';
+            document.querySelector('#deleteNongButton').onclick = function() { deleteNong(nong.id, nong.link); };
+        } else {
+            document.querySelector('#nongLabel').style.display = 'none';
+            document.querySelector('#editModalNong').style.display = 'none';
+            document.querySelector('#deleteNongButton').style.display = 'none';
+        }
+      } catch(err) {
+        console.error('Error Fetching Nongs:', err);
+      }
     // Open the modal
     $('#editModal').modal('show');
 }
-function openRemoveModal(levelId) {
+async function openRemoveModal(levelId) {
     const listType = document.getElementById('listTypeDropdown').value;
     
     let modalMessage;
@@ -171,6 +189,7 @@ function openRemoveModal(levelId) {
             console.error('Unknown list type:', listType);
             return;
     }
+    
 
     document.getElementById('removeModalConfirmBtn').addEventListener('click', function() {
         removeLevel(levelId);
@@ -183,7 +202,21 @@ function openRemoveModal(levelId) {
     // Open the modal
     $('#removeModal').modal('show');
 }
-
+async function deleteNong(nongId, nongLink) {
+        let nongLinkWithoutExtension = nongLink.replace('.mp3', '');
+        console.log(nongId, nongLinkWithoutExtension)
+        let response = await fetch(`${API_URL}/rest/delete-nong?id=${nongId}&link=${nongLinkWithoutExtension}`, { 
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+            }
+        });
+        if(response.ok) {
+            alert('NONG deleted');
+        } else {
+            alert('Delete failed');
+        }
+}
 function updateRankingsAfterRemoval() {
     const listType = document.getElementById('listTypeDropdown').value;
     const offset = listType === 'legacy_levels' ? 100 : 0;

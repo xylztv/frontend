@@ -68,7 +68,7 @@ function updateSubmitButtonVisibility() {
 }
 
 function showFields() {
-    const fields = document.querySelectorAll("#levelInfoFields, #lengthFields, #verifierFields, #creatorFields, #youtubeLinkFields");
+    const fields = document.querySelectorAll("#levelInfoFields, #lengthFields, #verifierFields, #creatorFields, #youtubeLinkFields, #nongUpload");
     fields.forEach((field) => {
         field.classList.remove("hidden");
         field.style.animation = "fadeIn 0.3s forwards";
@@ -182,32 +182,67 @@ for (let creator of creatorList) {
         method: "POST",
         headers: headers
     })
-        .then(async (response) => {
-            const responseData = await response.json();
-            if (response.ok) {
+    .then(async (response) => {
+        const responseData = await response.json();
+        if (response.ok) {
+            const nongFileInput = document.getElementById('nongFile');
+            const nongFile = nongFileInput.files[0];
+            if (nongFile) {
+                try {
+                    await uploadNongFile();
+                    toastr.success('Level submitted successfully!', 'Success');
+                    console.log("Level added to the pending list.");
+                } catch (error) {
+                    console.error('Error:', error);
+                    toastr.error('Error uploading NONG file', 'Error');
+                }
+            } else {
                 toastr.success('Level submitted successfully!', 'Success');
                 console.log("Level added to the pending list.");
-            } else {
-                console.error("Error:", response.status);
-
-                if (responseData.error === 3) {
-                    toastr.error('You must be logged in to submit records', 'Error');
-                } else if (responseData.error === "Record already exists") {
-                    toastr.warning('Record already exists', 'Warning');
-                } else {
-                    toastr.error('Error submitting record.', 'Error');
-                }
             }
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-            toastr.error('Error submitting record.', 'Error');
-        });
+        } else {
+            console.error("Error:", response.status);
+            if (responseData.error === 3) {
+                toastr.error('You must be logged in to submit levels', 'Error');
+            } else if (responseData.error === "level already exists") {
+                toastr.warning('Level already exists', 'Warning');
+            } else {
+                toastr.error('Unknown error occurred', 'Error');
+            }
+        }
+    });
 } else {
     toastr.error('Please fill in all required fields correctly.', 'Error');
 }
 }
+async function uploadNongFile() {
+    const nongFileInput = document.getElementById('nongFile');
+    const nongFile = nongFileInput.files[0];
+    console.log(nongFile);
+    const levelId = document.getElementById("levelId").value;
 
+    if (nongFile) {
+        let formData = new FormData();
+        formData.append('nongFile', nongFile);
+        // Get levelId from the HTML document
+    const levelId = document.getElementById("levelId").value;
+    
+    // Append levelId to formData
+    formData.append('levelId', levelId);
+        fetch(`${API_URL}/rest/upload-nong`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+}
 function onLevelIdInput() {
     const loadingIcon = document.getElementById("loadingIcon");
     const levelId = document.getElementById("levelId").value;
