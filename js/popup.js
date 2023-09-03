@@ -206,11 +206,11 @@ popup.querySelector("#downloadNongBtn").addEventListener("click", function (even
     .then(data => {
         let songId = data.songId;
         let audioFileUrl;
-if (data.link.startsWith('https')) {
-    audioFileUrl = data.link;
-} else {
-    audioFileUrl = `${API_URL}/rest/get-audio/${data.link}`;
-}
+        if (data.link.startsWith('https')) {
+            window.open(data.link, '_blank');
+        } else {
+            audioFileUrl = `${API_URL}/rest/get-audio/${data.link}`;
+        }
 
         // Fetch the audio file
         return fetch(audioFileUrl, {
