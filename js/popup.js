@@ -1,6 +1,6 @@
 import { API_URL } from "./config.js";
 const fetch_url = `${API_URL}/rest/records`;
-const nong_fetch_url = `${API_URL}/rest/nong`;
+const nong_fetch_url = `${API_URL}/rest/all-nongs`;
 
 Setup();
 
@@ -38,8 +38,10 @@ async function addRecordItems(data) {
     });
 }
 
-async function addNONG(data) {
-    let i = 0
+async function addNONG() {
+    let response = await fetch(`${API_URL}/rest/all-nongs`);
+    let data = await response.json();
+    let i = 0;
     data.forEach(listItem => {
         if (!listItem.link) return;
         nongs[i] = {id: listItem.id, nong: listItem.link};
@@ -78,7 +80,7 @@ async function Setup() {
         // check if nong exists
         let nongData = nongs.find(e => e.id == levelID)
         if (nongData) {
-            runsHTML += `<a href="${nongData.nong}" target="_blank"><button class="btn btn-info nong-button">Download NONG</button></a>`
+            runsHTML += `<button id="downloadNongBtn" class="btn btn-info nong-button" data-nong-url="${nongData.link}">Download NONG</button>`;
         }
 
         runsHTML += `</div>`
@@ -134,50 +136,107 @@ async function Setup() {
 
         // end of runsHTML edit
 
-        let listitemlevelName = event.target.closest('.list-item').querySelector('.level-name');
-        let levelImage = event.target.closest('.list-item').querySelector('.level-image');
-        let levelInfo = event.target.closest('.list-item').querySelector('.level-info');
+        // ...
 
-        let newHTML = `
-                <div class="level-name">${levelName.innerHTML}</div>
-                <div class="level-info">${levelInfo.innerHTML}</div>
-        `
+let listitemlevelName = event.target.closest('.list-item').querySelector('.level-name');
+let levelImage = event.target.closest('.list-item').querySelector('.level-image');
+let levelInfo = event.target.closest('.list-item').querySelector('.level-info');
 
-        //create the element
-        let popup = document.createElement("div");
-        popup.classList.add("popup-box");
-        popup.style.overflow = `hidden`
-        popup.innerHTML = `
-            <div class="popup-header">
-                ${newHTML}
-            </div>
-            <div class="run-info">
-                ${runsHTML}
-            </div>
-            <button class="close-button btn btn-danger" style="line-height: 1"><span class="material-icons" style="pointer-events: none;">close</span></button>
-        `;
+let newHTML = `
+    <div class="level-name">${levelName.innerHTML}</div>
+    <div class="level-info">${levelInfo.innerHTML}</div>
+`
 
-        // animate the insertion of the element
-        TweenMax.from(popup, 0.5, {opacity: 0, y: -50});
-        event.target.closest(".list-item").insertAdjacentElement("afterend", popup);
+// create the element
+let popup = document.createElement("div");
+popup.classList.add("popup-box");
+popup.style.overflow = `hidden`
+popup.innerHTML = `
+    <div class="popup-header">
+        ${newHTML}
+    </div>
+    <div class="run-info">
+        ${runsHTML}
+    </div>
+    <button class="close-button btn btn-danger" style="line-height: 1"><span class="material-icons" style="pointer-events: none;">close</span></button>
+`;
 
-        let overlay = document.createElement("div");
-        overlay.classList.add("overlay");
+// animate the insertion of the element
+TweenMax.from(popup, 0.5, { opacity: 0, y: -50 });
+event.target.closest(".list-item").insertAdjacentElement("afterend", popup);
 
-        // animate the insertion of the overlay element to fade in
-        TweenMax.from(overlay, 0.5, {opacity: 0});
+let overlay = document.createElement("div");
+overlay.classList.add("overlay");
 
-        // insert the overlay element
-        document.body.appendChild(overlay);
+// animate the insertion of the overlay element to fade in
+TweenMax.from(overlay, 0.5, { opacity: 0 });
 
-        document.addEventListener('click', function (event) {
-            if (!event.target.matches('.close-button')) return;
-            let popupBox = event.target.parentElement;
-            let overlay = document.querySelector('.overlay');
-            TweenMax.to([popupBox, overlay], 0.5, {opacity: 0, onComplete: function(){
-                popupBox.remove();
-                overlay.remove();
-            }});
-        }, false);
+// insert the overlay element
+document.body.appendChild(overlay);
+
+document.addEventListener('click', function (event) {
+    if (!event.target.matches('.close-button')) return;
+    let popupBox = event.target.parentElement;
+    let overlay = document.querySelector('.overlay');
+    TweenMax.to([popupBox, overlay], 0.5, {
+        opacity: 0, onComplete: function () {
+            popupBox.remove();
+            overlay.remove();
+        }
     });
+}, false);
+
+popup.querySelector("#downloadNongBtn").addEventListener("click", function (event) {
+    event.preventDefault(); // prevent the default button action
+
+    // Get the levelId from the listItem
+    let levelId = event.target.closest('.popup-box').previousElementSibling.querySelector('.level-id').innerHTML;
+
+    // URL for the audio file from the button data attribute
+    let audioUrl = `${API_URL}/rest/nong?levelId=${levelId}`;
+
+    // Fetch the songId and the link to the audio file
+    fetch(audioUrl, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        let songId = data.songId;
+        let audioFileUrl;
+if (data.link.startsWith('https')) {
+    audioFileUrl = data.link;
+} else {
+    audioFileUrl = `${API_URL}/rest/get-audio/${data.link}`;
 }
+
+        // Fetch the audio file
+        return fetch(audioFileUrl, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+            }
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            let nong = nongs.find(n => n.id === Number(levelId));
+
+            // Check if the nong object is retrieved correctly
+            if (nong) {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = `${songId}.mp3`; // Use songId as the filename
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            } else {
+                console.error(`No nong found for level ID: ${levelId}`);
+            }
+        });
+    });
+});
+    })}
