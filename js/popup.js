@@ -221,7 +221,7 @@ popup.querySelector("#downloadNongBtn").addEventListener("click", function (even
         })
         .then(response => response.blob())
         .then(blob => {
-            let nong = nongs.find(n => n.id === Number(levelId));
+            let nong = nongs.find(n => n.id === levelId);
 
             // Check if the nong object is retrieved correctly
             if (nong) {
