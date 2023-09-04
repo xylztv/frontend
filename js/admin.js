@@ -517,39 +517,49 @@ function handlePendingLevelsSection() {
     function displayPendingLevels(data) {
         const pendingLevelsContainer = document.getElementById('levelsTable').querySelector('tbody');
         pendingLevelsContainer.innerHTML = ''; // Clear any previous data
+        
+        if (data.length === 0) {
+            const tr = document.createElement('tr');
+            const td = document.createElement('td');
     
-        data.forEach(listItem => {
-            pendingLevelsContainer.insertAdjacentHTML("beforeend", `
-                <tr>
-                    <td>${listItem.title}</td>
-                    <td>${listItem.id}</td>
-                    <td>${listItem.creator}</td>
-                    <td>${listItem.verifier}</td>
-                    <td><a href="${listItem.link}" target="_blank">Verification Video</a></td>
-                    <td>
-    <div class="button-container">
-        <button class="btn btn-success acceptButton" data-level-id="${listItem.id}">Accept</button>
-        <button class="btn btn-danger declineButton" data-level-id="${listItem.id}">Decline</button>
-    </div>
-</td>
-
-                </tr>
-            `);
-        });
-
-        document.querySelectorAll('.acceptButton').forEach(button => {
-            button.addEventListener('click', function() {
-                const levelId = this.dataset.levelId;
-                acceptPendingLevel(levelId);
+            td.textContent = 'There are no pending levels at the moment.';
+            td.setAttribute('colspan', '6'); // Assuming table has 5 columns, adjust as per your table structure
+    
+            tr.appendChild(td);
+            pendingLevelsContainer.appendChild(tr);
+        } else {
+            data.forEach(listItem => {
+                pendingLevelsContainer.insertAdjacentHTML("beforeend", `
+                    <tr>
+                        <td>${listItem.title}</td>
+                        <td>${listItem.id}</td>
+                        <td>${listItem.creator}</td>
+                        <td>${listItem.verifier}</td>
+                        <td><a href="${listItem.link}" target="_blank">Verification Video</a></td>
+                        <td>
+                            <div class="button-container">
+                                <button class="btn btn-success acceptButton" data-level-id="${listItem.id}">Accept</button>
+                                <button class="btn btn-danger declineButton" data-level-id="${listItem.id}">Decline</button>
+                            </div>
+                        </td>
+                    </tr>
+                `);
             });
-        });
-
-        document.querySelectorAll('.declineButton').forEach(button => {
-            button.addEventListener('click', function() {
-                const levelId = this.dataset.levelId;
-                declinePendingLevel(levelId);
+    
+            document.querySelectorAll('.acceptButton').forEach(button => {
+                button.addEventListener('click', function() {
+                    const levelId = this.dataset.levelId;
+                    acceptPendingLevel(levelId);
+                });
             });
-        });
+    
+            document.querySelectorAll('.declineButton').forEach(button => {
+                button.addEventListener('click', function() {
+                    const levelId = this.dataset.levelId;
+                    declinePendingLevel(levelId);
+                });
+            });
+        }
     }
 
     function acceptPendingLevel(levelId) {

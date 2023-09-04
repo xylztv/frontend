@@ -230,19 +230,29 @@ function loadPendingRecords(token) {
       `;
 
       const tbody = recordsTable.querySelector('tbody');
-      records.forEach(record => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-        <td>${record.player || "N/A"}</td>
-        <td>${record.percent || "N/A"}</td>
-        <td>${record.level_id || "N/A"}</td>
-        <td>${record.publisher || "Unknown"}</td>
-        <td>
-    <button class="btn btn-primary" onclick='openReviewModal("${encodeJSON(record)}")'>Review</button>
-</td>
-        `;
-        tbody.appendChild(row);
-    });    
+
+      if (records.length === 0) {
+          const row = document.createElement('tr');
+          const cell = document.createElement('td');
+          cell.textContent = 'There are no pending records at the moment.';
+          cell.setAttribute('colspan', '5');
+          row.appendChild(cell);
+          tbody.appendChild(row);
+      } else {
+          records.forEach(record => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+              <td>${record.player || "N/A"}</td>
+              <td>${record.percent || "N/A"}</td>
+              <td>${record.level_id || "N/A"}</td>
+              <td>${record.publisher || "Unknown"}</td>
+              <td>
+          <button class="btn btn-primary" onclick='openReviewModal("${encodeJSON(record)}")'>Review</button>
+          </td>
+              `;
+              tbody.appendChild(row);
+          });    
+      }
   });
 }
 let currentRecord = null;

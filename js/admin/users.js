@@ -134,7 +134,7 @@ function handleUsersSection() {
   listTypeDropdown.style.display = 'none';
 
   // Fetch users data
-  const userToken = localStorage.getItem('userToken');
+const userToken = localStorage.getItem('userToken');
 fetch(`${API_URL}/rest/admin/users`, {
   headers: {
     'Authorization': `Bearer ${userToken}`
@@ -142,11 +142,28 @@ fetch(`${API_URL}/rest/admin/users`, {
 })
 .then(response => response.json())
 .then(data => {
-  users = data;  // Store the fetched users in the global variable
-  renderUsersTable(data);
+  if (data.error && data.message === 'Insufficient permissions') {
+    const usersTable = document.getElementById("levelsTable");
+    usersTable.innerHTML = `
+      <thead>
+          <tr>
+              <th>User</th>
+              <th>Role</th>
+              <th>Actions</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr>
+              <td colspan="5">You do not have sufficient permissions to view this data.</td>
+          </tr>
+      </tbody>
+    `;
+  } else {
+    users = data;  // Store the fetched users in the global variable
+    renderUsersTable(data);
+  }
 })
 .catch(error => console.error("Error fetching users:", error));
-
 }
 
 
