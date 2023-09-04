@@ -155,7 +155,7 @@ async function openEditModal(levelId) {
         let response = await fetch(`${API_URL}/rest/all-nongs`);
         let nongs = await response.json();
         
-        let nong = nongs.find(n => n.id === Number(levelId));
+        let nong = nongs.find(n => n.id === levelId);
         if (nong){
             document.querySelector('#nongLabel').style.display = 'block';
             document.querySelector('#editModalNong').src = API_URL + '/rest/get-audio/' + nong.link;
