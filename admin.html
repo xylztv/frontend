@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -224,8 +225,11 @@ body {
 </div>
 
 <div class="container" id="notAdminMessage" style="display: none;">
-  <h2>You do not have permission to access this page, silly goose.</h2>
-</div>
+    <div style="animation: bounce; animation-duration: 2s;">
+     <h2>You do not have permission to access this page, silly goose.</h2>
+     <img src="/images/sillygoose.png" alt="Silly Goose">
+    </div>
+ </div>
 <!-- The Generic Modal -->
 <div class="modal fade" id="genericModal">
     <div class="modal-dialog">
