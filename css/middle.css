@@ -270,227 +270,274 @@
     border: 1px solid #ddd;
     padding: 8px;
 }
-
-@media screen and (max-width: 992px) {
-    .middle {
-      padding: 32px 16px;
-    }
-
+@media screen and (max-width: 1312px) {
     .list-item {
-        height: 96px;
+        min-width: 0px;
+    }
+    .middle {
+        padding: 32px 16px;
+    }
+}
+
+@media screen and (max-width: 1278px) {
+    .list-item,
+    .middle {
+        min-width: 0px;
+        padding: 32px 16px;
+    }
+}
+
+@media screen and (max-width: 1155px) {
+    .list-item,
+    .list-info {
+        min-width: 0px;
         column-gap: 8px;
         padding: 0 8px;
-        min-width: 0px;
         overflow: hidden;
     }
+}
 
+@media screen and (max-width: 1125px) {
+    .list-item,
+    .list-info,
+    .level-info {
+        min-width: 0px;
+        column-gap: 8px;
+        padding: 0 8px;
+        overflow: hidden;
+    }
     .list-info {
         flex: 1;
         padding: 8px 8px;
         row-gap: 14px;
     }
-    
     .level-info {
         display: flex;
         align-items: bottom;
         column-gap: 8px;
     }
+}
 
+@media screen and (max-width: 1091px) {
+    .list-item,
+    .middle,
+    .list-number,
+    .level-name,
+    .level-id,
+    .level-author,
+    .level-verifier,
+    .list-thumbnail,
+    .list-image {
+        min-width: 0px;
+    }
+    .middle {
+        padding: 32px 16px;
+    }
+    .list-item,
+    .list-info {
+        column-gap: 8px;
+        padding: 0 8px;
+        overflow: hidden;
+    }
+    .list-info,
+    .level-info {
+        flex: 1;
+        padding: 8px 8px;
+        row-gap: 14px;
+        display: flex;
+        align-items: bottom;
+        column-gap: 8px;
+    }
     .list-number {
         padding: 0 8px;
         font-size: 1.5rem;
     }
-    
     .level-name {
         font-size: 16px;
     }
-    
     .level-id,
     .level-author,
-    .level-verifier{
+    .level-verifier {
         flex: 1;
         color: #525252;
         font-size: 14px;
     }
+}
 
+@media screen and (max-width: 995px) {
+    .middle {
+        padding: 32px 16px;
+    }
+    .list-item,
+    .list-info,
+    .level-info {
+        height: 102px;
+        column-gap: 8px;
+        padding: 0 8px;
+        overflow: hidden;
+    }
+    .list-info,
+    .level-info {
+        flex: 1;
+        padding: 8px 8px;
+        row-gap: 14px;
+        display: flex;
+        align-items: bottom;
+        column-gap: 8px;
+    }
+    .list-number {
+        padding: 0 8px;
+        font-size: 1.5rem;
+    }
+    .level-name {
+        font-size: 16px;
+    }
+    .level-id,
+    .level-author,
+    .level-verifier {
+        flex: 1;
+        color: #525252;
+        font-size: 14px;
+    }
     .list-thumbnail {
         width: 171px;
     }
-
     .list-image {
-        height: 96px;
+        height: 102px;
     }
 }
+
+@media screen and (max-width: 881px) {
+    .middle {
+        padding: 32px 16px;
+    }
+    .list-item,
+    .list-info,
+    .level-info {
+        height: 102px;
+        column-gap: 0px;
+        padding: 0 8px;
+        overflow: hidden;
+    }
+    .list-info,
+    .level-info {
+        flex: 1;
+        padding: 8px 2px;
+        row-gap: 14px;
+        display: flex;
+        align-items: bottom;
+        column-gap: 0px;
+    }
+    .list-number {
+        padding: 0 0px;
+        font-size: 1.5rem;
+    }
+    .level-name {
+        font-size: 16px;
+    }
+    .level-id,
+    .level-author,
+    .level-verifier {
+        flex: 1;
+        color: #525252;
+        font-size: 14px;
+    }
+    .list-thumbnail {
+        width: 171px;
+    }
+    .list-image {
+        height: 102px;
+    }
+}
+
+@media screen and (max-width: 865px) {
+    .list-item {
+        column-gap: 0px;
+    }
+    .list-info {
+        flex: 1;
+        padding: 8px 2px;
+        row-gap: 14px;
+    }
+    .list-number {
+        padding: 0 0px;
+        font-size: 1.5rem;
+    }
+}
+
+@media screen and (max-width: 819px) {
+    .list-item,
+    .list-info,
+    .level-info {
+        column-gap: 0px;
+    }
+    .list-info {
+        flex: 1;
+        padding: 8px 2px;
+        row-gap: 14px;
+    }
+    .list-number {
+        padding: 0 0px;
+        font-size: 1.5rem;
+    }
+}
+
+@media screen and (max-width: 849px) {
+    .list-item {
+        column-gap: 0px;
+    }
+}
+
 @media screen and (max-width: 560px) {
     .level-verifier {
         display: none;
     }
+}
+
 @media screen and (max-width: 535px) {
     .middle {
         padding: 8px 4px;
         row-gap: 24px;
     }
-
-    .list-item {
+    .list-item,
+    .list-info,
+    .level-info {
         height: 82px;
         column-gap: 4px;
         padding: 0 2px;
-        min-width: 0px;
         overflow: hidden;
+        min-width: 0px;
     }
-
-    .list-info {
+    .list-info,
+    .level-info {
         flex: 1;
         padding: 4px 4px;
         row-gap: 2px;
-    }
-    
-    .level-info {
         display: flex;
         align-items: bottom;
         column-gap: 8px;
     }
-
     .list-number {
         padding: 0 8px;
         font-size: 1.5rem;
     }
-    
     .level-name {
         font-size: 12px;
     }
-    
     .level-id,
     .level-author,
-    .level-verifier{
+    .level-verifier {
         flex: 1;
         color: #525252;
         font-size: 12px;
     }
-
     .list-thumbnail {
         width: 150px;
     }
-
     .list-image {
         height: 80px;
     }
-
     .level-verifier {
         display: none;
     }
 }
-
-@media screen and (max-width: 437px) {
-    .middle {
-      padding: 8px 4px;
-      row-gap: 24px;
-    }
-
-    .list-item {
-        height: 82px;
-        column-gap: 4px;
-        padding: 0 2px;
-        min-width: 0px;
-        overflow: hidden;
-    }
-
-    .list-info {
-        flex: 1;
-        padding: 4px 4px;
-        row-gap: 2px;
-    }
-    
-    .level-info {
-        display: flex;
-        align-items: bottom;
-        column-gap: 3px;
-    }
-
-    .list-number {
-        padding: 0 8px;
-        font-size: 1.2rem;
-    }
-    
-    .level-name {
-        font-size: 12px;
-        padding: 0px 0px;
-        padding-top: 2px;
-    }
-    
-    .level-id,
-    .level-author,
-    .level-verifier{
-        flex: 1;
-        color: #525252;
-        font-size: 12px;
-    }
-
-    .list-thumbnail {
-        width: 80px;
-    }
-
-    .list-image {
-        height: 100%;
-    }
-
-    .level-verifier {
-        display: none;
-    }
-}
-
-@media screen and (max-width: 340px) {
-    .middle {
-      padding: 0px 0px;
-      row-gap: 12px;
-    }
-
-    .list-item {
-        height: 60px;
-        column-gap: 1px;
-        padding: 0 1px;
-        min-width: 0px;
-        overflow: hidden;
-    }
-
-    .list-info {
-        flex: 1;
-        padding: 0px 0px;
-        row-gap: 1px;
-    }
-    
-    .level-info {
-        display: flex;
-        align-items: bottom;
-        column-gap: 0px;
-    }
-
-    .list-number {
-        padding: 0 2px;
-        font-size: 0.9rem;
-    }
-    
-    .level-name {
-        font-size: 12px;
-    }
-    
-    .level-id,
-    .level-author,
-    .level-verifier{
-        flex: 1;
-        color: #525252;
-        font-size: 12px;
-    }
-
-    .list-thumbnail {
-        width: 40px;
-    }
-
-    .list-image {
-        height: 60px;
-    }
-
-    .level-verifier {
-        display: none;
-    }
-}}

@@ -98,7 +98,7 @@
     animation-fill-mode: forwards; /* Retain styles of the last keyframe */
 }
 
-@media only screen and (max-width: 775px) {
+@media only screen and (max-width: 819px) {
     .sidebar {
         display: none;
     }
