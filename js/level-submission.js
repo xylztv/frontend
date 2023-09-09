@@ -100,14 +100,16 @@ function validateYouTubeLink() {
 async function getLevelInfo() {
     const loadingIcon = document.getElementById("loadingIcon");
     const levelId = document.getElementById("levelId").value;
+    const userToken = localStorage.getItem('userToken'); // Get the user token from local storage.
 
-    const response = await fetch(`${API_URL}/getlevel`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ "levelId": levelId })
-    });
+const response = await fetch(`${API_URL}/getlevel`, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${userToken}` // Include the user token in 'Authorization' header.
+    },
+    body: JSON.stringify({ "levelId": levelId })
+});
 
     loadingIcon.classList.add("hidden");
 
@@ -131,6 +133,9 @@ async function getLevelInfo() {
         const errorData = await response.json();
         if (errorData.error === "Invalid level ID") { 
             toastr.error("Invalid Level ID", "Error");
+        }
+        else if (errorData.error === 3) {
+            toastr.error('You must be logged in to submit levels', 'Error');
         } else {
             console.error("Error:", response.status);
             toastr.error("GD API Error", "Error");
@@ -236,7 +241,12 @@ async function uploadNongFile() {
             },
             body: formData
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => console.log(data))
         .catch((error) => {
             console.error('Error:', error);
@@ -265,6 +275,14 @@ function onLevelIdInput() {
         updateSubmitButtonVisibility();
         return;
     }
+
+if (levelId.length < 3 || levelId.length > 8) {
+    toastr.error("Level ID should be 3 to 8 digits long.");
+    loadingIcon.classList.add("hidden");
+    isLevelIdValid = false;
+    updateSubmitButtonVisibility();
+    return;
+}
 
     // Check if the level is in the mainlist
     fetch(`${API_URL}/rest/mainlist`)
