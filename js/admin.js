@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             const userToken = localStorage.getItem('userToken');
-            const delay = index === 0 ? 0 : 10000;
+            const delay = index === 0 ? 0 : 30000;
     
             // Stagger fetch requests
             await new Promise((resolve) => {
