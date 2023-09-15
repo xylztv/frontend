@@ -293,7 +293,7 @@ button-54:mouseover
     width: 100%;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
-#toast-container > .toast {
+#toast-container {
     margin-top: 60px;
 }
 #checkbox:checked + .toggle + .menu {

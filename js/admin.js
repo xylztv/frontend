@@ -11,6 +11,111 @@ document.addEventListener('DOMContentLoaded', function() {
     const adminPanel = document.getElementById('adminPanel');
     const expandedSection = document.getElementById('expandedSection');
     const sectionTitle = document.getElementById('sectionTitle');
+    
+    document.getElementById('fetchUpdatesContinueButton').addEventListener('click', async function() {
+        const progressBarContainer = document.getElementById('progress-bar-container');
+        progressBarContainer.style.display = 'block';
+    
+        // Show the text and spinner
+        const fetchingUpdates = document.getElementById('fetchingUpdates');
+        fetchingUpdates.style.display = 'inline-block';
+    
+        // Show the Cancel button
+        const fetchUpdatesCancelButton = document.getElementById('fetchUpdatesCancelButton');
+        fetchUpdatesCancelButton.style.display = 'inline-block';
+    
+        // Hide the Continue button
+        const fetchUpdatesButton = document.getElementById('fetchUpdatesButton');
+        fetchUpdatesButton.style.display = 'none';
+    
+        // Add a flag to allow cancellation of the fetch process
+        let cancelFetch = false;
+    
+        fetchUpdatesCancelButton.addEventListener('click', function () {
+            cancelFetch = true;
+        });
+    
+        // Fetch all level IDs from the table
+        const levelRows = document.querySelectorAll('#levelsTable tbody tr');
+        const levelIds = Array.from(levelRows).map(row => {
+            // Extract the level ID from the row
+            const levelIdCell = row.querySelector('td:nth-child(4)');
+            return levelIdCell.textContent;
+        });
+    
+        // Create a map of level IDs to table rows
+        const levelRowMap = Array.from(levelRows).reduce((map, row) => {
+            const levelIdCell = row.querySelector('td:nth-child(4)');
+            const levelId = levelIdCell.textContent;
+    
+            map[levelId] = row;
+    
+            return map;
+        }, {});
+    
+        // Send fetch requests for all level IDs
+        for (let index = 0; index < levelIds.length; index++) {
+            if (cancelFetch) {
+                break;
+            }
+            
+            const userToken = localStorage.getItem('userToken');
+            const delay = index === 0 ? 0 : 10000;
+    
+            // Stagger fetch requests
+            await new Promise((resolve) => {
+                setTimeout(() => {
+                    const levelId = levelIds[index];
+                    fetch(`${API_URL}/fetchrawdata?levelId=${levelId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${userToken}`
+                        },
+                    })
+                    .then(response => {
+                        if (response.status !== 200) {
+                            toastr.error('Failed to check updates for level (rate limited)?')
+                            fetchingUpdates.style.display = 'none';
+                            fetchUpdatesCancelButton.style.display = 'none';
+                            fetchUpdatesButton.style.display = 'block';
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.wasUpdated == true) {
+                            const row = levelRowMap[levelId];
+                            row.classList.add('updated');
+                            toastr.success('Level ' + levelId + ' was updated.');
+                        } else if (data.wasUpdated == false) {
+                            const row = levelRowMap[levelId];
+                            row.classList.add('checked');
+                            toastr.info('Level ' + levelId + ' has not changed.');
+                        }
+                        
+                        // Calculate the progress
+                        const progress = ((index + 1) / levelIds.length) * 100;
+                        // Update the width of the progress bar
+                        const progressBar = document.getElementById('progress-bar');
+                        progressBar.style.width = progress + '%';
+                
+                        if (cancelFetch || progress === 100) {
+                            fetchingUpdates.style.display = 'none';
+                            fetchUpdatesCancelButton.style.display = 'none';
+                            fetchUpdatesButton.style.display = 'inline-block';
+                        }
+                        resolve();
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        toastr.error('Failed to check updates for level ' + levelId + '.');
+                    });
+                }, delay);
+            });
+        }
+    });
+    
 
     levelsButton.addEventListener('click', function() {
         showExpandedSection('Levels');
@@ -32,6 +137,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function hideExpandedSection() {
         adminPanel.style.display = 'block';
         expandedSection.style.display = 'none';
+        const fetchUpdatesButton = document.getElementById('fetchUpdatesButton')
+        fetchUpdatesButton.style.display = 'none';
     }
 
     // Save Changes button click event:
@@ -831,4 +938,22 @@ function handleLevelsSection() {
     .catch(error => {
         console.error(`Error fetching ${listType} levels:`, error);
     });
+    // Show the 'Fetch Updates' button
+    const fetchUpdatesButton = document.getElementById('fetchUpdatesButton');
+    fetchUpdatesButton.style.display = 'block';
+
+    // Add event listener for the button
+    fetchUpdatesButton.addEventListener('click', function() {
+        // Fetch all level IDs from the table
+        const levelRows = document.querySelectorAll('#levelsTable tbody tr');
+        const levelIds = Array.from(levelRows).map(row => {
+            // Extract the level ID from the row
+            const levelIdCell = row.querySelector('td:nth-child(4)');
+            return levelIdCell.textContent;
+        });
+
+        // Show the modal
+        $('#fetchUpdatesModal').modal('show');
+    });
+
 }
