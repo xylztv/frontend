@@ -62,6 +62,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
             return map;
         }, {});
+        const response = await fetch(`${API_URL}/rest/mainlist`);
+        if (!response.ok) {
+        throw new Error('Failed to fetch mainlist data');
+        }
+        const mainlistData = await response.json();
+
         // Before fetching starts
         Object.entries(levelRowMap).forEach(([levelId, row]) => {
           // Check if the lastUpdatedCell already exists
@@ -72,7 +78,50 @@ document.addEventListener('DOMContentLoaded', function() {
             lastUpdatedCell.className = 'lastUpdatedCell';  // Add a class to identify the cell
             row.appendChild(lastUpdatedCell);
           }
-          lastUpdatedCell.textContent = 'Fetching...';  // Update the text
+          const mainlistEntry = mainlistData.find(entry => entry.id === levelId);
+if (mainlistEntry && mainlistEntry.last_updated) {
+  const lastUpdated = new Date(mainlistEntry.last_updated);
+  const currentTime = new Date();
+  const timeDifference = currentTime - lastUpdated;
+  
+  const millisecondsPerSecond = 1000;
+  const millisecondsPerMinute = millisecondsPerSecond * 60;
+  const millisecondsPerHour = millisecondsPerMinute * 60;
+  const millisecondsPerDay = millisecondsPerHour * 24;
+  const millisecondsPerWeek = millisecondsPerDay * 7;
+  const millisecondsPerMonth = millisecondsPerDay * 30;
+  const millisecondsPerYear = millisecondsPerDay * 365;
+  
+  let formattedTimeDifference;
+  
+  if (timeDifference < millisecondsPerMinute) {
+    const seconds = Math.floor(timeDifference / millisecondsPerSecond);
+    formattedTimeDifference = `${seconds} second${seconds !== 1 ? 's' : ''} ago`;
+  } else if (timeDifference < millisecondsPerHour) {
+    const minutes = Math.floor(timeDifference / millisecondsPerMinute);
+    formattedTimeDifference = `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+  } else if (timeDifference < millisecondsPerDay) {
+    const hours = Math.floor(timeDifference / millisecondsPerHour);
+    formattedTimeDifference = `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+  } else if (timeDifference < millisecondsPerWeek) {
+    const days = Math.floor(timeDifference / millisecondsPerDay);
+    formattedTimeDifference = `${days} day${days !== 1 ? 's' : ''} ago`;
+  } else if (timeDifference < millisecondsPerMonth) {
+    const weeks = Math.floor(timeDifference / millisecondsPerWeek);
+    formattedTimeDifference = `${weeks} week${weeks !== 1 ? 's' : ''} ago`;
+  } else if (timeDifference < millisecondsPerYear) {
+    const months = Math.floor(timeDifference / millisecondsPerMonth);
+    formattedTimeDifference = `${months} month${months !== 1 ? 's' : ''} ago`;
+  } else {
+    const years = Math.floor(timeDifference / millisecondsPerYear);
+    formattedTimeDifference = `${years} year${years !== 1 ? 's' : ''} ago`;
+  }
+  
+  lastUpdatedCell.textContent = formattedTimeDifference;
+} else {
+  lastUpdatedCell.textContent = 'Fetching...';
+}
+
           levelRowMap[levelId] = { row, lastUpdatedCell };  // Store references to row and cell
         });
         // Send fetch requests for all level IDs
