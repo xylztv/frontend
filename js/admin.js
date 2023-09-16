@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             toastr.error('Failed to check updates for level (rate limited)?')
                             fetchingUpdates.style.display = 'none';
                             fetchUpdatesCancelButton.style.display = 'none';
-                            fetchUpdatesButton.style.display = 'block';
+                            fetchUpdatesButton.style.display = 'inline-block';
                             throw new Error('Network response was not ok');
                         }
                         return response.json();
@@ -893,10 +893,13 @@ function fetchRemovedLevels() {
 
 
 function handleLevelsSection() {
-    const listType = document.getElementById('listTypeDropdown').value;
-  const listTypeDropdown = document.getElementById('listTypeDropdown');
-  listTypeDropdown.style.display = 'block';
-
+    const listTypeDropdown = document.getElementById('listTypeDropdown');
+    listTypeDropdown.style.display = 'inline-block';
+    const fetchUpdatesButton = document.getElementById('fetchUpdatesButton');
+       
+        const listType = listTypeDropdown.value;
+        console.log(listType)
+        fetchUpdatesButton.style.display = listType === 'pending_levels' ? 'none' : 'inline-block';
     // Fetch the appropriate list based on the dropdown value
     let endpoint;
     let headers = [];
@@ -938,9 +941,6 @@ function handleLevelsSection() {
     .catch(error => {
         console.error(`Error fetching ${listType} levels:`, error);
     });
-    // Show the 'Fetch Updates' button
-    const fetchUpdatesButton = document.getElementById('fetchUpdatesButton');
-    fetchUpdatesButton.style.display = 'block';
 
     // Add event listener for the button
     fetchUpdatesButton.addEventListener('click', function() {
@@ -951,7 +951,6 @@ function handleLevelsSection() {
             const levelIdCell = row.querySelector('td:nth-child(4)');
             return levelIdCell.textContent;
         });
-
         // Show the modal
         $('#fetchUpdatesModal').modal('show');
     });

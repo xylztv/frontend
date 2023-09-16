@@ -83,7 +83,7 @@
 
 .table-responsive {
     width: 100%; /* Ensure it takes the full width */
-    margin: 100px 0; /* Add some spacing between tables if they wrap */
+    margin: 0px 0; /* Add some spacing between tables if they wrap */
     overflow-x: visible;
 }
         #sectionTitle {
@@ -219,7 +219,7 @@ body {
 
     <div style="display: flex; justify-content: space-between;">
         <div class="table-responsive" style="width: 100%;">
-            <button id="fetchUpdatesButton" class="btn btn-primary" style="display: none;">Fetch Updates</button>
+            <button id="fetchUpdatesButton" class="btn btn-primary" style="display: none; float: right;">Fetch Updates</button>
             <button id="fetchUpdatesCancelButton" class="btn btn-danger" style="display: none;">Cancel Fetching</button>
             <div id="fetchingUpdates" style="display: none;">
                 <div class="spinner-border text-primary" role="status">
