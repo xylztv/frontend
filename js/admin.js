@@ -13,6 +13,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const sectionTitle = document.getElementById('sectionTitle');
     
     document.getElementById('fetchUpdatesContinueButton').addEventListener('click', async function() {
+        const headerRow = document.querySelector('#levelsTable thead tr');
+        // Check if the 'Updated' header already exists
+        const existingUpdatedHeader = Array.from(headerRow.children).find(th => th.textContent === 'Updated');
+        if (!existingUpdatedHeader) {
+          // If it doesn't exist, create and append it
+          const updatedTh = document.createElement('th');
+          updatedTh.textContent = 'Updated';
+          headerRow.appendChild(updatedTh);
+        }
+
         const progressBarContainer = document.getElementById('progress-bar-container');
         progressBarContainer.style.display = 'block';
     
@@ -52,7 +62,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
             return map;
         }, {});
-    
+        // Before fetching starts
+        Object.entries(levelRowMap).forEach(([levelId, row]) => {
+          // Check if the lastUpdatedCell already exists
+          let lastUpdatedCell = Array.from(row.children).find(td => td.className === 'lastUpdatedCell');
+          if (!lastUpdatedCell) {
+            // If it doesn't exist, create and append it
+            lastUpdatedCell = document.createElement('td');
+            lastUpdatedCell.className = 'lastUpdatedCell';  // Add a class to identify the cell
+            row.appendChild(lastUpdatedCell);
+          }
+          lastUpdatedCell.textContent = 'Fetching...';  // Update the text
+          levelRowMap[levelId] = { row, lastUpdatedCell };  // Store references to row and cell
+        });
         // Send fetch requests for all level IDs
         for (let index = 0; index < levelIds.length; index++) {
             if (cancelFetch) {
@@ -61,12 +83,12 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const userToken = localStorage.getItem('userToken');
             const delay = index === 0 ? 0 : 30000;
-    
+
             // Stagger fetch requests
             await new Promise((resolve) => {
                 setTimeout(() => {
                     const levelId = levelIds[index];
-                    fetch(`${API_URL}/fetchrawdata?levelId=${levelId}`, {
+                    fetch(`${API_URL}/last-update?levelId=${levelId}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -84,16 +106,26 @@ document.addEventListener('DOMContentLoaded', function() {
                         return response.json();
                     })
                     .then(data => {
+
+                        const {row, lastUpdatedCell } = levelRowMap[levelId];
+                        const levelIdCell = row.querySelector('td:nth-child(8)')
                         if (data.wasUpdated == true) {
-                            const row = levelRowMap[levelId];
+                            const {row, lastUpdatedCell } = levelRowMap[levelId];
                             row.classList.add('updated');
-                            toastr.success('Level ' + levelId + ' was updated.');
+                            // Add Last Updated info to Level ID cell
+                            levelIdCell.textContent = `${data.lastUpdate} ago`;
+
+                            toastr.warning('Level ' + levelId + ' was updated');
                         } else if (data.wasUpdated == false) {
-                            const row = levelRowMap[levelId];
+                            const {row, lastUpdatedCell } = levelRowMap[levelId];
                             row.classList.add('checked');
+                            // Add Last Updated info to Level ID cell
+                            levelIdCell.textContent = `${data.lastUpdate} ago`;
+
                             toastr.info('Level ' + levelId + ' has not changed.');
                         }
-                        
+                        // Add tooltip to row
+                        row.title = `Last updated: ${data.lastUpdate}`;
                         // Calculate the progress
                         const progress = ((index + 1) / levelIds.length) * 100;
                         // Update the width of the progress bar
@@ -104,6 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             fetchingUpdates.style.display = 'none';
                             fetchUpdatesCancelButton.style.display = 'none';
                             fetchUpdatesButton.style.display = 'inline-block';
+                            progressBar.style = 'none'
                         }
                         resolve();
                     })
