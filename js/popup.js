@@ -61,6 +61,9 @@ async function Setup() {
         let listInfo = event.target.parentElement.querySelector(".level-info");
         let levelID = listInfo.querySelector(".level-id").innerHTML
         let levelName = event.target.closest(".list-item").querySelector(".level-name");
+        let rankString = event.target.closest(".list-item").querySelector(".list-number").innerText;
+        let rank = parseInt(rankString.replace('#', ''));
+        let points = parseFloat(GetPoints(rank, 100).toFixed(2))
         let runs = completions.filter(x => x.id == levelID);
         let runsHTML = ""
 
@@ -75,7 +78,7 @@ async function Setup() {
 
         runsHTML += `
         <div style="display: flex; justify-content: space-between; width: 100%;">
-            <a href="/record_submission_form.html" target="_blank"><button class="btn btn-info submit-record-button">Submit Record</button></a>`
+        <a href="/record_submission_form.html?levelId=${levelID}" target="_blank"><button class="btn btn-info submit-record-button">Submit Record</button></a>`
 
         // check if nong exists
         let nongData = nongs.find(e => e.id == levelID)
@@ -134,16 +137,12 @@ async function Setup() {
             });
         }
 
-        // end of runsHTML edit
-
-        // ...
-
 let listitemlevelName = event.target.closest('.list-item').querySelector('.level-name');
 let levelImage = event.target.closest('.list-item').querySelector('.level-image');
 let levelInfo = event.target.closest('.list-item').querySelector('.level-info');
 
 let newHTML = `
-    <div class="level-name">${levelName.innerHTML}</div>
+    <div class="level-name">${levelName.innerHTML} (${points} Points)</div>
     <div class="level-info">${levelInfo.innerHTML}</div>
 `
 
@@ -239,4 +238,19 @@ popup.querySelector("#downloadNongBtn").addEventListener("click", function (even
         });
     });
 });
+function GetPoints(rank, progress) {
+	let maxPoints
+
+	if (rank <= 10) {
+		maxPoints = 149.61 * (Math.pow(1.38796762063, 1 - rank)) + 100.39
+	} else if (rank <= 20) {
+		maxPoints = 166.611 * (Math.pow(1.0172736527773, -8 - rank)) - 14.195692219
+	} else if (rank <= 35) {
+		maxPoints = 261.8498558893426 * (Math.pow(1.036, -14 - rank)) + 10.2765560994
+	} else if (rank <= 100) {
+		maxPoints = 36.18203535684543 * (Math.pow(2, Math.log(50) * (50.947 - rank) / 99)) + 0.5599125586
+	}
+
+	return progress == 100 ? maxPoints : maxPoints * 0.1 * Math.pow(5, (progress - REQUIREMENT) / (100 - REQUIREMENT))
+}
     })}

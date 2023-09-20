@@ -148,6 +148,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         option.style.padding = '10px 0';
         levelDropdown.appendChild(option);
     });
+    // Get the level ID from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const levelId = urlParams.get('levelId');
+
+    // Pre-select the level in the dropdown
+    if (levelId) {
+        levelDropdown.value = levelId;
+        console.log(levelId)
+    }
 });
 
 // Event Listeners
