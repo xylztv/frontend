@@ -36,6 +36,12 @@ async function addRecordItems(data) {
         completions[i] = {id: recordItem.level_id, link: recordItem.link, name: recordItem.player, runPercentage: recordItem.percent};
         i++;
     });
+
+    completions.sort((a, b) => {
+        let aPercentage = parseFloat(a.runPercentage.replace('%', ''));
+        let bPercentage = parseFloat(b.runPercentage.replace('%', ''));
+        return bPercentage - aPercentage; // For descending order
+    });
 }
 
 async function addNONG() {
@@ -184,7 +190,7 @@ document.addEventListener('click', function (event) {
         }
     });
 }, false);
-
+if (popup.querySelector("#downloadNongBtn")) {
 popup.querySelector("#downloadNongBtn").addEventListener("click", function (event) {
     event.preventDefault(); // prevent the default button action
 
@@ -238,6 +244,7 @@ popup.querySelector("#downloadNongBtn").addEventListener("click", function (even
         });
     });
 });
+}
 function GetPoints(rank, progress) {
 	let maxPoints
 

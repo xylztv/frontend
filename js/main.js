@@ -55,7 +55,7 @@ async function updatePlaceholdersWithActualData(data) {
 
 function createListItem(item) {
     const videoID = getVideoID(item.link);
-    const thumbnailURL = item.link ? `https://img.youtube.com/vi/${videoID}/mqdefault.jpg` : 'white-placeholder-image-url';
+    const thumbnailURL = item.link ? `https://img.youtube.com/vi/${videoID}/mqdefault.jpg`:'';
     const listItem = document.createElement('div');
     listItem.classList.add('list-item');
     const rankingText = item.ranking ? `#${item.ranking}` : '';
