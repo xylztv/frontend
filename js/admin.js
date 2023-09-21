@@ -240,6 +240,24 @@ if (mainlistEntry && mainlistEntry.last_updated) {
 function saveChangesToBackend() {
     const listType = document.getElementById('listTypeDropdown').value;
     const offset = listType === 'legacy_levels' ? 100 : 0;
+    let endpoint
+    switch (listType) {
+        case 'mainlist':
+            endpoint = '/rest/mainlist';
+            break;
+        case 'legacy_levels':
+            endpoint = '/rest/legacy_levels';
+            break;
+        case 'removed_levels':
+            endpoint = '/rest/removed_levels';
+            break;
+        case 'pending_levels':
+            endpoint = '/rest/pending-levels';
+            break;
+        default:
+            console.error('Unknown list type:', listType);
+            return;
+    }
     
     const payload = {
         listType: listType,
@@ -259,17 +277,18 @@ function saveChangesToBackend() {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
-            toastr.success('Changes saved successfully!'); // Toastr success notification
-            changedLevels = []; // Reset the changes array
+        if (data.success && changedLevels.length !== 0) {
+            toastr.success('Changes saved successfully!');
+            changedLevels = [];
 
-            // Update the initialOrder to reflect the current order
             const levelsContainer = document.getElementById('levelsTable').querySelector('tbody');
             initialOrder = Array.from(levelsContainer.children).map(row => row.querySelector('.editButton').dataset.levelId);
-            fetchMainListLevels(endpoint); // Refresh the levels list
+            fetchMainListLevels(endpoint);
 
+        } else if (changedLevels.length === 0) {
+            toastr.warning('No changes to save.'); 
         } else {
-            toastr.error('Error saving changes.'); // Toastr error notification
+            toastr.error('Error saving changes.');
         }
     })
     .catch(error => {
@@ -588,6 +607,8 @@ function updateDisplayedRankings() {
 }
 function fetchMainListLevels(endpoint) {
     //reusing function to fetch from whatever list needed
+    const levelsContainer = levelsTable.querySelector('tbody');
+    levelsContainer.innerHTML = '';
     fetch(`${API_URL}${endpoint}`)
     .then(response => response.json())
     .then(data => {
