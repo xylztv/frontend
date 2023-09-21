@@ -95,7 +95,23 @@
     font-weight: 600;
     transition: color 0.25s;
     padding: 8px 0px;
-    margin-bottom: 12px;
+}
+
+@font-face {
+  font-family: 'Rocher';
+  src: url(https://assets.codepen.io/9632/RocherColorGX.woff2);
+}
+
+@font-palette-values --Mint {
+  font-family: Rocher;
+  base-palette: 3;
+}
+
+.level-points {
+    font-family: Rocher;
+    font-palette: --Mint;
+    font-size: 16px;
+    padding-bottom: 16px;
 }
 
 .level-id,
@@ -231,6 +247,38 @@
     column-gap: 16px;
     background: #fff;
     min-height: 100px;
+}
+
+.run-info label {
+  --button_radius: 0.75em;
+  --button_color: #e8e8e8;
+  --button_outline_color: #000000;
+  padding: 0;
+  font-size: 17px;
+  font-weight: bold;
+  border: none;
+  border-radius: var(--button_radius);
+  background: var(--button_outline_color);
+}
+
+.submit-button {
+  display: block;
+  box-sizing: border-box;
+  border: 2px solid var(--button_outline_color);
+  border-radius: var(--button_radius);
+  padding: 0.75em 1.5em;
+  background: var(--button_color);
+  color: var(--button_outline_color);
+  transform: translateY(-0.2em);
+  transition: transform 0.1s ease;
+}
+
+label:hover .submit-button {
+  transform: translateY(-0.33em);
+}
+
+label:active .submit-button {
+  transform: translateY(0);
 }
 
 .run-name-header,
