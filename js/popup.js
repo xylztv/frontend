@@ -84,7 +84,7 @@ async function Setup() {
 
         runsHTML += `
         <div style="display: flex; justify-content: space-between; width: 100%;">
-        <a href="/record_submission_form.html?levelId=${levelID}" target="_blank"><button class="btn btn-info submit-record-button">Submit Record</button></a>`
+        <a href="/record_submission_form.html?levelId=${levelID}" target="_blank"><label><span class="submit-button">Submit Record</span></label></a>`
 
         // check if nong exists
         let nongData = nongs.find(e => e.id == levelID)
@@ -148,7 +148,8 @@ let levelImage = event.target.closest('.list-item').querySelector('.level-image'
 let levelInfo = event.target.closest('.list-item').querySelector('.level-info');
 
 let newHTML = `
-    <div class="level-name">${levelName.innerHTML} (${points} Points)</div>
+    <div class="level-name">${levelName.innerHTML}</div>
+    <div class="level-points">${points} points</div>
     <div class="level-info">${levelInfo.innerHTML}</div>
 `
 
