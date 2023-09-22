@@ -400,7 +400,7 @@ label:active .submit-button {
         padding: 0 8px;
         font-size: 1.5rem;
     }
-    .level-name {
+    .list-item .level-name {
         font-size: 16px;
     }
     .level-id,
@@ -437,7 +437,7 @@ label:active .submit-button {
         padding: 0 8px;
         font-size: 1.5rem;
     }
-    .level-name {
+    .list-item .level-name {
         font-size: 16px;
     }
     .level-id,
@@ -480,7 +480,7 @@ label:active .submit-button {
         padding: 0 0px;
         font-size: 1.5rem;
     }
-    .level-name {
+    .list-item .level-name {
         font-size: 16px;
     }
     .level-id,
@@ -576,7 +576,7 @@ label:active .submit-button {
         padding: 0 8px;
         font-size: 1.5rem;
     }
-    .level-name {
+    .list-item .level-name {
         font-size: 15px;
         padding: 2px 0px;
     }
@@ -624,7 +624,7 @@ label:active .submit-button {
             padding: 0 5px;
             font-size: 1.2rem;
         }
-        .level-name {
+        .list-item .level-name {
             font-size: calc(10px + 1vw); /* Adjust the formula as needed */
             padding: 0px 0px;
             padding-top: 0px;
@@ -674,7 +674,7 @@ label:active .submit-button {
         padding: 0 10px;
         font-size: 1.3rem;
     }
-    .level-name {
+    .list-item .level-name {
         font-size: 15px;
     }
     .level-id,
