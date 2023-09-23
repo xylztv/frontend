@@ -11,7 +11,156 @@ document.addEventListener('DOMContentLoaded', function() {
     const adminPanel = document.getElementById('adminPanel');
     const expandedSection = document.getElementById('expandedSection');
     const sectionTitle = document.getElementById('sectionTitle');
+    let selectedBackup = null; // Variable to store the selected backup
+let selectedRow;
+document.getElementById('restoreBackupButton').addEventListener('click', function() {
+  $('#restoreBackupModal').modal('show');
+});
+
+$('#restoreBackupModal').on('show.bs.modal', function (event) {
+  const userToken = localStorage.getItem('userToken');
+
+  fetch(`${API_URL}/rest/backups`, {
+    headers: {
+      'Authorization': `Bearer ${userToken}`
+    }
+  })
+  .then(response => response.json())
+  .then(backups => {
+    const backupTableBody = document.querySelector('#backupTable tbody');
+    backupTableBody.innerHTML = ''; // Clear the table body
+
+    backups.forEach((backup, index) => {
+      const row = document.createElement('tr');
+
+      const indexCell = document.createElement('th');
+      indexCell.scope = 'row';
+      indexCell.textContent = index + 1;
+
+      const backupCell = document.createElement('td');
+      backupCell.textContent = backup;
+
+      const viewButtonCell = document.createElement('td');
+      const viewButton = document.createElement('button');
+      viewButton.textContent = 'View Contents';
+      viewButton.addEventListener('click', () => {
+        viewBackupContents(backup);
+      });
+
+      viewButtonCell.appendChild(viewButton);
+
+      row.appendChild(indexCell);
+      row.appendChild(backupCell);
+      row.appendChild(viewButtonCell);
+      // Add click event listener to the row
+      row.addEventListener('click', function() {
+        // Remove the visual indicator from the previously selected row
+        if (selectedRow) {
+          selectedRow.style.backgroundColor = ''; // Remove the background color
+        }
+
+        // Add the visual indicator to the selected row
+        row.style.backgroundColor = 'lightblue'; // Set the background color
+        selectedRow = row;
+
+        selectedBackup = backup; // Store the name of the clicked backup
+      });
+
+      backupTableBody.appendChild(row);
+    });
+  })
+  .catch(error => {
+    toastr.error('Error fetching backups. Please try again.');
+    console.error('Error fetching backups:', error);
+  });
+});
+
+function viewBackupContents(backupFileName) {
+    $('#restoreBackupModal').modal('hide');
+    const viewContentsUrl = `${API_URL}/rest/viewBackup/${backupFileName}`;
+  
+    const userToken = localStorage.getItem('userToken');
+  
+    fetch(viewContentsUrl, {
+      headers: {
+        'Authorization': `Bearer ${userToken}`
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.text();
+    })
+    .then(backupContents => {
+      // Display the backup contents in a modal
+      $('#backupContentsModal .modal-body').html(backupContents);
+    })
+    .catch(error => {
+      toastr.error('Error viewing backup contents. Please try again.');
+      console.error('Error viewing backup contents:', error);
+    })
+    .finally(() => {
+      // Show the backupContentsModal after a delay to ensure the fade animation is complete
+      setTimeout(() => {
+        $('#backupContentsModal').modal('show');
+      }, 500); // Adjust the delay as needed
+    });
+  }
+  
+  // Reopen restoreBackupModal when backupContentsModal is closed
+  $('#backupContentsModal').on('hidden.bs.modal', function (e) {
+    $('#restoreBackupModal').modal('show');
+  });
+  
+  
+  
+  // Reopen restoreBackupModal when backupContentsModal is closed
+  $('#backupContentsModal').on('hidden.bs.modal', function (e) {
+    $('#restoreBackupModal').modal('show');
+  });
+
+document.querySelector('#restoreBackupModal .btn-primary').addEventListener('click', function() {
+  if (selectedBackup) {
+    restoreBackup(selectedBackup);
+  }
+});
+// Reopen restoreBackupModal when backupContentsModal is closed
+$('#backupContentsModal').on('hidden.bs.modal', function (e) {
+    $('#restoreBackupModal').modal('show');
+  });
+function restoreBackup(backupFileName) {
+  const restoreUrl = `${API_URL}/rest/restore/${backupFileName}`;
+
+  const userToken = localStorage.getItem('userToken');
+
+  fetch(restoreUrl, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${userToken}`
+    }
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.text();
+  })
+  .then(data => {
+    toastr.success('Database restored successfully from backup.');
+    console.log('Restore successful:', data);
+  })
+  .catch(error => {
+    toastr.error('Error restoring database. Please try again.');
+    console.error('Error restoring database:', error);
+  });
+}
+
+  
+  
+
     
+
     document.getElementById('fetchUpdatesContinueButton').addEventListener('click', async function() {
         const headerRow = document.querySelector('#levelsTable thead tr');
         // Check if the 'Updated' header already exists
@@ -465,6 +614,7 @@ function updateRankingsAfterRemoval() {
             .then(data => {
                 if (data.success) {
                     toastr.success('Levels order updated successfully!');
+                    levelsContainer.innerHTML = '';
                 } else {
                     toastr.error('Error updating levels order.');
                 }
@@ -999,10 +1149,12 @@ function handleLevelsSection() {
     const listTypeDropdown = document.getElementById('listTypeDropdown');
     listTypeDropdown.style.display = 'inline-block';
     const fetchUpdatesButton = document.getElementById('fetchUpdatesButton');
+    const restoreBackupButton = document.getElementById('restoreBackupButton');
        
         const listType = listTypeDropdown.value;
         console.log(listType)
         fetchUpdatesButton.style.display = listType === 'pending_levels' ? 'none' : 'inline-block';
+        restoreBackupButton.style.display = listType === 'pending_levels' ? 'none' : 'inline-block';
     // Fetch the appropriate list based on the dropdown value
     let endpoint;
     let headers = [];
