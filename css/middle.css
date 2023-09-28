@@ -104,13 +104,13 @@
 
 @font-palette-values --Mint {
   font-family: Rocher;
-  base-palette: 3;
+  base-palette: 0;
 }
 
 .level-points {
     font-family: Rocher;
     font-palette: --Mint;
-    font-size: 16px;
+    font-size: 20px;
     padding-bottom: 16px;
 }
 
