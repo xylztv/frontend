@@ -197,6 +197,8 @@ for (let creator of creatorList) {
                     await uploadNongFile();
                     toastr.success('Level submitted successfully!', 'Success');
                     console.log("Level added to the pending list.");
+                    submitButton.disabled = false;
+                    resetFormFields();
                 } catch (error) {
                     console.error('Error:', error);
                     toastr.error('Error uploading NONG file', 'Error');
@@ -204,6 +206,9 @@ for (let creator of creatorList) {
             } else {
                 toastr.success('Level submitted successfully!', 'Success');
                 console.log("Level added to the pending list.");
+                submitButton.disabled = false;
+                resetFormFields();
+
             }
         } else {
             console.error("Error:", response.status);
@@ -218,7 +223,31 @@ for (let creator of creatorList) {
     });
 } else {
     toastr.error('Please fill in all required fields correctly.', 'Error');
+    submitButton.disabled = false;
 }
+}
+function resetFormFields() {
+    // List of all input ids
+    const inputIds = ["levelId", "levelName", "verifier", "youtubeLink"];
+
+    // Loop through each input id and reset its value
+    for (let i = 0; i < inputIds.length; i++) {
+        const input = document.getElementById(inputIds[i]);
+        if (input) {
+            input.value = ""; // reset input field
+        }
+    }
+
+    // Reset all creators fields
+    const creatorInputs = document.querySelectorAll('#creatorFields input[name="creator"]');
+    creatorInputs.forEach(input => {
+        input.value = "";
+    });
+        const fields = document.querySelectorAll("#levelInfoFields, #lengthFields, #verifierFields, #creatorFields, #youtubeLinkFields, #nongUpload");
+        fields.forEach((field) => {
+            field.classList.add("hidden");
+        });
+        submitButton.classList.add("hidden");
 }
 async function uploadNongFile() {
     const nongFileInput = document.getElementById('nongFile');
@@ -258,7 +287,7 @@ function onLevelIdInput() {
     const levelId = document.getElementById("levelId").value;
 
     if (levelId === "") {
-        const fields = document.querySelectorAll("#levelInfoFields, #lengthFields, #verifierFields, #creatorFields, #youtubeLinkFields");
+        const fields = document.querySelectorAll("#levelInfoFields, #lengthFields, #verifierFields, #creatorFields, #youtubeLinkFields, #nongUpload");
         fields.forEach((field) => {
             field.classList.add("hidden");
         });
