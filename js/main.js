@@ -91,8 +91,7 @@ async function copyText(event) {
     const id = event.target.textContent;
     try {
         await navigator.clipboard.writeText(id);
-        console.log('Content copied to clipboard:', id);
-        event.target.innerHTML = `<span style="color: #42be65">Copied!</span>`;
+        toastr.success(id, 'Copied to clipboard')
         setTimeout(() => event.target.innerHTML = id, 1000);
     } catch (err) {
         console.error('Failed to copy:', err);

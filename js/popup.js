@@ -65,6 +65,7 @@ async function Setup() {
 
         // Reconstruct the html from the element
         let listInfo = event.target.parentElement.querySelector(".level-info");
+        if (!listInfo) return;
         let levelID = listInfo.querySelector(".level-id").innerHTML
         let levelName = event.target.closest(".list-item").querySelector(".level-name");
         let rankString = event.target.closest(".list-item").querySelector(".list-number").innerText;
