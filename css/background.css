@@ -77,7 +77,7 @@
 }
 
 .gradient.mainlist {
-    background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(255,197,61,1) 0%, rgba(255,94,7,1) 90% );
+    background-image: radial-gradient( circle farthest-corner at 10% 0%,  rgb(255, 179, 39) 0%, rgb(117, 202, 78) );
 }
 
 .gradient.legacy {
