@@ -1045,9 +1045,7 @@ function handlePendingLevelsSection() {
     }
         
     function finalizeAcceptance(levelId, placementIndex) {
-        if (!endpoint){
         let endpoint = '/rest/mainlist';
-        }
         // First, insert the accepted level with its new ranking
         insertAcceptedLevel(levelId, placementIndex);
     
