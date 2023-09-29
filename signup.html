@@ -219,10 +219,14 @@
     .then(response => response.json())
     .then(data => {
         if (data.token) {
-            toastr.success('Signed up successfully.');
-        } else {
-            toastr.error('There was an error signing up.');
-        }
+                    localStorage.setItem('userToken', data.token);
+                    localStorage.setItem('justLoggedIn', 'true');
+                    toastr.success('Signed up successfully.');
+                    // Optionally, redirect to a dashboard or main page
+                    window.location.href = '/';
+                } else {
+                    toastr.error(data.message);
+                }
     })
     .catch(() => {
         toastr.error('There was an error signing up.');

@@ -177,7 +177,7 @@
                     // Optionally, redirect to a dashboard or main page
                     window.location.href = '/';
                 } else {
-                    toastr.error('There was an error signing in.');
+                    toastr.error(data.message);
                 }
             })
             .catch(() => {
