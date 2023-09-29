@@ -18,18 +18,6 @@ async function fetchData(url) {
     }
     return data
 }
-
-async function checkNONG(data) {
-    let middle = document.getElementsByClassName("middle");
-    let IDs = data.values.map((listItem) => getVideoID(listItem[4]));
-
-    let submit = document.getElementsByClassName("submit-record-button");
-    await Promise.all(getThumbnails(IDs)).then(thumbnails => {
-        data.values.forEach((listItem, index) => {listItem[0]
-        });
-    }).catch((e) => console.log("Error fetching thumbnails: ", e))
-}
-
 async function addRecordItems(data) {
     let i = 0;
     data.forEach(recordItem => {
@@ -44,9 +32,7 @@ async function addRecordItems(data) {
     });
 }
 
-async function addNONG() {
-    let response = await fetch(`${API_URL}/rest/all-nongs`);
-    let data = await response.json();
+async function addNONG(data) {
     let i = 0;
     data.forEach(listItem => {
         if (!listItem.link) return;
