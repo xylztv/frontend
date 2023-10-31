@@ -311,8 +311,8 @@ if (mainlistEntry && mainlistEntry.last_updated) {
                             const {row, lastUpdatedCell } = levelRowMap[levelId];
                             row.classList.add('updated');
                             // Add Last Updated info to Level ID cell
-                            levelIdCell.textContent = `${data.lastUpdate} ago`;
-
+                            let prevupdate = levelIdCell.textContent;
+                            levelIdCell.textContent = `${prevupdate} --> ${data.lastUpdate} ago`;
                             toastr.warning('Level ' + levelId + ' was updated');
                         } else if (data.wasUpdated == false) {
                             const {row, lastUpdatedCell } = levelRowMap[levelId];
