@@ -51,6 +51,6 @@ if (storedDiscordMembers) {
     const { helperNames, adminNames } = JSON.parse(storedDiscordMembers);
     updateSidebar(helperNames, adminNames);
 }
-
-// Fetch the latest data from the server
-fetchDiscordMembers();
+else{
+    fetchDiscordMembers()
+}
