@@ -17,6 +17,17 @@ async function validateUser() {
     }
     return;
   }
+  if (userToken){
+        // Hide elements with the .loggedOutButtons class
+        const loggedOutButtons = document.querySelectorAll('.loggedOutButtons');
+        const loggedInButtons = document.querySelectorAll('.loggedInButton');
+    for (const button of loggedOutButtons){
+      button.style.display = 'none';
+    }
+    for (const button of loggedInButtons){
+      button.style.display = 'block';
+    }
+  }
   const response = await fetch(`${API_URL}/rest/validateUser`, {
     headers: {
       'Authorization': `Bearer ${localStorage.getItem('userToken')}`
