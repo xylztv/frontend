@@ -185,38 +185,61 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script type="module">
         import { API_URL } from "./js/config.js";
-        // Fetch user details from the backend and populate the fields
-        fetch(`${API_URL}/rest/users`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+        // Function to fetch user details and populate the fields
+        async function fetchUserDetails() {
+            try {
+                // Check if user details are in local storage
+                const storedUserData = localStorage.getItem('userData');
+                if (storedUserData) {
+                    const userData = JSON.parse(storedUserData);
+                    displayUserDetails(userData);
+                } else {
+                    // Fetch from server if not in local storage
+                    const response = await fetch(`${API_URL}/rest/users`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const userData = await response.json();
+                        // Save user data in local storage
+                        localStorage.setItem('userData', JSON.stringify(userData));
+                        displayUserDetails(userData);
+                    } else {
+                        throw new Error('Failed to fetch user details');
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+                toastr.error('Failed to fetch account details.');
             }
-        })
-        .then(response => response.json())
-        .then(data => {
+        }
+        // Function to display user details
+function displayUserDetails(data) {
     document.getElementById('usernameDisplay').innerText = data.username;
     if (data.permission_level >= 1) {
         document.getElementById('adminTag').style.display = 'inline';
         document.getElementById('adminPanelBtn').style.display = 'inline-block';
-
     }
     const isoDate = data.joinDate;
     const date = new Date(isoDate);
     const formattedDate = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}`;
-
     document.getElementById('joinDateDisplay').innerText = formattedDate;
-})
+}
 
-        .catch(error => {
-            console.error('Error fetching user details:', error);
-            toastr.error('Failed to fetch account details.');
-        });
-    
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-        localStorage.removeItem('userToken');
-        toastr.success('Logged out successfully.');
-        window.location.href = '/';
-    });
+document.addEventListener('DOMContentLoaded', () => {
+    fetchUserDetails();
+});
+// Logout button event listener
+
+document.getElementById('logoutBtn').addEventListener('click', function() {
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('userData'); // Remove user data from local storage
+    window.location.href = '/';
+});
+
 
     // Handle change password form submission
     document.getElementById('changePasswordForm').addEventListener('submit', function(event) {
