@@ -155,14 +155,14 @@ popup.innerHTML = `
 `;
 
 // animate the insertion of the element
-TweenMax.from(popup, 0.5, { opacity: 0, y: -50 });
+TweenMax.from(popup, 0.3, { opacity: 0, y: -50 });
 event.target.closest(".list-item").insertAdjacentElement("afterend", popup);
 
 let overlay = document.createElement("div");
 overlay.classList.add("overlay");
 
 // animate the insertion of the overlay element to fade in
-TweenMax.from(overlay, 0.5, { opacity: 0 });
+TweenMax.from(overlay, 0.1, { opacity: 0 });
 
 // insert the overlay element
 document.body.appendChild(overlay);
@@ -171,7 +171,7 @@ document.addEventListener('click', function (event) {
     if (!event.target.matches('.close-button')) return;
     let popupBox = event.target.parentElement;
     let overlay = document.querySelector('.overlay');
-    TweenMax.to([popupBox, overlay], 0.5, {
+    TweenMax.to([popupBox, overlay], 0.1, {
         opacity: 0, onComplete: function () {
             popupBox.remove();
             overlay.remove();
