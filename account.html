@@ -183,7 +183,7 @@
   </div>
   
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <script type="module">
+    <script data-cfasync="false" type="module">
         import { API_URL } from "./js/config.js";
         // Function to fetch user details and populate the fields
         async function fetchUserDetails() {
@@ -285,6 +285,6 @@ document.getElementById('logoutBtn').addEventListener('click', function() {
     </script>
     <link rel="stylesheet" href="css/main.css" defer>
     <link rel="stylesheet" href="css/header.css" defer>
-    <script type="module" data-cfasync="false" src="js/authCheck.js"></script>
+    <script type="module" src="js/authCheck.js" defer></script>
 </body>
 </html>
