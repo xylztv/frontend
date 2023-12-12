@@ -46,46 +46,55 @@ async function fetchUserCreatedLevels(gdUsername) {
 }
 
 async function fetchUserRecords(gdUsername) {
-    try {
-        const response = await fetch(`${API_URL}/rest/records`);
-        const mainlistResponse = await fetch(`${API_URL}/rest/mainlist`);
-        if (response.ok && mainlistResponse.ok) {
-            const recordsData = await response.json();
-            const mainlistData = await mainlistResponse.json();
-            const challengesData = await GetChallenges();
-            const verifierRecords = mainlistData.filter(level => level.verifier === gdUsername);
-            return recordsData.filter(record => record.player === gdUsername).map(record => {
-                const challenge = challengesData[record.level_id];
-                const isVerifier = challenge ? challenge.verifier === gdUsername : false;
-                const isMainlistVerifier = verifierRecords.some(level => level.id === record.level_id);
-                return {
-                    id: record.level_id,
-                    name: challenge ? challenge.name : 'Unknown',
-                    progress: record.percent,
-                    verified: isVerifier || isMainlistVerifier,
-                    link: record.link,
-                    points: GetPoints(challenge ? challenge.rank : 0, parseInt(record.percent)),
-                    rank: challenge ? challenge.rank : 'Unknown'
-                };
-            }).concat(verifierRecords.map(level => {
-                const challenge = challengesData[level.id];
-                return {
-                    id: level.id,
-                    name: challenge ? challenge.name : 'Unknown',
-                    progress: "100%",
-                    verified: true,
-                    link: level.link,
-                    points: GetPoints(challenge ? challenge.rank : 0, 100),
-                    rank: challenge ? challenge.rank : 'Unknown'
-                };
-            })).sort((a, b) => parseFloat(b.points) - parseFloat(a.points)); // Sort records by points
-        } else {
-            throw new Error('Failed to fetch user records');
-        }
-    } catch (error) {
-        console.error('Error fetching user records:', error);
+    const [recordsResponse, mainlistResponse] = await Promise.all([
+        fetch(`${API_URL}/rest/records`),
+        fetch(`${API_URL}/rest/mainlist`)
+    ]);
+
+    if (!recordsResponse.ok || !mainlistResponse.ok) {
+        console.error('Error fetching user records');
         toastr.error('Failed to fetch Geometry Dash records.');
+        return;
     }
+
+    const [recordsData, mainlistData] = await Promise.all([
+        recordsResponse.json(),
+        mainlistResponse.json()
+    ]);
+
+    const challengesData = await GetChallenges();
+    const records = [];
+
+    for (const record of recordsData) {
+        if (record.player !== gdUsername) continue;
+        const challenge = challengesData[record.level_id];
+        records.push({
+            id: record.level_id,
+            name: challenge ? challenge.name : 'Unknown',
+            progress: record.percent,
+            verified: challenge ? challenge.verifier === gdUsername : false,
+            link: record.link,
+            points: GetPoints(challenge ? challenge.rank : 0, parseInt(record.percent)),
+            rank: challenge ? challenge.rank : 'Unknown'
+        });
+    }
+
+    for (const level of mainlistData) {
+        if (level.verifier !== gdUsername) continue;
+        const challenge = challengesData[level.id];
+        records.push({
+            id: level.id,
+            name: challenge ? challenge.name : 'Unknown',
+            progress: "100%",
+            verified: true,
+            link: level.link,
+            points: GetPoints(challenge ? challenge.rank : 0, 100),
+            rank: challenge ? challenge.rank : 'Unknown'
+        });
+    }
+
+    records.sort((a, b) => parseFloat(b.points) - parseFloat(a.points)); // Sort records by points
+    return records;
 }
 
 function displayUserDetails(data) {
