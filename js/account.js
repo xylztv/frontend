@@ -439,6 +439,7 @@ async function fetchUserFlag() {
     } else {
         // If the user doesn't have a flag, show the flag icon
         document.getElementById('flagIcon').style.display = 'inline-block';
+        document.getElementById('flagIcon').style.cursor = 'pointer';
     }
 }
 });
