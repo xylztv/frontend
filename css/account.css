@@ -8,7 +8,13 @@
     max-height: 200px; /* Adjust as needed */
     overflow-y: auto;
 }
+.flag {
+    margin: 5px; /* Adjust as needed */
+}
 
+#flagModal .modal-dialog {
+    max-width: 800px; /* Adjust as needed */
+}
 .fas {
     margin: 6px;
 }

@@ -195,6 +195,32 @@ function getBadgeClassForPercentage(percentage) {
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchUserDetails();
+    fetchUserFlag();
+    let countryCodes = {};
+
+    // Fetch the list of country codes when the page loads
+    fetch('https://flagcdn.com/en/codes.json')
+    .then(response => response.json())
+    .then(data => {
+        countryCodes = data;
+    });
+    document.getElementById('removeFlagBtn').addEventListener('click', function() {
+        updateFlag('');
+    });
+    document.getElementById('flagSearch').addEventListener('input', function(event) {
+        const query = event.target.value.toLowerCase();
+        const flags = document.querySelectorAll('#flagContainer img');
+        flags.forEach(flag => {
+            const countryCode = flag.dataset.countryCode;
+            const countryName = countryCodes[countryCode];
+            if (countryName && countryName.toLowerCase().includes(query)) {
+                flag.style.display = '';
+            } else {
+                flag.style.display = 'none';
+            }
+        });
+    });
+    flagIcon.onclick = loadFlagsIntoModal;
     document.getElementById('verifyGdUsernameBtn').addEventListener('click', async function() {
         const gdUsername = document.getElementById('gdUsername').value;
         if (gdUsername) {
@@ -306,7 +332,115 @@ document.addEventListener('DOMContentLoaded', () => {
             toastr.error('An error occurred while trying to unlink the account.');
         }
     });
-    
+
+async function loadFlagsIntoModal() {
+    const flagContainer = document.getElementById('flagContainer');
+
+    // Clear the flag container
+    flagContainer.innerHTML = '';
+
+    // Fetch the list of country codes
+    const response = await fetch('https://flagcdn.com/en/codes.json');
+    const countryCodes = await response.json();
+
+    // Add each flag to the flag container
+    Object.keys(countryCodes).forEach(countryCode => {
+        const flagElement = document.createElement('img');
+        flagElement.src = `https://flagcdn.com/64x48/${countryCode}.png`;
+        flagElement.dataset.countryCode = countryCode;
+        flagElement.onclick = selectFlag;
+        flagElement.className = 'flag';
+        flagElement.style.cursor = 'pointer';
+        flagContainer.appendChild(flagElement);
+    });
+
+    $('#flagModal').modal('show');
+}
+
+function selectFlag(event) {
+    const flagElement = event.target;
+    const countryCode = flagElement.dataset.countryCode;
+    updateFlag(countryCode);
+}
+
+function updateFlag(flag) {
+    // Get the user token from local storage
+    const userToken = localStorage.getItem('userToken');
+
+    // Send the request to the server
+    fetch(`${API_URL}/rest/update-flag`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${userToken}`
+        },
+        body: JSON.stringify({
+            flag: flag
+        })
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to update flag');
+        }
+        return response.json();
+    }).then(data => {
+        // The flag was updated successfully.
+        toastr.success('Successfully changed flag');
+        $('#flagModal').modal('hide'); // Close the modal
+        if (flag === '') {
+            // If the flag was removed, replace the flag image with the original flag icon
+            const flagIcon = document.createElement('i');
+            flagIcon.className = 'fas fa-flag';
+            flagIcon.id = 'flagIcon';
+            flagIcon.dataset.toggle = 'modal';
+            flagIcon.dataset.target = '#flagModal';
+            flagIcon.onclick = loadFlagsIntoModal;
+            flagIcon.style.display = 'inline-block';
+
+            const oldFlagIcon = document.getElementById('flagIcon');
+            oldFlagIcon.parentNode.replaceChild(flagIcon, oldFlagIcon);
+        } else {
+            fetchUserFlag(); // Refresh the flag of the user on the account
+        }
+    }).catch(error => {
+        console.error('Error updating flag:', error);
+    });
+}
+async function fetchUserFlag() {
+    // Get the GD account name
+    const gdUsername = document.getElementById('gdUsernameDisplay').textContent;
+
+    // Check if the user has a linked GD account
+    if (!gdUsername) {
+        toastr.error('No linked GD account found.');
+        return;
+    }
+
+    // Send the request to the server
+    const response = await fetch(`${API_URL}/rest/get-flag?gdUsername=${encodeURIComponent(gdUsername)}`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch flag');
+    }
+    const data = await response.json();
+
+     // Check if the user has a flag
+     if (data.flag) {
+        // Create a new flag icon
+        const flagIcon = document.createElement('img');
+        flagIcon.src = `https://flagcdn.com/24x18/${data.flag}.png`;
+        flagIcon.id = 'flagIcon';
+        flagIcon.style.marginRight = '10px';
+        flagIcon.style.cursor = 'pointer';
+        flagIcon.onclick = loadFlagsIntoModal;
+
+
+        // Replace the old flag icon with the new one
+        const oldFlagIcon = document.getElementById('flagIcon');
+        oldFlagIcon.parentNode.replaceChild(flagIcon, oldFlagIcon);
+    } else {
+        // If the user doesn't have a flag, show the flag icon
+        document.getElementById('flagIcon').style.display = 'inline-block';
+    }
+}
 });
 
 document.getElementById('logoutBtn').addEventListener('click', function() {
@@ -350,11 +484,4 @@ document.getElementById('changePasswordForm').addEventListener('submit', functio
         console.error('Error changing password:', error);
         toastr.error('Failed to change password. Please try again.');
     });
-});
-
-// Additional event listener for the Geometry Dash account link button
-document.getElementById('linkGdAccountBtn').addEventListener('click', function() {
-    // Implementation depends on how you plan to link Geometry Dash accounts
-    // Example:
-    // window.location.href = '/link-gd-account.html';
 });

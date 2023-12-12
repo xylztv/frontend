@@ -64,34 +64,6 @@ async function Setup() {
 	const CHALLENGE_DATA = await GetChallenges()
 	let leaderboardData = []
 
-	// Structure data into an array containing players and their records, sorted from highest to lowest points
-	/* 
-	leaderboardData = [
-		[1] = {
-			player: "Ellopro"
-			totalPoints: 2097,
-			records: [
-				{
-					id: 87793135,
-					progress: "100%",
-					verified: true,
-					link: url,
-					points: 362
-				},
-				{
-					id: 87454329,
-					progress: "100%",
-					verified: false,
-					link: url,
-					points: 166
-				},
-				...
-			],
-		}
-		...
-	]
-	 */
-
 	function GetPlayer(player) {
 		// Try finding the player
 		let playerEntry = leaderboardData.find(playerInfo => { return playerInfo.player == player })
@@ -189,16 +161,27 @@ async function Setup() {
 	let tableBody = table.querySelector(`tbody`)
 
 	// Insert every player on the leaderboard
-	leaderboardData.forEach((playerEntry, i) => {
+	await Promise.all(leaderboardData.map(async (playerEntry, i) => {
+		// Fetch the flag for the player
+		const response = await fetch(`${API_URL}/rest/get-flag?gdUsername=${encodeURIComponent(playerEntry.player)}`);
+		const data = await response.json();
+
+		let flagElement = '';
+		if (data.success) {
+				const flag = data.flag;
+				flagElement = `<img src="https://flagcdn.com/20x15/${flag}.png" alt="${flag} flag">`; // Add the flag next to the player name
+		}
+
 		tableBody.innerHTML += `
 		<tr>
-			<td>
-				<span style="font-weight: bold; margin-right: 5px;">#${i + 1} </span>
-				<a href="#/" data-player="${playerEntry.player}">${playerEntry.player}</a>
-			</td>
-			<td>${playerEntry.totalPoints.toFixed(2)}</td>
+				<td>
+						<span style="font-weight: bold; margin-right: 5px;">#${i + 1} </span>
+						<a href="#/" data-player="${playerEntry.player}">${playerEntry.player}</a>
+						${flagElement}
+				</td>
+				<td>${playerEntry.totalPoints.toFixed(2)}</td>
 		</tr>`
-	})
+}))
 
 	// Setup search bar
 	let searchBar = document.getElementById(`search-input`)

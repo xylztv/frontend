@@ -84,9 +84,11 @@
                                 <!-- Display GD Username if available -->
                                 <span id="gdUsernameDisplay"></span>
                                 <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#linkGdAccountModal" id="linkGdAccountBtn">Link</button>
+                                <i class="fas fa-flag" id="flagIcon" style="display: none;"></i>
                                 <button id="unlinkGdAccountBtn" class="btn btn-danger btn-sm" style="display: none;">Unlink</button>
                             </div>
                         </div>
+                        
                         <!-- Geometry Dash records field -->
                         <div id="gdRecordsField">
                             <span><i class="fas fa-award gd-icon"></i>Your Records:</span>
@@ -171,6 +173,26 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="flagModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Select a Flag</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="flagSearch" placeholder="Search for a flag">
+                <div id="flagContainer">
+                    <!-- List of flags will go here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-warning" id="removeFlagBtn">Remove Flag</button>
             </div>
         </div>
     </div>
