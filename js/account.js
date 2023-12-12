@@ -48,21 +48,37 @@ async function fetchUserCreatedLevels(gdUsername) {
 async function fetchUserRecords(gdUsername) {
     try {
         const response = await fetch(`${API_URL}/rest/records`);
-        if (response.ok) {
+        const mainlistResponse = await fetch(`${API_URL}/rest/mainlist`);
+        if (response.ok && mainlistResponse.ok) {
             const recordsData = await response.json();
+            const mainlistData = await mainlistResponse.json();
             const challengesData = await GetChallenges();
+            const verifierRecords = mainlistData.filter(level => level.verifier === gdUsername);
             return recordsData.filter(record => record.player === gdUsername).map(record => {
                 const challenge = challengesData[record.level_id];
+                const isVerifier = challenge ? challenge.verifier === gdUsername : false;
+                const isMainlistVerifier = verifierRecords.some(level => level.id === record.level_id);
                 return {
                     id: record.level_id,
                     name: challenge ? challenge.name : 'Unknown',
                     progress: record.percent,
-                    verified: challenge ? challenge.verifier === gdUsername : false,
+                    verified: isVerifier || isMainlistVerifier,
                     link: record.link,
                     points: GetPoints(challenge ? challenge.rank : 0, parseInt(record.percent)),
                     rank: challenge ? challenge.rank : 'Unknown'
                 };
-            }).sort((a, b) => parseFloat(b.points) - parseFloat(a.points)); // Sort records by points
+            }).concat(verifierRecords.map(level => {
+                const challenge = challengesData[level.id];
+                return {
+                    id: level.id,
+                    name: challenge ? challenge.name : 'Unknown',
+                    progress: "100%",
+                    verified: true,
+                    link: level.link,
+                    points: GetPoints(challenge ? challenge.rank : 0, 100),
+                    rank: challenge ? challenge.rank : 'Unknown'
+                };
+            })).sort((a, b) => parseFloat(b.points) - parseFloat(a.points)); // Sort records by points
         } else {
             throw new Error('Failed to fetch user records');
         }
@@ -112,7 +128,7 @@ function displayUserDetails(data) {
                 row.innerHTML = `
                     <td><a href="${record.link}" target="_blank" style="color: inherit; text-decoration: none;">${record.name} (#${record.rank})</a></td>
                     <td><span class="badge ${getBadgeClassForPercentage(record.progress)}">${record.progress}</span></td>
-                    <td><span class="badge ${getBadgeClassForPoints(record.points)}">${record.points.toFixed(2)}</span>${record.verified ? '<span class="badge badge-success">VERIFIER</span>' : ''}</td>
+                    <td><span style="font-size: 0.8em;">${record.points.toFixed(2)}</span>${record.verified ? '<span class="badge badge-success" style="margin-left: 5px; background-color: #e795b7;">VERIFIER</span>' : ''}</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -165,15 +181,6 @@ function getBadgeClassForPercentage(percentage) {
         return 'badge-warning';
     } else {
         return 'badge-danger';
-    }
-}
-function getBadgeClassForPoints(points) {
-    if (points >= 200) {
-        return 'badge-success';
-    } else if (points >= 100) {
-        return 'badge-info';
-    } else {
-        return;
     }
 }
 
