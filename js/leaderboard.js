@@ -25,7 +25,7 @@ async function GetRecords() {
 	})
 }
 
-async function GetChallenges() {
+export async function GetChallenges() {
 	return fetchData(fetch_url_challenges).then(data => {
 		let obj = {}
 
@@ -43,7 +43,7 @@ async function GetChallenges() {
 	})
 }
 
-function GetPoints(rank, progress) {
+export function GetPoints(rank, progress) {
 	let maxPoints
 
 	if (rank <= 10) {

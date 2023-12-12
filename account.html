@@ -12,6 +12,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" /> 
 
     <style>
+        #gdUsernameDisplay {
+        /* This ensures there is a little space between the username and the buttons */
+        margin-right: 8px;
+        }
+
+        #gdRecordsContainer, #gdCreatedLevelsContainer {
+        max-height: 200px; /* Adjust as needed */
+        overflow-y: auto;
+    }
+        .fas {
+            margin: 6px;
+        }
         /* CSS styles... */
         .admin-button {
             display: none;
@@ -128,10 +140,28 @@
                             </span>
                         </div>
                         
-                        <div class="d-flex justify-content-between mb-3">
-                            <span><i class="fas fa-envelope mr-2"></i>Email:</span>
-                            <span id="emailDisplay">Coming soon</span>
+                        <!-- Geometry Dash account field -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span><i class="fas fa-gamepad gd-icon"></i>Geometry Dash Account:</span>
+                            <div class="d-flex align-items-center">
+                                <!-- Display GD Username if available -->
+                                <span id="gdUsernameDisplay"></span>
+                                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#linkGdAccountModal" id="linkGdAccountBtn">Link</button>
+                                <button id="unlinkGdAccountBtn" class="btn btn-danger btn-sm" style="display: none;">Unlink</button>
+                            </div>
                         </div>
+                        <!-- Geometry Dash records field -->
+                        <div id="gdRecordsField">
+                            <span><i class="fas fa-award gd-icon"></i>Your Records:</span>
+                            <div id="gdRecordsContainer"></div>
+                        </div>
+
+                        <!-- Geometry Dash created levels field -->
+                        <div id="gdLevelsField">
+                            <span><i class="fas fa-image gd-icon"></i>Your Levels:</span>
+                            <div id="gdCreatedLevelsContainer"></div>
+                        </div>
+
                         <div class="d-flex justify-content-between mb-3">
                             <span><i class="fas fa-calendar-alt mr-2"></i>Joined:</span>
                             <span id="joinDateDisplay"></span>
@@ -181,110 +211,40 @@
       </div>
     </div>
   </div>
+<!-- Link Geometry Dash Account Modal -->
+<div class="modal fade" id="linkGdAccountModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Link Geometry Dash Account</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="linkGdAccountForm">
+                    <div class="form-group" id="gdUsernameSection">
+                        <label for="gdUsername">Geometry Dash Username:</label>
+                        <input type="text" id="gdUsername" class="form-control">
+                        <button type="button" class="btn btn-primary mt-2" id="verifyGdUsernameBtn">Next</button>
+                    </div>
+                    <div class="form-group" style="display:none;" id="verificationInstructionsSection">
+                        <p id="verificationInstructions">Please upload the following comment to your Geometry Dash account:</p>
+                        <button type="button" class="btn btn-primary mt-2" id="submitVerificationBtn">Verify</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
   
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <script data-cfasync="false" type="module">
-        import { API_URL } from "./js/config.js";
-        // Function to fetch user details and populate the fields
-        async function fetchUserDetails() {
-            try {
-                // Check if user details are in local storage
-                const storedUserData = localStorage.getItem('userData');
-                if (storedUserData) {
-                    const userData = JSON.parse(storedUserData);
-                    displayUserDetails(userData);
-                } else {
-                    // Fetch from server if not in local storage
-                    const response = await fetch(`${API_URL}/rest/users`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${localStorage.getItem('userToken')}`
-                        }
-                    });
-
-                    if (response.ok) {
-                        const userData = await response.json();
-                        // Save user data in local storage
-                        localStorage.setItem('userData', JSON.stringify(userData));
-                        displayUserDetails(userData);
-                    } else {
-                        throw new Error('Failed to fetch user details');
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching user details:', error);
-                toastr.error('Failed to fetch account details.');
-            }
-        }
-        // Function to display user details
-function displayUserDetails(data) {
-    document.getElementById('usernameDisplay').innerText = data.username;
-    if (data.permission_level >= 1) {
-        document.getElementById('adminTag').style.display = 'inline';
-        document.getElementById('adminPanelBtn').style.display = 'inline-block';
-    }
-    const isoDate = data.joinDate;
-    const date = new Date(isoDate);
-    const formattedDate = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}`;
-    document.getElementById('joinDateDisplay').innerText = formattedDate;
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    fetchUserDetails();
-});
-// Logout button event listener
-
-document.getElementById('logoutBtn').addEventListener('click', function() {
-    localStorage.removeItem('userToken');
-    localStorage.removeItem('userData'); // Remove user data from local storage
-    window.location.href = '/';
-});
-
-
-    // Handle change password form submission
-    document.getElementById('changePasswordForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const currentPassword = document.getElementById('currentPassword').value;
-        const newPassword = document.getElementById('newPassword').value;
-        const confirmNewPassword = document.getElementById('confirmNewPassword').value;
-
-        if (newPassword !== confirmNewPassword) {
-            toastr.error('New passwords do not match.');
-            return;
-        }
-
-        fetch(`${API_URL}/rest/change-password`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('userToken')}`
-            },
-            body: JSON.stringify({
-                currentPassword: currentPassword,
-                newPassword: newPassword
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                toastr.success(data.message);
-                $('#changePasswordModal').modal('hide');
-            } else {
-                toastr.error(data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error changing password:', error);
-            toastr.error('Failed to change password. Please try again.');
-        });
-    });
-    document.getElementById('adminPanelBtn').addEventListener('click', function() {
-        window.location.href = '/admin.html';
-    });
-    </script>
+    <script data-cfasync="false" type="module" src="js/account.js" ></script>
     <link rel="stylesheet" href="css/main.css" defer>
     <link rel="stylesheet" href="css/header.css" defer>
-    <script type="module" src="js/authCheck.js" defer></script>
+    <script type="module" data-cfasync="false" src="js/authCheck.js" defer></script>
 </body>
 </html>
