@@ -35,7 +35,7 @@ async function fetchUserCreatedLevels(gdUsername) {
         const response = await fetch(`${API_URL}/rest/mainlist`);
         if (response.ok) {
             const levelsData = await response.json();
-            return levelsData.filter(level => level.creator === gdUsername);
+            return levelsData.filter(level => level.creator === gdUsername).sort((a, b) => a.ranking - b.ranking);
         } else {
             throw new Error('Failed to fetch user created levels');
         }
