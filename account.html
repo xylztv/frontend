@@ -10,70 +10,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" /> 
-
-    <style>
-        #gdUsernameDisplay {
-        /* This ensures there is a little space between the username and the buttons */
-        margin-right: 8px;
-        }
-
-        #gdRecordsContainer, #gdCreatedLevelsContainer {
-        max-height: 200px; /* Adjust as needed */
-        overflow-y: auto;
-    }
-        .fas {
-            margin: 6px;
-        }
-        /* CSS styles... */
-        .admin-button {
-            display: none;
-            border-radius: 4px;
-            background-color: #3d405b;
-            border: none;
-            color: #FFFFFF;
-            text-align: center;
-            font-size: 17px;
-            padding: 16px;
-            padding-top: 8px;
-            padding-bottom: 8px;
-            height: auto;
-            width: auto;
-            transition: all 0.5s;
-            cursor: pointer;
-            margin: 5px;
-            margin-left: auto; /* This will push the button to the right */
-        }
-
-        .admin-button span {
-            cursor: pointer;
-            display: inline-block;
-            position: relative;
-            transition: 0.5s;
-        }
-
-        .admin-button span:after {
-            content: '»';
-            position: absolute;
-            opacity: 0;
-            top: 0;
-            right: -15px;
-            transition: 0.5s;
-        }
-
-        .admin-button:hover span {
-            padding-right: 15px;
-        }
-
-        .admin-button:hover span:after {
-            opacity: 1;
-            right: 0;
-        }
-        .admin-button-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-    </style>
+    <link rel="stylesheet" href="css/account.css">
 </head>
 <body>
     <div class="header">
@@ -227,7 +164,7 @@
                         <button type="button" class="btn btn-primary mt-2" id="verifyGdUsernameBtn">Next</button>
                     </div>
                     <div class="form-group" style="display:none;" id="verificationInstructionsSection">
-                        <p id="verificationInstructions">Please upload the following comment to your Geometry Dash account:</p>
+                        <p id="verificationInstructions"></p>
                         <button type="button" class="btn btn-primary mt-2" id="submitVerificationBtn">Verify</button>
                     </div>
                 </form>
@@ -238,9 +175,6 @@
         </div>
     </div>
 </div>
-
-
-  
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script data-cfasync="false" type="module" src="js/account.js" ></script>
     <link rel="stylesheet" href="css/main.css" defer>

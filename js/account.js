@@ -79,6 +79,11 @@ function displayUserDetails(data) {
     const linkGdAccountBtn = document.getElementById('linkGdAccountBtn');
     const unlinkGdAccountBtn = document.getElementById('unlinkGdAccountBtn');
 
+    if (data.permission_level >= 1) {
+        document.getElementById('adminTag').style.display = 'inline';
+        document.getElementById('adminPanelBtn').style.display = 'inline-block';
+    }
+
     if (data.gdusername) {
         gdUsernameDisplay.innerText = data.gdusername;
         linkGdAccountBtn.style.display = 'none';
@@ -194,7 +199,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     const commentData = await commentResponse.json();
                     if (commentData.comment) {
                         verificationComment = commentData.comment;
-                        document.getElementById('verificationInstructions').innerHTML = `Please upload the following comment to your Geometry Dash account: <pre style="white-space: pre-wrap; margin-top: 20px;">${verificationComment}</pre>`;
+                        
+                        const codeElement = document.createElement("code");
+                        codeElement.innerText = verificationComment;
+
+                        const copyCodeButton = document.createElement("copy-code-button");
+                        copyCodeButton.innerText = "Copy";
+                        copyCodeButton.addEventListener("click", async () => {
+                            try {
+                                await navigator.clipboard.writeText(verificationComment);
+                                copyCodeButton.innerText = "Copied!";
+                                setTimeout(() => { copyCodeButton.innerText = "Copy" }, 2000);
+                            } catch (err) {
+                                console.error("Failed to copy text: ", err);
+                            }
+                        });
+
+                        const preElement = document.createElement("pre");
+                        preElement.appendChild(codeElement);
+                        preElement.appendChild(copyCodeButton);
+                        
+                        const verificationInstructions = document.getElementById("verificationInstructions");
+                        verificationInstructions.innerText = "Please upload the following comment to your Geometry Dash account:";
+                        verificationInstructions.appendChild(preElement);
+
                         document.getElementById('gdUsernameSection').style.display = 'none';
                         document.getElementById('verificationInstructionsSection').style.display = 'block';
                     } else {
