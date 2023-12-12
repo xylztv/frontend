@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         document.getElementById('gdUsernameSection').style.display = 'none';
                         document.getElementById('verificationInstructionsSection').style.display = 'block';
                     } else {
-                        throw new Error("Failed to generate verification comment.");
+                        throw new Error(commentData.error || "Failed to generate verification comment.");
                     }
                 } else {
                     throw new Error(validationData.errorMessage || "Invalid Geometry Dash username.");
@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.removeItem('userData');
                     fetchUserDetails();
                 } else {
-                    throw new Error(data.errorMessage || "Verification failed.");
+                    throw new Error(data.error || "Verification failed.");
                 }
             } catch (error) {
                 console.error('Error:', error);
