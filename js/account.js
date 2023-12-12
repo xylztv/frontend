@@ -66,7 +66,7 @@ async function fetchUserRecords(gdUsername) {
     const records = [];
 
     for (const record of recordsData) {
-        if (record.player !== gdUsername) continue;
+        if (record.player !== gdUsername || !challengesData.hasOwnProperty(record.level_id)) continue;
         const challenge = challengesData[record.level_id];
         records.push({
             id: record.level_id,
@@ -80,7 +80,7 @@ async function fetchUserRecords(gdUsername) {
     }
 
     for (const level of mainlistData) {
-        if (level.verifier !== gdUsername) continue;
+        if (level.verifier !== gdUsername || !challengesData.hasOwnProperty(level.id)) continue;
         const challenge = challengesData[level.id];
         records.push({
             id: level.id,
