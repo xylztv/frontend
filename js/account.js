@@ -333,35 +333,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-async function loadFlagsIntoModal() {
-    const flagContainer = document.getElementById('flagContainer');
+    async function loadFlagsIntoModal() {
+        const flagContainer = document.getElementById('flagContainer');
+    
+        // Clear the flag container
+        flagContainer.innerHTML = '';
+    
+        // Fetch the list of country codes
+        const response = await fetch('https://flagcdn.com/en/codes.json');
+        const countryCodes = await response.json();
+    
+        // Add each flag to the flag container
+        Object.keys(countryCodes).forEach(countryCode => {
+            const flagElement = document.createElement('img');
+            flagElement.src = `https://flagcdn.com/64x48/${countryCode}.png`;
+            flagElement.dataset.countryCode = countryCode;
+            flagElement.onclick = selectFlag;
+            flagElement.className = 'flag';
+            flagElement.style.cursor = 'pointer';
+            flagElement.title = countryCodes[countryCode]; // Add the country name as a tooltip
+            flagContainer.appendChild(flagElement);
+        });
+    
+        $('#flagModal').modal('show');
+    }
 
-    // Clear the flag container
-    flagContainer.innerHTML = '';
-
-    // Fetch the list of country codes
-    const response = await fetch('https://flagcdn.com/en/codes.json');
-    const countryCodes = await response.json();
-
-    // Add each flag to the flag container
-    Object.keys(countryCodes).forEach(countryCode => {
-        const flagElement = document.createElement('img');
-        flagElement.src = `https://flagcdn.com/64x48/${countryCode}.png`;
-        flagElement.dataset.countryCode = countryCode;
-        flagElement.onclick = selectFlag;
-        flagElement.className = 'flag';
-        flagElement.style.cursor = 'pointer';
-        flagContainer.appendChild(flagElement);
-    });
-
-    $('#flagModal').modal('show');
-}
-
-function selectFlag(event) {
-    const flagElement = event.target;
-    const countryCode = flagElement.dataset.countryCode;
-    updateFlag(countryCode);
-}
+    function selectFlag(event) {
+        const flagElement = event.target;
+        const countryCode = flagElement.dataset.countryCode;
+        updateFlag(countryCode);
+    }
 
 function updateFlag(flag) {
     // Get the user token from local storage
