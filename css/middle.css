@@ -20,7 +20,7 @@
     padding: 0 16px;
     box-sizing: border-box;
     transition: filter 0.5s, transform 0.3s;
-    animation-duration: 0.6s;
+    animation-duration: 0.3s;
     animation-timing-function: ease-in-out;
     /*box-shadow:
     1px 2px 2px 0px rgba(255, 209, 44, 0.7),
@@ -31,14 +31,15 @@
     box-shadow : 0px 0px 15px 5px rgba(110, 70, 45, 0.3);
 }
 
-.placeholder{
+.placeholder {
     animation-name: loadingAnim;
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .list-item:hover{
     filter : brightness(75%);
     cursor: pointer;
-    transform : scale(1.1);
+    transform : scale(1.05);
 }
 
 @keyframes loadingAnim {

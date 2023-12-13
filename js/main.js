@@ -55,23 +55,26 @@ async function updatePlaceholdersWithActualData(data) {
 
 function createListItem(item) {
     const videoID = getVideoID(item.link);
-    const thumbnailURL = item.link ? `https://img.youtube.com/vi/${videoID}/mqdefault.jpg`:'';
+    const thumbnailURL = item.link ? `https://img.youtube.com/vi/${videoID}/mqdefault.jpg`: '';
     const listItem = document.createElement('div');
     listItem.classList.add('list-item');
     const rankingText = item.ranking ? `#${item.ranking}` : '';
+    const imageElement = item.link 
+        ? `<img class="list-image" src="${thumbnailURL}" alt="Level thumbnail" loading="lazy">`
+        : `<div class="list-image skeleton"></div>`;
     listItem.innerHTML = `
-        <div class="list-number">${rankingText}</div>
+        <div class="list-number ${!item.ranking ? 'skeleton' : ''}">${rankingText}</div>
         <div class="list-thumbnail">
             <a href="${item.link}" target="_blank">
-            <img class="list-image" src="${thumbnailURL}" alt="Level thumbnail" loading="lazy">
+                ${imageElement}
             </a>
         </div>
         <div class="list-info">
-            <p class="level-name">${item.title}</p>
+            <p class="level-name ${!item.title ? 'skeleton' : ''}">${item.title || ''}</p>
             <div class="level-info">
-                <p class="level-id">${item.id}</p>
-                <p class="level-author">${item.creator}</p>
-                <p class="level-verifier">${item.verifier}</p>
+                <p class="level-id ${!item.id ? 'skeleton' : ''}">${item.id || ''}</p>
+                <p class="level-author ${!item.creator ? 'skeleton' : ''}">${item.creator || ''}</p>
+                <p class="level-verifier ${!item.verifier ? 'skeleton' : ''}">${item.verifier || ''}</p>
             </div>
         </div>
     `;

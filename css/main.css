@@ -25,7 +25,34 @@ body {
 .loggedOutButtons {
     display: none;
 }
+.skeleton {
+    background-color: #ddd; /* Light grey background */
+    border-radius: 4px;
+    height: 20px;
+    width: 80%;
+    margin: 10px 0;
+    animation: pulse 1.5s infinite ease-in-out;
+}
 
+.skeleton-text {
+    width: 70%; /* Adjust the width as per your design */
+}
+
+.list-image.skeleton {
+    width: 320px; /* adjust as needed */
+    height: 180px; /* adjust as needed */
+}
+
+.level-author.skeleton::before,
+.level-verifier.skeleton::before,
+.level-id.skeleton::before {
+    content: none;
+}
+
+@keyframes pulse {
+    0%, 100% { background-color: #ddd; }
+    50% { background-color: #ccc; }
+}
 
 /* For Webkit browsers */
 /* 
