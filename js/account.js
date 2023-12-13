@@ -390,12 +390,13 @@ function updateFlag(flag) {
         if (flag === '') {
             // If the flag was removed, replace the flag image with the original flag icon
             const flagIcon = document.createElement('i');
-            flagIcon.className = 'fas fa-flag';
+            flagIcon.className = 'fas bi-globe-europe-africa';
             flagIcon.id = 'flagIcon';
             flagIcon.dataset.toggle = 'modal';
             flagIcon.dataset.target = '#flagModal';
             flagIcon.onclick = loadFlagsIntoModal;
             flagIcon.style.display = 'inline-block';
+            flagIcon.style.fontSize = '20px';
 
             const oldFlagIcon = document.getElementById('flagIcon');
             oldFlagIcon.parentNode.replaceChild(flagIcon, oldFlagIcon);
