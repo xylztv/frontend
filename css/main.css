@@ -40,7 +40,7 @@ body {
 
 .list-image.skeleton {
     width: 320px; /* adjust as needed */
-    height: 180px; /* adjust as needed */
+    height: 160px; /* adjust as needed */
 }
 
 .level-author.skeleton::before,

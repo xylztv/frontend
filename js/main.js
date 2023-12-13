@@ -13,7 +13,7 @@ async function fetchData(url) {
 async function updateFirstPlaceholdersWithActualData(data) {
     const middle = document.querySelector(".middle");
     const placeholders = middle.querySelectorAll(".placeholder");
-    for (let i = 0; i < Math.min(5, data.length); i++) {
+    for (let i = 0; i < Math.min(9, data.length); i++) {
         const placeholder = placeholders[i];
         const item = data.find(entry => entry.ranking === i + 1); // Find item with the appropriate ranking
         if (item) {
@@ -116,7 +116,7 @@ function getVideoID(url) {
     const middle = document.querySelector(".middle");
 
     // Add empty list items as placeholders with animation class and ranking value
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= 9; i++) {
         const placeholder = createListItem({ ranking: i, link: '', title: '', id: '', creator: '', verifier: '' });
         placeholder.classList.add("placeholder", "animation-class");
         middle.appendChild(placeholder);
