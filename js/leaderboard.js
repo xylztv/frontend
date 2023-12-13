@@ -3,6 +3,13 @@ const fetch_url_records = `${API_URL}/rest/records`;
 const fetch_url_challenges = `${API_URL}/rest/mainlist`
 const REQUIREMENT = 60
 
+let countryCodes = {};
+
+async function loadCountryCodes() {
+    const response = await fetch('https://flagcdn.com/en/codes.json');
+    const data = await response.json();
+    countryCodes = data;
+}
 async function fetchData(url) {
 	const response = await fetch(url);
 	let data = await response.json();
@@ -178,7 +185,8 @@ async function fetchFlag(player, size) {
 
     if (data.success) {
         const flag = data.flag;
-        const flagElement = `<img src="https://flagcdn.com/${size}/${flag}.png" alt="${flag} flag">`; // Add the flag next to the player name
+        const countryName = countryCodes[flag];
+        const flagElement = `<img src="https://flagcdn.com/${size}/${flag}.png" alt="${flag} flag" title="${countryName}">`; // Add the flag next to the player name
         return flagElement;
     }
 
@@ -186,7 +194,7 @@ async function fetchFlag(player, size) {
 }
 // Fetch the flag for each player in the leaderboard
 await Promise.all(leaderboardData.map(async (playerEntry) => {
-    const flagElement = await fetchFlag(playerEntry.player, '20x15');
+    const flagElement = await fetchFlag(playerEntry.player, '24x18');
     document.getElementById(`flag-${playerEntry.player}`).innerHTML = flagElement;
 }));
 
@@ -300,4 +308,7 @@ await Promise.all(leaderboardData.map(async (playerEntry) => {
 
 }
 
-Setup()
+loadCountryCodes().then(() => {
+	Setup();
+});
+
