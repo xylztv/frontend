@@ -161,27 +161,34 @@ async function Setup() {
 	let tableBody = table.querySelector(`tbody`)
 
 	// Insert every player on the leaderboard
-	await Promise.all(leaderboardData.map(async (playerEntry, i) => {
-		// Fetch the flag for the player
-		const response = await fetch(`${API_URL}/rest/get-flag?gdUsername=${encodeURIComponent(playerEntry.player)}`);
-		const data = await response.json();
+leaderboardData.forEach((playerEntry, i) => {
+    tableBody.innerHTML += `
+    <tr>
+        <td>
+            <span style="font-weight: bold; margin-right: 5px;">#${i + 1} </span>
+            <a href="#/" data-player="${playerEntry.player}">${playerEntry.player}</a>
+            <span id="flag-${playerEntry.player}"></span>
+        </td>
+        <td>${playerEntry.totalPoints.toFixed(2)}</td>
+    </tr>`
+});
+async function fetchFlag(player, size) {
+    const response = await fetch(`${API_URL}/rest/get-flag?gdUsername=${encodeURIComponent(player)}`);
+    const data = await response.json();
 
-		let flagElement = '';
-		if (data.success) {
-				const flag = data.flag;
-				flagElement = `<img src="https://flagcdn.com/20x15/${flag}.png" alt="${flag} flag">`; // Add the flag next to the player name
-		}
+    if (data.success) {
+        const flag = data.flag;
+        const flagElement = `<img src="https://flagcdn.com/${size}/${flag}.png" alt="${flag} flag">`; // Add the flag next to the player name
+        return flagElement;
+    }
 
-		tableBody.innerHTML += `
-		<tr>
-				<td>
-						<span style="font-weight: bold; margin-right: 5px;">#${i + 1} </span>
-						<a href="#/" data-player="${playerEntry.player}">${playerEntry.player}</a>
-						${flagElement}
-				</td>
-				<td>${playerEntry.totalPoints.toFixed(2)}</td>
-		</tr>`
-}))
+    return '';
+}
+// Fetch the flag for each player in the leaderboard
+await Promise.all(leaderboardData.map(async (playerEntry) => {
+    const flagElement = await fetchFlag(playerEntry.player, '20x15');
+    document.getElementById(`flag-${playerEntry.player}`).innerHTML = flagElement;
+}));
 
 	// Setup search bar
 	let searchBar = document.getElementById(`search-input`)
@@ -203,12 +210,13 @@ async function Setup() {
 
 	playerLinks.forEach(playerLink => {
 		let playerEntry = GetPlayer(playerLink.innerHTML)
+		let flagPromise = fetchFlag(playerEntry.player, '40x30');
 		let txt = `
 		<div class="overlay"></div>
 		<div class="popup-box profile">
 			<div style="position: sticky; top: 0; display: flex; justify-content: center; width: 100%;">
 				<div class="popup-header">
-					<span style="font-size: 2rem; margin-bottom: 0.25em;">${playerEntry.player}</span>
+				<span style="font-size: 2rem; margin-bottom: 0.25em;" id="player-name-${playerEntry.player}">${playerEntry.player} <span id="popup-flag-${playerEntry.player}"></span></span>
 					<span>Points: ${playerEntry.totalPoints.toFixed(2)}</span>
 				</div>
 				<div>
@@ -269,12 +277,18 @@ async function Setup() {
 			let tl = gsap.timeline({ defaults: { opacity: 0, duration: 0.3, ease: `0.2, 0, 0.38, 0.9`, onReverseComplete: OnClose }})
 			tl.from(`.popup-box`, { y: -50 })
 			tl.from(`.overlay`, {}, 0)
+			
 
 			// Handle click events on the close button
 			let closeBtn = wrapper.querySelector(`.close-button`)
 
 			// Animate popup closing
 			closeBtn.addEventListener(`click`, () => { tl.reverse() })
+
+			// Update the popup header with the flag when it's loaded
+			flagPromise.then(flagElement => {
+				document.getElementById(`popup-flag-${playerEntry.player}`).innerHTML = flagElement;
+			});
 
 			function OnClose() {
 				// Close popup
