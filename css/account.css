@@ -16,7 +16,8 @@
     max-width: 800px; /* Adjust as needed */
 }
 .fas {
-    margin: 6px;
+    margin-left: 0px;
+    margin-right: 10px;
 }
 /* CSS styles... */
 .admin-button {
