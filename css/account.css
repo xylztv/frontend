@@ -1,4 +1,151 @@
 
+  
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.Btn {
+    --black: #000000;
+    --ch-black: #141414;
+    --eer-black: #1b1b1b;
+    --night-rider: #2e2e2e;
+    --white: #ffffff;
+    --af-white: #f3f3f3;
+    --ch-white: #e1e1e1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-left:auto;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition-duration: .3s;
+    box-shadow: 2px 2px 6px rgb(20, 20, 20);
+    background-color: rgb(20, 20, 20);
+    white-space: nowrap;
+  }
+  
+  /* plus sign */
+  .sign {
+    width: 100%;
+    transition-duration: .3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .sign svg {
+    width: 17px;
+  }
+  
+  .sign svg path {
+    fill: var(--af-white);
+  }
+  /* text */
+  .text {
+    position: absolute;
+    right: 0%;
+    width: 0%;
+    opacity: 0;
+    color: var(--af-white);
+    font-size: 1.2em;
+    font-weight: 600;
+    transition-duration: .3s;
+  }
+  /* hover effect on button width */
+  .Btn:hover {
+    width: 125px;
+    border-radius: 5px;
+    transition-duration: .3s;
+  }
+  
+  .Btn:hover .sign {
+    width: 30%;
+    transition-duration: .3s;
+    padding-left: 20px;
+  }
+  /* hover effect button's text */
+  .Btn:hover .text {
+    opacity: 1;
+    width: 70%;
+    transition-duration: .3s;
+    padding-right: 10px;
+  }
+  /* button click effect*/
+  .Btn:active {
+    transform: translate(2px ,2px);
+  }
+
+
+
+  .edit-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgb(20, 20, 20);
+    border: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 2px 2px 10px rgb(20, 20, 20);
+    cursor: pointer;
+    transition-duration: 0.3s;
+    overflow: hidden;
+    position: relative;
+    text-decoration: none !important;
+  }
+  
+  .edit-svgIcon {
+    width: 17px;
+    transition-duration: 0.3s;
+  }
+  
+  .edit-svgIcon path {
+    fill: white;
+  }
+  
+  .edit-button:hover {
+    width: 120px;
+    border-radius: 50px;
+    transition-duration: 0.3s;
+    background-color: rgb(255, 69, 69);
+    align-items: center;
+  }
+  
+  .edit-button:hover .edit-svgIcon {
+    width: 20px;
+    transition-duration: 0.3s;
+    transform: translateY(60%);
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+  
+  .edit-button::before {
+    display: none;
+    content: "Change Password";
+    color: white;
+    transition-duration: 0.3s;
+    font-size: 2px;
+  }
+  
+  .edit-button:hover::before {
+    display: block;
+    padding-right: 10px;
+    font-size: 13px;
+    opacity: 1;
+    transform: translateY(0px);
+    transition-duration: 0.3s;
+  }
+  
 #gdUsernameDisplay {
     /* This ensures there is a little space between the username and the buttons */
     margin-right: 8px;
@@ -23,11 +170,12 @@
 .admin-button {
     display: none;
     border-radius: 4px;
-    background-color: #3d405b;
+    background-color: #202020;
+    box-shadow: 2px 2px 10px rgb(20, 20, 20);
     border: none;
     color: #FFFFFF;
     text-align: center;
-    font-size: 17px;
+    font-size: 15px;
     padding: 16px;
     padding-top: 8px;
     padding-bottom: 8px;
@@ -35,8 +183,9 @@
     width: auto;
     transition: all 0.5s;
     cursor: pointer;
-    margin: 5px;
+    margin: 10px;
     margin-left: auto; /* This will push the button to the right */
+    margin-top: auto;
 }
 
 .admin-button span {
