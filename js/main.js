@@ -27,7 +27,7 @@ async function addListItems(data) {
     const middle = document.querySelector(".middle");
     const fragment = document.createDocumentFragment();
     data.sort((a, b) => a.ranking - b.ranking);
-    data.slice(5).forEach(item => {
+    data.slice(9).forEach(item => {
         fragment.appendChild(createListItem(item));
     });
 
