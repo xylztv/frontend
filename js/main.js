@@ -41,17 +41,6 @@ async function addListItems(data) {
     });
 }
 
-async function updatePlaceholdersWithActualData(data) {
-    const middle = document.querySelector(".middle");
-    const placeholders = middle.querySelectorAll(".placeholder");
-    placeholders.forEach((placeholder, index) => {
-        const item = data[index];
-        const listItem = createListItem(item);
-        placeholder.replaceWith(listItem);
-    });
-
-    assignCopyButtons();
-}
 
 function createListItem(item) {
     const videoID = getVideoID(item.link);
