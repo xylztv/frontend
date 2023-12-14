@@ -192,7 +192,7 @@ function displayUserDetails(data) {
         fetchUserCreatedLevels(gdusername).then(levels => {
             levelLoader.style.display = 'none'; // Hide loader
 
-            if (levels.length === 0) {
+            if (levels.length === 0 && !levels.some(level => level.status === 'Pending')) {
                 document.getElementById('gdLevelsField').style.display = 'none'; // Hide "Your Levels" section if no levels
             } else {
                 const levelsContainer = document.getElementById('gdCreatedLevelsContainer');
