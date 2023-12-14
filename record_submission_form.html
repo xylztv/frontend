@@ -36,6 +36,41 @@
   align-items: center;
   height: 100vh; /* This ensures the container takes up the full viewport height */
 }
+        .loader {
+        display: block;
+        --height-of-loader: 4px;
+        --loader-color: #0071e2;
+        width: 130px;
+        height: var(--height-of-loader);
+        border-radius: 30px;
+        background-color: rgba(0,0,0,0.2);
+        position: relative;
+        }
+
+        .loader::before {
+        content: "";
+        position: absolute;
+        background: var(--loader-color);
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 100%;
+        border-radius: 30px;
+        animation: moving 1s ease-in-out infinite;
+        ;
+        }
+
+        @keyframes moving {
+        50% {
+            width: 100%;
+        }
+
+        100% {
+            width: 0;
+            right: 0;
+            left: unset;
+        }
+        }
         .form-container {
             max-width: 400px;
             margin: 0 auto;
@@ -104,7 +139,6 @@
                 <a class="nav-link-button" href="/signin.html">Sign In</a>
             </li>
             <button class="button-54" role="button" onclick="window.location.href='legacy.html'">legacy</button>
-            <button class="button-54" role="button" onclick="window.location.href='/removed.html'">Removed</button>    
             <button class="button-54" role="button" onclick="window.location.href='/leaderboard.html'">Leaderboard</button>  
         </div>
         <div class="hamburger-menu">
@@ -146,7 +180,7 @@
 </div>
 
 <div class="form-group">
-  <label for="youtubeLinkRecord">YouTube Record Link:</label>
+  <label for="youtubeLinkRecord">YouTube Video Link:</label>
   <div class="input-group">
       <input type="text" class="form-control" id="youtubeLinkRecord" name="youtubeLinkRecord">
       <div class="input-group-append">
@@ -157,11 +191,11 @@
 </div>
             <div class="form-group">
               <label for="percentage">Percentage:</label>
-              <input type="number" class="form-control" id="percentage" name="percentage" min="0" max="100" required>
+              <input type="number" class="form-control" id="percentage" name="percentage" min="0" max="100" required value="100">
               <div id="percentageError" class="invalid-feedback">Percentage should be 60% or higher.</div>
           </div>
           
-            <input type="submit" class="btn btn-primary" value="Submit">
+            <input type="submit" class="btn btn-primary" id="submitButton" value="Submit"><div id="loader" class="loader mt-3" style="display: none;"></div>
         </form>
     </div>
 </div>

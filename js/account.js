@@ -32,13 +32,28 @@ async function fetchUserDetails() {
 }
 async function fetchUserCreatedLevels(gdUsername) {
     try {
-        const response = await fetch(`${API_URL}/rest/mainlist`);
-        if (response.ok) {
-            const levelsData = await response.json();
-            return levelsData.filter(level => level.creator.split(', ').includes(gdUsername)).sort((a, b) => a.ranking - b.ranking);
-        } else {
+        const [mainlistResponse, pendingLevelsResponse] = await Promise.all([
+            fetch(`${API_URL}/rest/mainlist`),
+            fetch(`${API_URL}/rest/user-pending-submissions`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+                }
+            })
+        ]);
+
+        if (!mainlistResponse.ok || !pendingLevelsResponse.ok) {
             throw new Error('Failed to fetch user created levels');
         }
+
+        const [mainlistData, pendingData] = await Promise.all([
+            mainlistResponse.json(),
+            pendingLevelsResponse.json()
+        ]);
+
+        const levelsData = [...mainlistData, ...pendingData.pendingLevels.map(level => ({...level, status: 'Pending'}))];
+
+        return levelsData.filter(level => level.creator.split(', ').includes(gdUsername)).sort((a, b) => a.ranking - b.ranking);
     } catch (error) {
         console.error('Error fetching user created levels:', error);
         toastr.error('Failed to fetch Geometry Dash levels.');
@@ -46,20 +61,27 @@ async function fetchUserCreatedLevels(gdUsername) {
 }
 
 async function fetchUserRecords(gdUsername) {
-    const [recordsResponse, mainlistResponse] = await Promise.all([
+    const [recordsResponse, mainlistResponse, pendingRecordsResponse] = await Promise.all([
         fetch(`${API_URL}/rest/records`),
-        fetch(`${API_URL}/rest/mainlist`)
+        fetch(`${API_URL}/rest/mainlist`),
+        fetch(`${API_URL}/rest/user-pending-submissions`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+            }
+        })
     ]);
 
-    if (!recordsResponse.ok || !mainlistResponse.ok) {
+    if (!recordsResponse.ok || !mainlistResponse.ok || !pendingRecordsResponse.ok) {
         console.error('Error fetching user records');
         toastr.error('Failed to fetch Geometry Dash records.');
         return;
     }
 
-    const [recordsData, mainlistData] = await Promise.all([
+    const [recordsData, mainlistData, pendingData] = await Promise.all([
         recordsResponse.json(),
-        mainlistResponse.json()
+        mainlistResponse.json(),
+        pendingRecordsResponse.json()
     ]);
 
     const challengesData = await GetChallenges();
@@ -93,10 +115,25 @@ async function fetchUserRecords(gdUsername) {
         });
     }
 
+    // Add pending records
+    for (const record of pendingData.pendingRecords) {
+        const level = mainlistData.find(level => level.id === record.level_id);
+        records.push({
+            id: record.level_id,
+            name: level ? level.title : 'Unknown',
+            progress: record.percent,
+            verified: false,
+            link: record.link,
+            points: level ? GetPoints(level.ranking, parseInt(record.percent)) : 0,
+            rank: level ? level.ranking : 'Unknown',
+            status: 'Pending'
+        });
+    }
+
     records.sort((a, b) => parseFloat(b.points) - parseFloat(a.points)); // Sort records by points
+
     return records;
 }
-
 function displayUserDetails(data) {
     document.getElementById('usernameDisplay').innerText = data.username;
 
@@ -137,7 +174,7 @@ function displayUserDetails(data) {
                 row.innerHTML = `
                     <td><a href="${record.link}" target="_blank" style="color: inherit; text-decoration: none;">${record.name} (#${record.rank})</a></td>
                     <td><span class="badge ${getBadgeClassForPercentage(record.progress)}">${record.progress}</span></td>
-                    <td><span style="font-size: 0.8em;">${record.points.toFixed(2)}</span>${record.verified ? '<span class="badge badge-success" style="margin-left: 5px; background-color: #e795b7;">VERIFIER</span>' : ''}</td>
+                    <td><span style="font-size: 0.8em;">${record.points.toFixed(2)}</span>${record.verified ? '<span class="badge badge-success" style="margin-left: 5px; background-color: #e795b7;">VERIFIER</span>' : ''}${record.status === 'Pending' ? '<span class="badge badge-warning" style="margin-left: 5px;">Pending</span>' : ''}</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -163,7 +200,7 @@ function displayUserDetails(data) {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td><a href="${level.link}" target="_blank" style="color: inherit; text-decoration: none;">${level.title}</a></td>
-                    <td>${level.ranking}</td>
+                    <td>${level.status === 'Pending' ? '<span class="badge badge-warning">Pending</span>' : level.ranking}</td>
                 `;
                 tbody.appendChild(row);
             });

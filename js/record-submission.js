@@ -60,6 +60,12 @@ function validateYouTubeLink() {
 
 document.getElementById('recordForm').addEventListener('submit', async (e) => {
     e.preventDefault();
+    const submitButton = document.getElementById('submitButton');
+    const loader = document.getElementById('loader');
+
+    // Disable the submit button and show the loader
+    submitButton.disabled = true;
+    loader.style.display = 'block';
 
     const levelId = document.getElementById('levelDropdown').value;
     const playerName = document.getElementById('playerName').value;
@@ -86,6 +92,9 @@ document.getElementById('recordForm').addEventListener('submit', async (e) => {
         })
 
             .then(async (response) => {
+                // Re-enable the submit button and hide the loader
+                submitButton.disabled = false;
+                loader.style.display = 'none';
                 const responseData = await response.json();
                 if (response.ok) {
                     toastr.success('Record submitted successfully!', 'Success');
@@ -98,10 +107,16 @@ document.getElementById('recordForm').addEventListener('submit', async (e) => {
                 }
             })
             .catch((error) => {
+                // Re-enable the submit button and hide the loader
+                submitButton.disabled = false;
+                loader.style.display = 'none';
                 console.error("Error:", error);
                 toastr.error('Error submitting record.', 'Error');
             });
     } else {
+        // Re-enable the submit button and hide the loader
+        submitButton.disabled = false;
+        loader.style.display = 'none';
         toastr.error('Please fill in all required fields correctly.', 'Error');
     }
 });
@@ -134,6 +149,21 @@ function validatePercentage() {
 
 
 document.addEventListener('DOMContentLoaded', async () => {
+
+    // Get the GDusername of the authenticated user
+    const response = await fetch(`${API_URL}/get-gdusername`, {
+        headers: headers
+    });
+    const data = await response.json();
+
+    // If the user has a GDusername, set it as the value of the playerName field
+    if (data.gdusername) {
+        const playerNameInput = document.getElementById('playerName');
+        playerNameInput.value = data.gdusername;
+        playerNameInput.readOnly = true;
+        validateUsername("playerName", document.getElementById("playerName").value)
+    }
+
     const levelDropdown = document.getElementById('levelDropdown');
     const levels = await fetchLevels();
 
@@ -157,6 +187,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         levelDropdown.value = levelId;
         console.log(levelId)
     }
+
+
 });
 
 // Event Listeners

@@ -155,8 +155,6 @@ submitButton.disabled = true;
   const creatorInputs = document.querySelectorAll('#creatorFields input[name="creator"]');
   const creators = Array.from(creatorInputs).map(input => input.value).join(', ');
 
-  console.log(creators)
-
   const isYouTubeLinkValid = validateYouTubeLink();
   const isVerifierValid = await validateUsername("verifier", verifier);
   const creatorList = creators.split(',').map(creator => creator.trim());
