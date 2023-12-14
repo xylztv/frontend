@@ -396,7 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Add each flag to the flag container
         Object.keys(countryCodes).forEach(countryCode => {
             const flagElement = document.createElement('img');
-            flagElement.src = `https://flagcdn.com/64x48/${countryCode}.png`;
+            flagElement.src = `https://flagcdn.com/36x27/${countryCode}.png`;
             flagElement.dataset.countryCode = countryCode;
             flagElement.onclick = selectFlag;
             flagElement.className = 'flag';
