@@ -7,8 +7,7 @@ async function fetchUserDetails() {
     try {
         const storedUserData = localStorage.getItem('userData');
         if (storedUserData) {
-            const userData = JSON.parse(storedUserData);
-            displayUserDetails(userData);
+            displayUserDetails(JSON.parse(storedUserData));
         } else {
             const response = await fetch(`${API_URL}/rest/users`, {
                 method: 'GET',
@@ -30,30 +29,39 @@ async function fetchUserDetails() {
         toastr.error('Failed to fetch account details.');
     }
 }
+
+async function fetchUserFlag() {
+    const gdUsername = document.getElementById('gdUsernameDisplay').textContent;
+    if (!gdUsername) return;
+
+    const response = await fetch(`${API_URL}/rest/get-flag?gdUsername=${encodeURIComponent(gdUsername)}`);
+    if (!response.ok) throw new Error('Failed to fetch flag');
+
+    const data = await response.json();
+    const flagIcon = document.getElementById('flagIcon');
+    if (data.flag) {
+        flagIcon.src = `https://flagcdn.com/24x18/${data.flag}.png`;
+    } else {
+        flagIcon.style.display = 'inline-block';
+        flagIcon.style.cursor = 'pointer';
+    }
+}
+
 async function fetchUserCreatedLevels(gdUsername) {
     try {
-        const [mainlistResponse, pendingLevelsResponse] = await Promise.all([
-            fetch(`${API_URL}/rest/mainlist`),
+        const [mainlistData, pendingData] = await Promise.all([
+            fetch(`${API_URL}/rest/mainlist`).then(res => res.json()),
             fetch(`${API_URL}/rest/user-pending-submissions`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('userToken')}`
                 }
-            })
+            }).then(res => res.json())
         ]);
 
-        if (!mainlistResponse.ok || !pendingLevelsResponse.ok) {
-            throw new Error('Failed to fetch user created levels');
-        }
-
-        const [mainlistData, pendingData] = await Promise.all([
-            mainlistResponse.json(),
-            pendingLevelsResponse.json()
-        ]);
-
-        const levelsData = [...mainlistData, ...pendingData.pendingLevels.map(level => ({...level, status: 'Pending'}))];
-
-        return levelsData.filter(level => level.creator.split(', ').includes(gdUsername)).sort((a, b) => a.ranking - b.ranking);
+        return [...mainlistData, ...pendingData.pendingLevels.map(level => ({...level, status: 'Pending'}))]
+            .filter(level => level.creator.split(', ').includes(gdUsername))
+            .sort((a, b) => a.ranking - b.ranking);
     } catch (error) {
         console.error('Error fetching user created levels:', error);
         toastr.error('Failed to fetch Geometry Dash levels.');
@@ -61,27 +69,15 @@ async function fetchUserCreatedLevels(gdUsername) {
 }
 
 async function fetchUserRecords(gdUsername) {
-    const [recordsResponse, mainlistResponse, pendingRecordsResponse] = await Promise.all([
-        fetch(`${API_URL}/rest/records`),
-        fetch(`${API_URL}/rest/mainlist`),
+    const [recordsData, mainlistData, pendingData] = await Promise.all([
+        fetch(`${API_URL}/rest/records`).then(res => res.json()),
+        fetch(`${API_URL}/rest/mainlist`).then(res => res.json()),
         fetch(`${API_URL}/rest/user-pending-submissions`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('userToken')}`
             }
-        })
-    ]);
-
-    if (!recordsResponse.ok || !mainlistResponse.ok || !pendingRecordsResponse.ok) {
-        console.error('Error fetching user records');
-        toastr.error('Failed to fetch Geometry Dash records.');
-        return;
-    }
-
-    const [recordsData, mainlistData, pendingData] = await Promise.all([
-        recordsResponse.json(),
-        mainlistResponse.json(),
-        pendingRecordsResponse.json()
+        }).then(res => res.json())
     ]);
 
     const challengesData = await GetChallenges();
@@ -115,7 +111,6 @@ async function fetchUserRecords(gdUsername) {
         });
     }
 
-    // Add pending records
     for (const record of pendingData.pendingRecords) {
         const level = mainlistData.find(level => level.id === record.level_id);
         records.push({
@@ -130,93 +125,107 @@ async function fetchUserRecords(gdUsername) {
         });
     }
 
-    records.sort((a, b) => parseFloat(b.points) - parseFloat(a.points)); // Sort records by points
-
+    records.sort((a, b) => parseFloat(b.points) - parseFloat(a.points));
     return records;
 }
+
 function displayUserDetails(data) {
-    document.getElementById('usernameDisplay').innerText = data.username;
+    const { username, permission_level, gdusername, joinDate } = data;
+    document.getElementById('usernameDisplay').innerText = username;
 
     const gdUsernameDisplay = document.getElementById('gdUsernameDisplay');
     const linkGdAccountBtn = document.getElementById('linkGdAccountBtn');
     const unlinkGdAccountBtn = document.getElementById('unlinkGdAccountBtn');
+    const recordLoader = document.getElementById('recordLoader');
+    const levelLoader = document.getElementById('levelLoader');
 
-    if (data.permission_level >= 1) {
+    if (permission_level >= 1) {
         document.getElementById('adminTag').style.display = 'inline';
         document.getElementById('adminPanelBtn').style.display = 'inline-block';
     }
 
-    if (data.gdusername) {
-        gdUsernameDisplay.innerText = data.gdusername;
+    if (gdusername) {
+        gdUsernameDisplay.innerText = gdusername;
         linkGdAccountBtn.style.display = 'none';
         unlinkGdAccountBtn.style.display = 'block';
         gdRecordsField.style.display = 'block';
-        gdLevelsField.style.display = 'block'
-        // Fetch and display user records
-        fetchUserRecords(data.gdusername).then(records => {
-            const recordsContainer = document.getElementById('gdRecordsContainer');
-            recordsContainer.innerHTML = `
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Level</th>
-                            <th>Progress</th>
-                            <th>Points</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            `;
-            const tbody = recordsContainer.querySelector('tbody');
-            records.forEach(record => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><a href="${record.link}" target="_blank" style="color: inherit; text-decoration: none;">${record.name} (#${record.rank})</a></td>
-                    <td><span class="badge ${getBadgeClassForPercentage(record.progress)}">${record.progress}</span></td>
-                    <td><span style="font-size: 0.8em;">${record.points.toFixed(2)}</span>${record.verified ? '<span class="badge badge-success" style="margin-left: 5px; background-color: #e795b7;">VERIFIER</span>' : ''}${record.status === 'Pending' ? '<span class="badge badge-warning" style="margin-left: 5px;">Pending</span>' : ''}</td>
+        gdLevelsField.style.display = 'block';
+
+        fetchUserRecords(gdusername).then(records => {
+            recordLoader.style.display = 'none'; // Hide loader
+
+            if (records.length === 0) {
+                document.getElementById('gdRecordsField').style.display = 'none'; // Hide "Your Records" section if no records
+            } else {
+                const recordsContainer = document.getElementById('gdRecordsContainer');
+                recordsContainer.innerHTML = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Level</th>
+                                <th>Progress</th>
+                                <th>Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 `;
-                tbody.appendChild(row);
-            });
+                const tbody = recordsContainer.querySelector('tbody');
+                records.forEach(record => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><a href="${record.link}" target="_blank" style="color: inherit; text-decoration: none;">${record.name} (#${record.rank})</a></td>
+                        <td><span class="badge ${getBadgeClassForPercentage(record.progress)}">${record.progress}</span></td>
+                        <td><span style="font-size: 0.8em;">${record.points.toFixed(2)}</span>${record.verified ? '<span class="badge badge-success" style="margin-left: 5px; background-color: #e795b7;">VERIFIER</span>' : ''}${record.status === 'Pending' ? '<span class="badge badge-warning" style="margin-left: 5px;">Pending</span>' : ''}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
         });
 
-        // Fetch and display user created levels
-        fetchUserCreatedLevels(data.gdusername).then(levels => {
-            const levelsContainer = document.getElementById('gdCreatedLevelsContainer');
-            levelsContainer.innerHTML = `
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Level</th>
-                            <th>Ranking</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            `;
-            const tbody = levelsContainer.querySelector('tbody');
-            levels.forEach(level => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><a href="${level.link}" target="_blank" style="color: inherit; text-decoration: none;">${level.title}</a></td>
-                    <td>${level.status === 'Pending' ? '<span class="badge badge-warning">Pending</span>' : level.ranking}</td>
+        fetchUserCreatedLevels(gdusername).then(levels => {
+            levelLoader.style.display = 'none'; // Hide loader
+
+            if (levels.length === 0) {
+                document.getElementById('gdLevelsField').style.display = 'none'; // Hide "Your Levels" section if no levels
+            } else {
+                const levelsContainer = document.getElementById('gdCreatedLevelsContainer');
+                levelsContainer.innerHTML = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Level</th>
+                                <th>Ranking</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 `;
-                tbody.appendChild(row);
-            });
+                const tbody = levelsContainer.querySelector('tbody');
+                levels.forEach(level => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><a href="${level.link}" target="_blank" style="color: inherit; text-decoration: none;">${level.title}</a></td>
+                        <td>${level.status === 'Pending' ? '<span class="badge badge-warning">Pending</span>' : level.ranking}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
         });
     } else {
         gdUsernameDisplay.innerText = '';
         linkGdAccountBtn.style.display = 'block';
         unlinkGdAccountBtn.style.display = 'none';
         gdRecordsField.style.display = 'none';
-        gdLevelsField.style.display = 'none'
+        gdLevelsField.style.display = 'none';
     }
 
-    const isoDate = data.joinDate;
-    const date = new Date(isoDate);
+    const date = new Date(joinDate);
     const formattedDate = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}`;
     document.getElementById('joinDateDisplay').innerText = formattedDate;
+    fetchUserFlag();
 }
 
 function getBadgeClassForPercentage(percentage) {
@@ -232,7 +241,6 @@ function getBadgeClassForPercentage(percentage) {
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchUserDetails();
-    fetchUserFlag();
     let countryCodes = {};
 
     // Fetch the list of country codes when the page loads
@@ -443,43 +451,6 @@ function updateFlag(flag) {
     }).catch(error => {
         console.error('Error updating flag:', error);
     });
-}
-async function fetchUserFlag() {
-    // Get the GD account name
-    const gdUsername = document.getElementById('gdUsernameDisplay').textContent;
-
-    // Check if the user has a linked GD account
-    if (!gdUsername) {
-        toastr.error('No linked GD account found.');
-        return;
-    }
-
-    // Send the request to the server
-    const response = await fetch(`${API_URL}/rest/get-flag?gdUsername=${encodeURIComponent(gdUsername)}`);
-    if (!response.ok) {
-        throw new Error('Failed to fetch flag');
-    }
-    const data = await response.json();
-
-     // Check if the user has a flag
-     if (data.flag) {
-        // Create a new flag icon
-        const flagIcon = document.createElement('img');
-        flagIcon.src = `https://flagcdn.com/24x18/${data.flag}.png`;
-        flagIcon.id = 'flagIcon';
-        flagIcon.style.marginRight = '10px';
-        flagIcon.style.cursor = 'pointer';
-        flagIcon.onclick = loadFlagsIntoModal;
-
-
-        // Replace the old flag icon with the new one
-        const oldFlagIcon = document.getElementById('flagIcon');
-        oldFlagIcon.parentNode.replaceChild(flagIcon, oldFlagIcon);
-    } else {
-        // If the user doesn't have a flag, show the flag icon
-        document.getElementById('flagIcon').style.display = 'inline-block';
-        document.getElementById('flagIcon').style.cursor = 'pointer';
-    }
 }
 });
 
