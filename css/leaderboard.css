@@ -3,7 +3,7 @@
 }
 #leaderboard-table {
     width: 100%;
-    box-shadow: 0 10px 30px 5px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 30px 5px rgba(0, 0, 0, 0.2);
 }
 
 #leaderboard-table thead tr:first-child th, 
