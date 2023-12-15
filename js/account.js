@@ -134,6 +134,26 @@ async function fetchUserRecords(gdUsername) {
 
     return records;
 }
+async function fetchUserRejectedSubmissions() {
+    try {
+        const response = await fetch(`${API_URL}/rest/user-rejected-submissions`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch user rejected submissions');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching user rejected submissions:', error);
+        toastr.error('Failed to fetch rejected submissions.');
+    }
+}
 function displayUserDetails(data) {
     const { username, permission_level, gdusername, joinDate } = data;
     document.getElementById('usernameDisplay').innerText = username;
@@ -218,7 +238,54 @@ function displayUserDetails(data) {
                     tbody.appendChild(row);
                 });
             }
+            // Fetch and display rejected submissions after levels are added
+        fetchUserRejectedSubmissions().then(rejectedSubmissions => {
+            if (rejectedSubmissions) {
+                const levelsContainer = document.getElementById('gdCreatedLevelsContainer');
+                let levelsTbody = levelsContainer.querySelector('tbody');
+
+                // Add a divider row to levels table
+                const levelsDividerRow = document.createElement('tr');
+                levelsDividerRow.innerHTML = `<td colspan="2"><hr style="border-width: 2px; border-color: #7777;"></td>`;
+                levelsTbody.appendChild(levelsDividerRow);
+
+                // Add rejected levels
+                rejectedSubmissions.rejectedLevels.forEach(level => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><a href="${level.link}" target="_blank" style="color: inherit; text-decoration: none;">${level.title}</a></td>
+                        <td><span class="badge badge-danger">Rejected</span></td>
+                    `;
+                    levelsTbody.appendChild(row);
+                });
+                const recordsContainer = document.getElementById('gdRecordsContainer');
+                let recordsTbody = recordsContainer.querySelector('tbody');
+
+                // Fetch mainlist data
+                fetch(`${API_URL}/rest/mainlist`).then(response => response.json()).then(mainlistData => {
+                    // Add a divider row to records table
+                    const recordsDividerRow = document.createElement('tr');
+                    recordsDividerRow.innerHTML = `<td colspan="3"><hr style="border-width: 2px; border-color: #7777;"></td>`;
+                    recordsTbody.appendChild(recordsDividerRow);
+
+                    // Add rejected records
+                    rejectedSubmissions.rejectedRecords.forEach(record => {
+                        // Find the corresponding level in the mainlist data
+                        const level = mainlistData.find(level => level.id === record.level_id);
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><a href="${record.link}" target="_blank" style="color: inherit; text-decoration: none;">${level ? level.title : 'Unknown'}</a></td>
+                            <td><span class="badge badge-success">${record.percent}</td>
+                            <td></span><span class="badge badge-danger">Rejected</span></td>
+                        `;
+                        recordsTbody.appendChild(row);
+                    });
+                });
+            }
         });
+        });
+        
     } else {
         gdUsernameDisplay.innerText = '';
         linkGdAccountBtn.style.display = 'block';
