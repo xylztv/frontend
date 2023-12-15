@@ -8,15 +8,21 @@ async function fetchUserDetails() {
         const storedUserData = localStorage.getItem('userData');
         if (storedUserData) {
             const userData = JSON.parse(storedUserData);
-            displayUserDetails(userData);
-        } else {
-            const response = await fetch(`${API_URL}/rest/users`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+            if (userData.gdusername) {
+                displayUserDetails(userData);
+            } else {
+                // GD username not found in stored user data, fetch user data again
+                const response = await fetchUserData();
+                if (response.ok) {
+                    const freshUserData = await response.json();
+                    localStorage.setItem('userData', JSON.stringify(freshUserData));
+                    displayUserDetails(freshUserData);
+                } else {
+                    throw new Error('Failed to fetch user details');
                 }
-            });
-
+            }
+        } else {
+            const response = await fetchUserData();
             if (response.ok) {
                 const userData = await response.json();
                 localStorage.setItem('userData', JSON.stringify(userData));
@@ -29,6 +35,14 @@ async function fetchUserDetails() {
         console.error('Error fetching user details:', error);
         toastr.error('Failed to fetch account details.');
     }
+}
+async function fetchUserData() {
+    return await fetch(`${API_URL}/rest/users`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+        }
+    });
 }
 async function fetchUserCreatedLevels(gdUsername) {
     try {
@@ -538,16 +552,13 @@ function updateFlag(flag) {
     });
 }
 async function fetchUserFlag() {
-    // Get the GD account name
-    const gdUsername = document.getElementById('gdUsernameDisplay').textContent;
-
-    // Check if the user has a linked GD account
-    if (!gdUsername) {
-        toastr.error('No linked GD account found.');
-        return;
-    }
-
-    // Send the request to the server
+    let gdUsername = null
+    const userDataResponse = await fetchUserData();
+            if (userDataResponse.ok) {
+                const userData = await userDataResponse.json();
+                // Get the GD account name
+                gdUsername = userData.gdUsername;
+                // Send the request to the server
     const response = await fetch(`${API_URL}/rest/get-flag?gdUsername=${encodeURIComponent(gdUsername)}`);
     if (!response.ok) {
         throw new Error('Failed to fetch flag');
@@ -572,6 +583,7 @@ async function fetchUserFlag() {
         // If the user doesn't have a flag, show the flag icon
         document.getElementById('flagIcon').style.display = 'inline-block';
         document.getElementById('flagIcon').style.cursor = 'pointer';
+    }
     }
 }
 });
