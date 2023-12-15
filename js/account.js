@@ -246,7 +246,7 @@ function displayUserDetails(data) {
 
                 // Add a divider row to levels table
                 const levelsDividerRow = document.createElement('tr');
-                levelsDividerRow.innerHTML = `<td colspan="2"><hr style="border-width: 2px; border-color: #7777;"></td>`;
+                levelsDividerRow.innerHTML = `<td colspan="2"><hr style="border-width: 2px; border-color: #333;"></td>`;
                 levelsTbody.appendChild(levelsDividerRow);
 
                 // Add rejected levels
@@ -265,7 +265,7 @@ function displayUserDetails(data) {
                 fetch(`${API_URL}/rest/mainlist`).then(response => response.json()).then(mainlistData => {
                     // Add a divider row to records table
                     const recordsDividerRow = document.createElement('tr');
-                    recordsDividerRow.innerHTML = `<td colspan="3"><hr style="border-width: 2px; border-color: #7777;"></td>`;
+                    recordsDividerRow.innerHTML = `<td colspan="3"><hr style="border-width: 2px; border-color: #333;"></td>`;
                     recordsTbody.appendChild(recordsDividerRow);
 
                     // Add rejected records
