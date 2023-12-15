@@ -149,10 +149,10 @@ async function Setup() {
 			<h1>Leaderboard</h1>
 		</div>
 		<div class="row mt-3 mb-2">
-			<input type="text" class="form-control col-6" id="search-input" placeholder="Search player...">
+			<input type="text" class="form-control col-6" id="search-input" placeholder="Search player..." style="border-radius: 20px;">
 		</div>
 		<div class="row">
-			<table id="leaderboard-table" class="table">
+			<table id="leaderboard-table" class="table" style="background-color: #fff; border-radius: 20px;">
 				<thead>
 					<tr>
 						<th>Player</th>
@@ -179,6 +179,19 @@ leaderboardData.forEach((playerEntry, i) => {
         <td>${playerEntry.totalPoints.toFixed(2)}</td>
     </tr>`
 });
+var pattern = trianglify({
+	width: window.innerWidth,
+	height: document.body.scrollHeight,
+	cellSize: 200, // Adjust this value as needed
+	xColors: ['#ffb727', '#ff6347', '#75ca4e'], // More contrasting colors
+	colorFunction: trianglify.colorFunctions.interpolateLinear(0.5),
+	seed: Math.random().toString(36).substring(7)
+});
+
+document.body.style.backgroundImage = 'url(' + pattern.toCanvas().toDataURL() + ')';
+document.body.style.backgroundColor = '#ffffff'; // Set a background color
+
+
 async function fetchFlag(player, size) {
     const response = await fetch(`${API_URL}/rest/get-flag?gdUsername=${encodeURIComponent(player)}`);
     const data = await response.json();
@@ -215,7 +228,7 @@ await Promise.all(leaderboardData.map(async (playerEntry) => {
 
 	// Setup popup window
 	let playerLinks = tableBody.querySelectorAll(`a`)
-
+	
 	playerLinks.forEach(playerLink => {
 		let playerEntry = GetPlayer(playerLink.innerHTML)
 		let flagPromise = fetchFlag(playerEntry.player, '40x30');
@@ -305,10 +318,9 @@ await Promise.all(leaderboardData.map(async (playerEntry) => {
 			}
 		})
 	})
-
+	
 }
 
 loadCountryCodes().then(() => {
 	Setup();
 });
-
