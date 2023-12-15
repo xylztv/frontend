@@ -133,9 +133,7 @@
             </label>
             <ul class="menu">
                 <li role="button" onclick="window.location.href='/leaderboard.html'">Leaderboard</li>
-                <li role="button" onclick="window.location.href='/removed.html'">Removed</li>
                 <li role="button" onclick="window.location.href='/legacy.html'">Legacy</li>
-                <li role="button" onclick="window.location.href='/about.html'">About</li>
                 <li role="button" class="loggedOutButtons" onclick="window.location.href='/signin.html'">Sign in</li>
                 <li role="button" class="loggedOutButtons" onclick="window.location.href='/signup.html'">Sign Up</li>
                 <li role="button" class="loggedInButton" onclick="window.location.href='/account.html'">Account</li>
@@ -259,5 +257,19 @@ document.getElementById('confirmPassword').addEventListener('input', checkFormSt
         <link rel="stylesheet" href="css/middle.css" defer>
         <link rel="stylesheet" href="css/footer.css" defer>
         <script type="module" data-cfasync="false" src="js/authCheck.js" defer></script>
+        <script src='https://unpkg.com/trianglify@^4/dist/trianglify.bundle.js'></script>
+        <script>
+            var pattern = trianglify({
+                width: window.innerWidth,
+                height: window.innerHeight,
+                cellSize: 200, // Adjust this value as needed
+                xColors: ['#ffb727', '#ff6347', '#75ca4e'], // More contrasting colors
+                colorFunction: trianglify.colorFunctions.interpolateLinear(0.5),
+                seed: Math.random().toString(36).substring(7)
+            });
+        
+            document.body.style.backgroundImage = 'url(' + pattern.toCanvas().toDataURL() + ')';
+            document.body.style.backgroundColor = '#ffffff'; // Set a background color
+        </script>
 </body>
 </html>

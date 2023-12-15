@@ -47,9 +47,7 @@
             </label>
             <ul class="menu">
                 <li role="button" onclick="window.location.href='/leaderboard.html'">Leaderboard</li>
-                <li role="button" onclick="window.location.href='/removed.html'">Removed</li>
                 <li role="button" onclick="window.location.href='/legacy.html'">Legacy</li>
-                <li role="button" onclick="window.location.href='/about.html'">About</li>
                 <li role="button" class="loggedOutButtons" onclick="window.location.href='/signin.html'">Sign in</li>
                 <li role="button" class="loggedOutButtons" onclick="window.location.href='/signup.html'">Sign Up</li>
                 <li role="button" class="loggedInButton" onclick="window.location.href='/account.html'">Account</li>
@@ -211,22 +209,22 @@
 </div>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/trianglify/2.0.0/trianglify.min.js"></script>
+    <script src='https://unpkg.com/trianglify@^4/dist/trianglify.bundle.js'></script>
     <script data-cfasync="false" type="module" src="js/account.js" ></script>
     <link rel="stylesheet" href="css/main.css" defer>
     <link rel="stylesheet" href="css/header.css" defer>
     <script type="module" data-cfasync="false" src="js/authCheck.js" defer></script>
     <script>
-        var pattern = Trianglify({
+        var pattern = trianglify({
             width: window.innerWidth,
             height: window.innerHeight,
-            cell_size: 80, // Adjust this value as needed
-            x_colors: ['#ffb727', '#ff6347', '#75ca4e'], // More contrasting colors
-            y_colors: 'match_x', // This will match the y-colors to the x-colors
+            cellSize: 200, // Adjust this value as needed
+            xColors: ['#ffb727', '#ff6347', '#75ca4e'], // More contrasting colors
+            colorFunction: trianglify.colorFunctions.interpolateLinear(0.5),
             seed: Math.random().toString(36).substring(7)
         });
     
-        document.body.style.backgroundImage = 'url(' + pattern.png() + ')';
+        document.body.style.backgroundImage = 'url(' + pattern.toCanvas().toDataURL() + ')';
         document.body.style.backgroundColor = '#ffffff'; // Set a background color
     </script>
 </body>
