@@ -82,7 +82,8 @@ function validateYouTubeLink() {
     const youtubeLinkError = document.getElementById("youtubeLinkError");
 
     const youtubeRegex = /^(https?:\/\/)?(www\.)?youtube.com\/watch\?v=([\w-]{11})(?:&[\w\-=]*)?$/;
-    const isValidLink = youtubeRegex.test(youtubeLink);
+    const shortYoutubeRegex = /^(https?:\/\/)?(www\.)?youtu.be\/([\w-]{11})$/;
+    const isValidLink = youtubeRegex.test(youtubeLink) || shortYoutubeRegex.test(youtubeLink);
 
     if (youtubeLink === "") {
         isYouTubeLinkPresent = false;
