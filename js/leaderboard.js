@@ -182,7 +182,7 @@ leaderboardData.forEach((playerEntry, i) => {
 var pattern = trianglify({
 	width: window.innerWidth,
 	height: document.body.scrollHeight,
-	cellSize: 200, // Adjust this value as needed
+	cellSize: 300, // Adjust this value as needed
 	xColors: ['#ffb727', '#ff6347', '#75ca4e'], // More contrasting colors
 	colorFunction: trianglify.colorFunctions.interpolateLinear(0.5),
 	seed: Math.random().toString(36).substring(7)
