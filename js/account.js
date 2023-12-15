@@ -44,6 +44,115 @@ async function fetchUserData() {
         }
     });
 }
+async function loadFlagsIntoModal() {
+    const flagContainer = document.getElementById('flagContainer');
+
+    // Clear the flag container
+    flagContainer.innerHTML = '';
+
+    // Fetch the list of country codes
+    const response = await fetch('https://flagcdn.com/en/codes.json');
+    const countryCodes = await response.json();
+
+    // Add each flag to the flag container
+    Object.keys(countryCodes).forEach(countryCode => {
+        const flagElement = document.createElement('img');
+        flagElement.src = `https://flagcdn.com/36x27/${countryCode}.png`;
+        flagElement.dataset.countryCode = countryCode;
+        flagElement.onclick = selectFlag;
+        flagElement.className = 'flag';
+        flagElement.style.cursor = 'pointer';
+        flagElement.title = countryCodes[countryCode]; // Add the country name as a tooltip
+        flagContainer.appendChild(flagElement);
+    });
+
+    $('#flagModal').modal('show');
+}
+
+function selectFlag(event) {
+    const flagElement = event.target;
+    const countryCode = flagElement.dataset.countryCode;
+    updateFlag(countryCode);
+}
+
+function updateFlag(flag) {
+// Get the user token from local storage
+const userToken = localStorage.getItem('userToken');
+
+// Send the request to the server
+fetch(`${API_URL}/rest/update-flag`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userToken}`
+    },
+    body: JSON.stringify({
+        flag: flag
+    })
+}).then(response => {
+    if (!response.ok) {
+        throw new Error('Failed to update flag');
+    }
+    return response.json();
+}).then(data => {
+    // The flag was updated successfully.
+    toastr.success('Successfully changed flag');
+    $('#flagModal').modal('hide'); // Close the modal
+    if (flag === '') {
+        // If the flag was removed, replace the flag image with the original flag icon
+        const flagIcon = document.createElement('i');
+        flagIcon.className = 'fas bi-globe-europe-africa';
+        flagIcon.id = 'flagIcon';
+        flagIcon.dataset.toggle = 'modal';
+        flagIcon.dataset.target = '#flagModal';
+        flagIcon.onclick = loadFlagsIntoModal;
+        flagIcon.style.display = 'inline-block';
+        flagIcon.style.fontSize = '20px';
+
+        const oldFlagIcon = document.getElementById('flagIcon');
+        oldFlagIcon.parentNode.replaceChild(flagIcon, oldFlagIcon);
+    } else {
+        fetchUserFlag(); // Refresh the flag of the user on the account
+    }
+}).catch(error => {
+    console.error('Error updating flag:', error);
+});
+}
+async function fetchUserFlag() {
+    let gdUsername = null
+    const userDataResponse = await fetchUserData();
+        if (userDataResponse.ok) {
+            const userData = await userDataResponse.json();
+            // Get the GD account name
+            gdUsername = userData.gdusername;
+            if (gdUsername){
+            // Send the request to the server
+            const response = await fetch(`${API_URL}/rest/get-flag?gdUsername=${encodeURIComponent(gdUsername)}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch flag');
+            }
+            const data = await response.json();
+            console.log(data)
+            // Check if the user has a flag
+            if (data.flag) {
+                // Create a new flag icon
+                const flagIcon = document.createElement('img');
+                flagIcon.src = `https://flagcdn.com/24x18/${data.flag}.png`;
+                flagIcon.id = 'flagIcon';
+                flagIcon.style.marginRight = '10px';
+                flagIcon.style.cursor = 'pointer';
+                flagIcon.onclick = loadFlagsIntoModal;
+                // Replace the old flag icon with the new one
+                const oldFlagIcon = document.getElementById('flagIcon');
+                oldFlagIcon.parentNode.replaceChild(flagIcon, oldFlagIcon);
+             } else {
+                // If the user doesn't have a flag, show the flag icon
+                document.getElementById('flagIcon').style.display = 'inline-block';
+                document.getElementById('flagIcon').style.cursor = 'pointer';
+            } 
+        }
+    }
+}
 async function fetchUserCreatedLevels(gdUsername) {
     try {
         const [mainlistResponse, pendingLevelsResponse] = await Promise.all([
@@ -184,6 +293,7 @@ function displayUserDetails(data) {
     }
 
     if (gdusername) {
+        fetchUserFlag();
         gdUsernameDisplay.innerText = gdusername;
         linkGdAccountBtn.style.display = 'none';
         unlinkGdAccountBtn.style.display = 'block';
@@ -468,6 +578,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 toastr.success('Geometry Dash account unlinked successfully.');
                 localStorage.removeItem('userData');
                 fetchUserDetails();
+                // Hide the flag icon
+                document.getElementById('flagIcon').style.display = 'none';
             } else {
                 toastr.error(data.message || 'Failed to unlink Geometry Dash account.');
             }
@@ -477,115 +589,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    async function loadFlagsIntoModal() {
-        const flagContainer = document.getElementById('flagContainer');
-    
-        // Clear the flag container
-        flagContainer.innerHTML = '';
-    
-        // Fetch the list of country codes
-        const response = await fetch('https://flagcdn.com/en/codes.json');
-        const countryCodes = await response.json();
-    
-        // Add each flag to the flag container
-        Object.keys(countryCodes).forEach(countryCode => {
-            const flagElement = document.createElement('img');
-            flagElement.src = `https://flagcdn.com/36x27/${countryCode}.png`;
-            flagElement.dataset.countryCode = countryCode;
-            flagElement.onclick = selectFlag;
-            flagElement.className = 'flag';
-            flagElement.style.cursor = 'pointer';
-            flagElement.title = countryCodes[countryCode]; // Add the country name as a tooltip
-            flagContainer.appendChild(flagElement);
-        });
-    
-        $('#flagModal').modal('show');
-    }
-
-    function selectFlag(event) {
-        const flagElement = event.target;
-        const countryCode = flagElement.dataset.countryCode;
-        updateFlag(countryCode);
-    }
-
-function updateFlag(flag) {
-    // Get the user token from local storage
-    const userToken = localStorage.getItem('userToken');
-
-    // Send the request to the server
-    fetch(`${API_URL}/rest/update-flag`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${userToken}`
-        },
-        body: JSON.stringify({
-            flag: flag
-        })
-    }).then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to update flag');
-        }
-        return response.json();
-    }).then(data => {
-        // The flag was updated successfully.
-        toastr.success('Successfully changed flag');
-        $('#flagModal').modal('hide'); // Close the modal
-        if (flag === '') {
-            // If the flag was removed, replace the flag image with the original flag icon
-            const flagIcon = document.createElement('i');
-            flagIcon.className = 'fas bi-globe-europe-africa';
-            flagIcon.id = 'flagIcon';
-            flagIcon.dataset.toggle = 'modal';
-            flagIcon.dataset.target = '#flagModal';
-            flagIcon.onclick = loadFlagsIntoModal;
-            flagIcon.style.display = 'inline-block';
-            flagIcon.style.fontSize = '20px';
-
-            const oldFlagIcon = document.getElementById('flagIcon');
-            oldFlagIcon.parentNode.replaceChild(flagIcon, oldFlagIcon);
-        } else {
-            fetchUserFlag(); // Refresh the flag of the user on the account
-        }
-    }).catch(error => {
-        console.error('Error updating flag:', error);
-    });
-}
-async function fetchUserFlag() {
-    let gdUsername = null
-    const userDataResponse = await fetchUserData();
-            if (userDataResponse.ok) {
-                const userData = await userDataResponse.json();
-                // Get the GD account name
-                gdUsername = userData.gdUsername;
-                // Send the request to the server
-    const response = await fetch(`${API_URL}/rest/get-flag?gdUsername=${encodeURIComponent(gdUsername)}`);
-    if (!response.ok) {
-        throw new Error('Failed to fetch flag');
-    }
-    const data = await response.json();
-
-     // Check if the user has a flag
-     if (data.flag) {
-        // Create a new flag icon
-        const flagIcon = document.createElement('img');
-        flagIcon.src = `https://flagcdn.com/24x18/${data.flag}.png`;
-        flagIcon.id = 'flagIcon';
-        flagIcon.style.marginRight = '10px';
-        flagIcon.style.cursor = 'pointer';
-        flagIcon.onclick = loadFlagsIntoModal;
-
-
-        // Replace the old flag icon with the new one
-        const oldFlagIcon = document.getElementById('flagIcon');
-        oldFlagIcon.parentNode.replaceChild(flagIcon, oldFlagIcon);
-    } else {
-        // If the user doesn't have a flag, show the flag icon
-        document.getElementById('flagIcon').style.display = 'inline-block';
-        document.getElementById('flagIcon').style.cursor = 'pointer';
-    }
-    }
-}
 });
 
 document.getElementById('logoutBtn').addEventListener('click', function() {
