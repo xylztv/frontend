@@ -241,8 +241,13 @@ function displayUserDetails(data) {
             // Fetch and display rejected submissions after levels are added
         fetchUserRejectedSubmissions().then(rejectedSubmissions => {
             if (rejectedSubmissions) {
+                // Ensure levelsContainer exists and has a tbody
                 const levelsContainer = document.getElementById('gdCreatedLevelsContainer');
                 let levelsTbody = levelsContainer.querySelector('tbody');
+                if (!levelsTbody) {
+                    levelsTbody = document.createElement('tbody');
+                    levelsContainer.appendChild(levelsTbody);
+                }
 
                 // Add a divider row to levels table
                 const levelsDividerRow = document.createElement('tr');
@@ -263,6 +268,14 @@ function displayUserDetails(data) {
 
                 // Fetch mainlist data
                 fetch(`${API_URL}/rest/mainlist`).then(response => response.json()).then(mainlistData => {
+                    // Ensure recordsContainer exists and has a tbody
+                    const recordsContainer = document.getElementById('gdRecordsContainer');
+                    let recordsTbody = recordsContainer.querySelector('tbody');
+                    if (!recordsTbody) {
+                        recordsTbody = document.createElement('tbody');
+                        recordsContainer.appendChild(recordsTbody);
+                    }
+
                     // Add a divider row to records table
                     const recordsDividerRow = document.createElement('tr');
                     recordsDividerRow.innerHTML = `<td colspan="3"><hr style="border-width: 2px; border-color: #333;"></td>`;
