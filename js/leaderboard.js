@@ -179,17 +179,6 @@ leaderboardData.forEach((playerEntry, i) => {
         <td>${playerEntry.totalPoints.toFixed(2)}</td>
     </tr>`
 });
-var pattern = trianglify({
-	width: window.innerWidth,
-	height: document.body.scrollHeight,
-	cellSize: 300, // Adjust this value as needed
-	xColors: ['#ffb727', '#ff6347', '#75ca4e'], // More contrasting colors
-	colorFunction: trianglify.colorFunctions.interpolateLinear(0.5),
-	seed: Math.random().toString(36).substring(7)
-});
-
-document.body.style.backgroundImage = 'url(' + pattern.toCanvas().toDataURL() + ')';
-document.body.style.backgroundColor = '#ffffff'; // Set a background color
 
 
 async function fetchFlag(player, size) {
