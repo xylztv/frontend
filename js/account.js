@@ -373,23 +373,24 @@ function displayUserDetails(data) {
                     levelsContainer.appendChild(levelsTbody);
                 }
 
-                // Add a divider row to levels table
-                const levelsDividerRow = document.createElement('tr');
-                levelsDividerRow.innerHTML = `<td colspan="2"><hr style="border-width: 2px; border-color: #333;"></td>`;
-                levelsTbody.appendChild(levelsDividerRow);
+                // Check if the divider row already exists
+                if (!levelsTbody.querySelector('.levels-divider-row')) {
+                    // Add a divider row to levels table
+                    const levelsDividerRow = document.createElement('tr');
+                    levelsDividerRow.className = 'levels-divider-row';
+                    levelsDividerRow.innerHTML = `<td colspan="2"><hr style="border-width: 2px; border-color: #333;"></td>`;
+                    levelsTbody.appendChild(levelsDividerRow);
 
-                // Add rejected levels
-                rejectedSubmissions.rejectedLevels.forEach(level => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><a href="${level.link}" target="_blank" style="color: inherit; text-decoration: none;">${level.title}</a></td>
-                        <td><span class="badge badge-danger">Rejected</span></td>
-                    `;
-                    levelsTbody.appendChild(row);
-                });
-                const recordsContainer = document.getElementById('gdRecordsContainer');
-                let recordsTbody = recordsContainer.querySelector('tbody');
-
+                    // Add rejected levels
+                    rejectedSubmissions.rejectedLevels.forEach(level => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><a href="${level.link}" target="_blank" style="color: inherit; text-decoration: none;">${level.title}</a></td>
+                            <td><span class="badge badge-danger">Rejected</span></td>
+                        `;
+                        levelsTbody.appendChild(row);
+                    });
+                }
                 // Fetch mainlist data
                 fetch(`${API_URL}/rest/mainlist`).then(response => response.json()).then(mainlistData => {
                     // Ensure recordsContainer exists and has a tbody
@@ -400,24 +401,28 @@ function displayUserDetails(data) {
                         recordsContainer.appendChild(recordsTbody);
                     }
 
-                    // Add a divider row to records table
-                    const recordsDividerRow = document.createElement('tr');
-                    recordsDividerRow.innerHTML = `<td colspan="3"><hr style="border-width: 2px; border-color: #333;"></td>`;
-                    recordsTbody.appendChild(recordsDividerRow);
+                    // Check if the divider row already exists
+                    if (!recordsTbody.querySelector('.records-divider-row')) {
+                        // Add a divider row to records table
+                        const recordsDividerRow = document.createElement('tr');
+                        recordsDividerRow.className = 'records-divider-row';
+                        recordsDividerRow.innerHTML = `<td colspan="3"><hr style="border-width: 2px; border-color: #333;"></td>`;
+                        recordsTbody.appendChild(recordsDividerRow);
 
-                    // Add rejected records
-                    rejectedSubmissions.rejectedRecords.forEach(record => {
-                        // Find the corresponding level in the mainlist data
-                        const level = mainlistData.find(level => level.id === record.level_id);
+                        // Add rejected records
+                        rejectedSubmissions.rejectedRecords.forEach(record => {
+                            // Find the corresponding level in the mainlist data
+                            const level = mainlistData.find(level => level.id === record.level_id);
 
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td><a href="${record.link}" target="_blank" style="color: inherit; text-decoration: none;">${level ? level.title : 'Unknown'}</a></td>
-                            <td><span class="badge badge-success">${record.percent}</td>
-                            <td></span><span class="badge badge-danger">Rejected</span></td>
-                        `;
-                        recordsTbody.appendChild(row);
-                    });
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td><a href="${record.link}" target="_blank" style="color: inherit; text-decoration: none;">${level ? level.title : 'Unknown'}</a></td>
+                                <td><span class="badge badge-success">${record.percent}</td>
+                                <td></span><span class="badge badge-danger">Rejected</span></td>
+                            `;
+                            recordsTbody.appendChild(row);
+                        });
+                    }
                 });
             }
         });
