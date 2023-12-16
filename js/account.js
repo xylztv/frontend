@@ -371,8 +371,6 @@ function displayUserDetails(data) {
                 if (!levelsTbody) {
                     levelsTbody = document.createElement('tbody');
                     levelsContainer.appendChild(levelsTbody);
-                } else {
-                    levelsTbody.innerHTML = ''; // Clear existing levels and divider
                 }
 
                 // Add a divider row to levels table
@@ -400,10 +398,7 @@ function displayUserDetails(data) {
                     if (!recordsTbody) {
                         recordsTbody = document.createElement('tbody');
                         recordsContainer.appendChild(recordsTbody);
-                    } else {
-                        recordsTbody.innerHTML = ''; // Clear existing records and divider
                     }
-
 
                     // Add a divider row to records table
                     const recordsDividerRow = document.createElement('tr');
