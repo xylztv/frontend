@@ -83,7 +83,7 @@
                             <span><i class="bi bi-controller gd-icon mr-2"style="font-size: 25px;"></i>Geometry Dash Account:</span>
                             <div class="d-flex align-items-center">
                                 <!-- Display GD Username if available -->
-                                <span id="gdUsernameDisplay"></span>
+                            </i></i><span id="gdUsernameDisplay"></span>
                                 <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#linkGdAccountModal" id="linkGdAccountBtn">Link</button>
                                 <i class="fas bi-globe-europe-africa" id="flagIcon" style="display: none; font-size: 20px;"></i>
                                 <button id="unlinkGdAccountBtn" class="Btn btn-danger btn-sm" style="display: none;">
@@ -97,7 +97,6 @@
                             <span><i class="bi bi-award gd-icon mr-2"style="font-size: 15px;"></i>Your Records:</span>
                             <div id="recordLoader" class="loader"></div>
                             <div id="gdRecordsContainer"></div>
-                            <hr class="my-1">
                         </div>
                         <!-- Geometry Dash created levels field -->
                         <div id="gdLevelsField" class="mt-3">
@@ -122,44 +121,33 @@
             </div>
         </div>
     </div>
-    <!-- The Modal -->
-<div class="modal fade" id="changePasswordModal">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-  
-        <!-- Modal Header -->
-        <div class="modal-header">
-          <h4 class="modal-title">Change Password</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+<!-- Remove Record Modal -->
+<div class="modal fade" id="removeRecordModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="removeRecordModalTitle">Remove Record</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <p id="removeRecordModalMessage">Are you sure you want to remove this record?</p>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="removeRecordModalConfirmBtn">Remove</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+
         </div>
-  
-        <!-- Modal body -->
-        <div class="modal-body">
-          <form id="changePasswordForm">
-              <div class="form-group">
-                  <label for="currentPassword">Current Password:</label>
-                  <input type="password" id="currentPassword" class="form-control">
-              </div>
-              <div class="form-group">
-                  <label for="newPassword">New Password:</label>
-                  <input type="password" id="newPassword" class="form-control">
-              </div>
-              <div class="form-group">
-                  <label for="confirmNewPassword">Confirm New Password:</label>
-                  <input type="password" id="confirmNewPassword" class="form-control">
-              </div>
-              <button type="submit" class="btn btn-primary">Change Password</button>
-          </form>
-        </div>
-  
-        <!-- Modal footer -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        </div>
-  
-      </div>
     </div>
-  </div>
+</div>
+
+
 <!-- Link Geometry Dash Account Modal -->
 <div class="modal fade" id="linkGdAccountModal">
     <div class="modal-dialog modal-dialog-centered">

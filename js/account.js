@@ -277,6 +277,7 @@ async function fetchUserRejectedSubmissions() {
         toastr.error('Failed to fetch rejected submissions.');
     }
 }
+
 function displayUserDetails(data) {
     const { username, permission_level, gdusername, joinDate } = data;
     document.getElementById('usernameDisplay').innerText = username;
@@ -302,10 +303,6 @@ function displayUserDetails(data) {
 
         fetchUserRecords(gdusername).then(records => {
             recordLoader.style.display = 'none'; // Hide loader
-
-            if (records.length === 0) {
-                document.getElementById('gdRecordsField').style.display = 'none'; // Hide "Your Records" section if no records
-            } else {
                 const recordsContainer = document.getElementById('gdRecordsContainer');
                 recordsContainer.innerHTML = `
                     <table class="table">
@@ -314,6 +311,7 @@ function displayUserDetails(data) {
                                 <th>Level</th>
                                 <th>Progress</th>
                                 <th>Points</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -324,21 +322,58 @@ function displayUserDetails(data) {
                 records.forEach(record => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td><a href="${record.link}" target="_blank" style="color: inherit; text-decoration: none;">${record.name} (#${record.rank})</a></td>
-                        <td><span class="badge ${getBadgeClassForPercentage(record.progress)}">${record.progress}</span></td>
-                        <td><span style="font-size: 0.8em;">${record.points.toFixed(2)}</span>${record.verified ? '<span class="badge badge-success" style="margin-left: 5px; background-color: #e795b7;">VERIFIER</span>' : ''}${record.status === 'Pending' ? '<span class="badge badge-warning" style="margin-left: 5px;">Pending</span>' : ''}</td>
-                    `;
+                    <td><a href="${record.link}" target="_blank" style="color: inherit; text-decoration: none;">${record.name} (#${record.rank})</a></td>
+                    <td><span class="badge ${getBadgeClassForPercentage(record.progress)}">${record.progress}</span></td>
+                    <td>
+                        <span style="font-size: 0.8em;">${record.points.toFixed(2)}</span>
+                    </td>
+                    <td>
+                        <div class="button-container">
+                            ${record.verified ? '<span class="badge badge-success" style="margin-left: 5px; background-color: #e795b7;">VERIFIER</span>' : ''}
+                            ${record.status === 'Pending' ? '<span class="badge badge-warning" style="margin-left: 5px;">Pending</span>' : ''}
+                            ${!record.verified && record.status !== 'Pending' ? `<button class="btn btn-danger removeButton" data-level-id="${record.id}">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>` : ''}
+                        </div>
+                    </td>
+                `;
                     tbody.appendChild(row);
+                    row.querySelector('.removeButton').addEventListener('click', function() {
+                        // Populate the modal with the record data
+                        document.getElementById('removeRecordModalTitle').innerText = `Remove Record ${record.id}`;
+                        document.getElementById('removeRecordModalMessage').innerText = `Are you sure you want to remove the record for level ${record.name}?`;
+
+                        // Add an event listener to the confirm button in the modal
+                        document.getElementById('removeRecordModalConfirmBtn').addEventListener('click', function() {
+                            fetch(`${API_URL}/rest/deleteRecord?link=${encodeURIComponent(record.link)}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+                                }
+                            }).then(response => {
+                                if (response.ok) {
+                                    toastr.success('Removed record successfully.');
+                                    $('#removeRecordModal').modal('hide'); // Close the modal
+                                    const storedUserData = localStorage.getItem('userData');
+                                    const userData = JSON.parse(storedUserData);
+                                    displayUserDetails(userData);// Refresh the records
+                                } else {
+                                }
+                            }).catch(error => {
+                                console.error('Error removing record:', error);
+                                toastr.error('An error occurred while removing the record.');
+                            });
+                        });
+
+                        // Open the modal
+                        $('#removeRecordModal').modal('show');
+                    });
                 });
-            }
         });
 
         fetchUserCreatedLevels(gdusername).then(levels => {
             levelLoader.style.display = 'none'; // Hide loader
 
-            if (levels.length === 0) {
-                document.getElementById('gdLevelsField').style.display = 'none'; // Hide "Your Levels" section if no levels
-            } else {
                 const levelsContainer = document.getElementById('gdCreatedLevelsContainer');
                 levelsContainer.innerHTML = `
                     <table class="table">
@@ -346,6 +381,7 @@ function displayUserDetails(data) {
                             <tr>
                                 <th>Level</th>
                                 <th>Ranking</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -358,12 +394,58 @@ function displayUserDetails(data) {
                     row.innerHTML = `
                         <td><a href="${level.link}" target="_blank" style="color: inherit; text-decoration: none;">${level.title}</a></td>
                         <td>${level.status === 'Pending' ? '<span class="badge badge-warning">Pending</span>' : level.ranking}</td>
+                        <td>
+                            <div class="button-container">
+                            <button class="btn btn-danger removeButton" data-level-id="${level.id}" ${level.status === 'Pending' ? 'style="display: none;"' : ''}>
+                                 <i class="fas fa-trash-alt"></i>
+                             </button>
+                            </div>
+                        </td>
                     `;
                     tbody.appendChild(row);
+
+                    row.querySelector('.removeButton').addEventListener('click', function() {
+                        // Populate the modal with the level data
+                        document.getElementById('removeRecordModalTitle').innerText = `Remove Level`;
+                        document.getElementById('removeRecordModalMessage').innerText = `Are you sure you want to remove the level ${level.title} from the list?`;
+                
+                        // Add an event listener to the confirm button in the modal
+                        document.getElementById('removeRecordModalConfirmBtn').addEventListener('click', function() {
+                            fetch(`${API_URL}/rest/deleteLevel?id=${encodeURIComponent(level.id)}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+                                }
+                            }).then(response => {
+                                if (response.ok) {
+                                    toastr.success('Level removed successfully.');
+                                    $('#removeRecordModal').modal('hide'); // Close the modal
+                                    const storedUserData = localStorage.getItem('userData');
+                                    const userData = JSON.parse(storedUserData);
+                                    displayUserDetails(userData);// Refresh the levels
+                                } else {
+                                }
+                            }).catch(error => {
+                                console.error('Error removing level:', error);
+                                toastr.error('An error occurred while removing the level.');
+                            });
+                        });
+                
+                        // Open the modal
+                        $('#removeRecordModal').modal('show');
+                    });
                 });
-            }
             // Fetch and display rejected submissions after levels are added
         fetchUserRejectedSubmissions().then(rejectedSubmissions => {
+            fetchUserRecords(gdusername).then(records => {
+                const recordsField = document.getElementById('gdRecordsField');
+                // If there are no records and no rejected records, hide the records table
+                if (records.length === 0 && rejectedSubmissions.rejectedRecords.length === 0) {
+                    recordsField.style.display = 'none';
+                } else {
+                    recordsField.style.display = '';
+                }
+            });
             if (rejectedSubmissions) {
                 // Ensure levelsContainer exists and has a tbody
                 const levelsContainer = document.getElementById('gdCreatedLevelsContainer');
@@ -372,25 +454,61 @@ function displayUserDetails(data) {
                     levelsTbody = document.createElement('tbody');
                     levelsContainer.appendChild(levelsTbody);
                 }
-
-                // Check if the divider row already exists
-                if (!levelsTbody.querySelector('.levels-divider-row')) {
-                    // Add a divider row to levels table
-                    const levelsDividerRow = document.createElement('tr');
-                    levelsDividerRow.className = 'levels-divider-row';
-                    levelsDividerRow.innerHTML = `<td colspan="2"><hr style="border-width: 2px; border-color: #333;"></td>`;
-                    levelsTbody.appendChild(levelsDividerRow);
-
+                const levelsField = document.getElementById('gdLevelsField');
+                         // If there are no levels and no rejected levels, hide the levels table
+                         if (levels.length === 0 && rejectedSubmissions.rejectedLevels.length === 0) {
+                            levelsField.style.display = 'none';
+                        } else {
+                            levelsField.style.display = '';
+                        }
                     // Add rejected levels
                     rejectedSubmissions.rejectedLevels.forEach(level => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td><a href="${level.link}" target="_blank" style="color: inherit; text-decoration: none;">${level.title}</a></td>
-                            <td><span class="badge badge-danger">Rejected</span></td>
-                        `;
+                        <td><a href="${level.link}" target="_blank" style="color: inherit; text-decoration: none;"><i class="fas fa-exclamation-triangle"></i> ${level.title}</a></td>
+                        <td><span class="badge badge-danger">Rejected</span></td>
+                        <td>
+                            <div class="button-container">
+                                <button class="btn btn-danger removeButton" data-level-id="${level.id}">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
                         levelsTbody.appendChild(row);
+
+                        row.querySelector('.removeButton').addEventListener('click', function() {
+                            // Populate the modal with the record data
+                    document.getElementById('removeRecordModalTitle').innerText = `Remove Level`;
+                    document.getElementById('removeRecordModalMessage').innerText = `Are you sure you want to remove the rejected level ${level ? level.title : 'Unknown'} from your profile?`;
+
+                    // Add an event listener to the confirm button in the modal
+                    document.getElementById('removeRecordModalConfirmBtn').addEventListener('click', function() {
+                        fetch(`${API_URL}/rest/deleteRejectedLevel?id=${encodeURIComponent(level.id)}`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+                            }
+                        }).then(response => {
+                            if (response.ok) {
+                                toastr.success('Level removed successfully.');
+                                $('#removeRecordModal').modal('hide'); // Close the modal
+                                const storedUserData = localStorage.getItem('userData');
+                                const userData = JSON.parse(storedUserData);
+                                displayUserDetails(userData);// Refresh the levels
+                            } else {
+                            }
+                        }).catch(error => {
+                            console.error('Error removing level:', error);
+                            toastr.error('An error occurred while removing the level.');
+                        });
                     });
-                }
+                    // Open the modal
+                    $('#removeRecordModal').modal('show');
+                        }); 
+                    });
+                    
+                    
                 // Fetch mainlist data
                 fetch(`${API_URL}/rest/mainlist`).then(response => response.json()).then(mainlistData => {
                     // Ensure recordsContainer exists and has a tbody
@@ -401,14 +519,6 @@ function displayUserDetails(data) {
                         recordsContainer.appendChild(recordsTbody);
                     }
 
-                    // Check if the divider row already exists
-                    if (!recordsTbody.querySelector('.records-divider-row')) {
-                        // Add a divider row to records table
-                        const recordsDividerRow = document.createElement('tr');
-                        recordsDividerRow.className = 'records-divider-row';
-                        recordsDividerRow.innerHTML = `<td colspan="3"><hr style="border-width: 2px; border-color: #333;"></td>`;
-                        recordsTbody.appendChild(recordsDividerRow);
-
                         // Add rejected records
                         rejectedSubmissions.rejectedRecords.forEach(record => {
                             // Find the corresponding level in the mainlist data
@@ -416,13 +526,50 @@ function displayUserDetails(data) {
 
                             const row = document.createElement('tr');
                             row.innerHTML = `
-                                <td><a href="${record.link}" target="_blank" style="color: inherit; text-decoration: none;">${level ? level.title : 'Unknown'}</a></td>
+                                <td><a href="${record.link}" target="_blank" style="color: inherit; text-decoration: none;"><i class="fas fa-exclamation-triangle"></i> ${level ? level.title : 'Unknown'}</a></td>
                                 <td><span class="badge badge-success">${record.percent}</td>
                                 <td></span><span class="badge badge-danger">Rejected</span></td>
+                                <td>
+                                    <div class="button-container">
+                                        <button class="btn btn-danger removeButton" data-level-id="${level.id}">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </td>
                             `;
                             recordsTbody.appendChild(row);
+
+                            row.querySelector('.removeButton').addEventListener('click', function() {
+                                // Populate the modal with the record data
+                        document.getElementById('removeRecordModalTitle').innerText = `Remove Record ${level ? level.title : 'Unknown'}`;
+                        document.getElementById('removeRecordModalMessage').innerText = `Are you sure you want to remove the rejected record for level ${level ? level.title : 'Unknown'} from your profile?`;
+
+                        // Add an event listener to the confirm button in the modal
+                        document.getElementById('removeRecordModalConfirmBtn').addEventListener('click', function() {
+                            fetch(`${API_URL}/rest/deleteRejectedRecord?link=${encodeURIComponent(record.link)}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+                                }
+                            }).then(response => {
+                                if (response.ok) {
+                                    toastr.success('Record removed successfully.');
+                                    $('#removeRecordModal').modal('hide'); // Close the modal
+                                    const storedUserData = localStorage.getItem('userData');
+                                    const userData = JSON.parse(storedUserData);
+                                    displayUserDetails(userData);// Refresh the records
+                                } else {
+                                }
+                            }).catch(error => {
+                                console.error('Error removing record:', error);
+                                toastr.error('An error occurred while removing the record.');
+                            });
                         });
-                    }
+
+                        // Open the modal
+                        $('#removeRecordModal').modal('show');
+                            });
+                        });
                 });
             }
         });

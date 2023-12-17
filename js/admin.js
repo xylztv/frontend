@@ -637,13 +637,13 @@ function removeLevel(levelId) {
     let endpoint;
     switch (listType) {
         case 'mainlist':
-            endpoint = '/rest/remove-level';
+            endpoint = '/rest/admin/remove-level';
             break;
         case 'legacy_levels':
-            endpoint = '/rest/delete-level';
+            endpoint = '/rest/admin/delete-legacy-level';
             break;
         case 'removed_levels':
-            endpoint = '/rest/delete-removed-level';
+            endpoint = '/rest/admin/delete-removed-level';
             break;
         default:
             console.error('Unknown list type:', listType);

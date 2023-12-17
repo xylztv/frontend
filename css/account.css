@@ -39,6 +39,9 @@
     justify-content: space-between;
     align-items: center;
 }
+.card{
+  box-shadow: 0 10px 30px 5px rgba(0, 0, 0, 0.5);
+}
 .Btn {
     --black: #000000;
     --ch-black: #141414;
