@@ -331,7 +331,7 @@ function displayUserDetails(data) {
                         <div class="button-container">
                             ${record.verified ? '<span class="badge badge-success" style="margin-left: 5px; background-color: #e795b7;">VERIFIER</span>' : ''}
                             ${record.status === 'Pending' ? '<span class="badge badge-warning" style="margin-left: 5px;">Pending</span>' : ''}
-                            ${!record.verified && record.status !== 'Pending' ? `<button class="btn btn-danger removeButton" data-level-id="${record.id}">
+                            ${!record.verified && record.status !== 'Pending' ? `<button class="btn btn-outline-danger btn-sm removeButton" data-level-id="${record.id}">
                                 <i class="fas fa-trash-alt"></i>
                             </button>` : ''}
                         </div>
@@ -402,7 +402,7 @@ function displayUserDetails(data) {
                         <td>${level.status === 'Pending' ? '<span class="badge badge-warning">Pending</span>' : level.ranking}</td>
                         <td>
                             <div class="button-container">
-                            <button class="btn btn-danger removeButton" data-level-id="${level.id}" ${level.status === 'Pending' ? 'style="display: none;"' : ''}>
+                            <button class="btn btn-outline-danger btn-sm removeButton" data-level-id="${level.id}" ${level.status === 'Pending' ? 'style="display: none;"' : ''}>
                                  <i class="fas fa-trash-alt"></i>
                              </button>
                             </div>
@@ -475,7 +475,7 @@ function displayUserDetails(data) {
                         <td><span class="badge badge-danger">Rejected</span></td>
                         <td>
                             <div class="button-container">
-                                <button class="btn btn-danger removeButton" data-level-id="${level.id}">
+                                <button class="btn btn-outline-danger btn-sm removeButton" data-level-id="${level.id}">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
@@ -537,7 +537,7 @@ function displayUserDetails(data) {
                                 <td></span><span class="badge badge-danger">Rejected</span></td>
                                 <td>
                                     <div class="button-container">
-                                        <button class="btn btn-danger removeButton" data-level-id="${level.id}">
+                                        <button class="btn btn-outline-danger btn-sm removeButton" data-level-id="${level.id}">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </div>
