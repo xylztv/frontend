@@ -338,7 +338,10 @@ function displayUserDetails(data) {
                     </td>
                 `;
                     tbody.appendChild(row);
-                    row.querySelector('.removeButton').addEventListener('click', function() {
+
+                    const removeButton = row.querySelector('.removeButton');
+                    if (removeButton) {
+                    removeButton.addEventListener('click', function() {
                         // Populate the modal with the record data
                         document.getElementById('removeRecordModalTitle').innerText = `Remove Record ${record.id}`;
                         document.getElementById('removeRecordModalMessage').innerText = `Are you sure you want to remove the record for level ${record.name}?`;
@@ -368,7 +371,10 @@ function displayUserDetails(data) {
                         // Open the modal
                         $('#removeRecordModal').modal('show');
                     });
+                }
                 });
+                
+            
         });
 
         fetchUserCreatedLevels(gdusername).then(levels => {
