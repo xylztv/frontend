@@ -513,6 +513,12 @@ function displayUserDetails(data) {
                     $('#removeRecordModal').modal('show');
                         }); 
                     });
+                        // Add the additional text under the rejected levels
+                        const additionalTextRow = document.createElement('tr');
+                        additionalTextRow.innerHTML = `
+                            <td colspan="4" style="font-family: 'Montserrat'; color: red; padding-top: 10px; font-size: 12px;">Turn to the Discord server for questions about rejections</td>
+                        `;
+                        levelsTbody.appendChild(additionalTextRow);
                     
                     
                 // Fetch mainlist data
@@ -576,7 +582,13 @@ function displayUserDetails(data) {
                         $('#removeRecordModal').modal('show');
                             });
                         });
-                });
+                        // Add the additional text under the rejected records
+                        const additionalTextRow = document.createElement('tr');
+                        additionalTextRow.innerHTML = `
+                            <td colspan="4" style="font-family: 'Montserrat'; color: red; padding-top: 10px; font-size: 12px;">Turn to the Discord server for questions about rejections</td>
+                        `;
+                        recordsTbody.appendChild(additionalTextRow);
+                                });
             }
         });
         });
