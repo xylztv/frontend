@@ -304,7 +304,7 @@ function onLevelIdInput() {
         return;
     }
 
-if (levelId.length < 3 || levelId.length > 8) {
+if (levelId.length < 3 || levelId.length > 9) {
     toastr.error("Level ID should be 3 to 9 digits long.");
     loadingIcon.classList.add("hidden");
     isLevelIdValid = false;
