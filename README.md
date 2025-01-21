@@ -9,7 +9,7 @@
        |___/                                         |___/                    
 ```
 
-Welcome to the repository for xylz.tv!
+Welcome to the repository for xylz.online! (formerly xylz.tv)
 
 ## Contact
 
