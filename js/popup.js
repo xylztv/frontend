@@ -1,4 +1,5 @@
 import { API_URL } from "./config.js";
+import { escapeHTML } from "./utils.js";
 const fetch_url = `${API_URL}/rest/records`;
 const nong_fetch_url = `${API_URL}/rest/all-nongs`;
 
@@ -13,7 +14,7 @@ async function fetchData(url) {
     
     // Storing data in form of JSON
     let data = await response.json();
-    if (!response) {
+    if (!response.ok) {
         throw new Error("Failed to fetch data.");
     }
     return data
@@ -71,7 +72,7 @@ async function Setup() {
 
         runsHTML += `
         <div style="display: flex; justify-content: space-between; width: 100%;">
-        <a href="/record_submission_form.html?levelId=${levelID}" target="_blank"><label><span class="submit-button">Submit Record</span></label></a>`
+        <a href="/record_submission_form.html?levelId=${escapeHTML(levelID)}" target="_blank"><label><span class="submit-button">Submit Record</span></label></a>`
 
         // check if nong exists
         let nongData = nongs.find(e => e.id == levelID)
@@ -96,9 +97,9 @@ async function Setup() {
             `
             runs.forEach(element => {
                 runsHTML += `<tr>
-                <td>${element.name}</td>
-                <td>${element.runPercentage}</td>
-                <td><a href="${element.link}" target="_blank">Link <i class="fas fa-box-arrow-up-right"></i></a></td>
+                <td>${escapeHTML(element.name)}</td>
+                <td>${escapeHTML(element.runPercentage)}</td>
+                <td><a href="${escapeHTML(element.link)}" target="_blank">Link <i class="fas fa-box-arrow-up-right"></i></a></td>
                 </tr>`
             });
             runsHTML += `
@@ -107,27 +108,6 @@ async function Setup() {
             </div>
             `
             
-            $(document).ready(function() {
-                $('#runs-table').DataTable({
-                    "dom": "ft",
-                    "autoWidth": true
-                });
-            });
-            let horizontalBar = "<hr>";
-            let tableHeight = $("#runs-table").height();
-            $(".popup-box").css("height", tableHeight + "px");
-            $("#runs-table").on("resize", function() {
-                let tableHeight = $("#runs-table").height();
-                $(".popup-box").css("height", tableHeight + "px");
-                $(window).resize(function() {
-                    let tableHeight = $("#runs-table").height();
-                    let tableWidth = $("#runs-table").width();
-                    $(".popup-box").css("height", tableHeight + "px");
-                    $(".popup-box").css("width", tableWidth + "px");
-                    $(".popup-box").css("margin-left", "-" + $(".popup-box").width()/2 + "px");
-                    $(".popup-box").css("margin-top", "-" + $(".popup-box").height()/2 + "px");
-                });
-            });
         }
 
 let listitemlevelName = event.target.closest('.list-item').querySelector('.level-name');
@@ -233,6 +213,7 @@ popup.querySelector("#downloadNongBtn").addEventListener("click", function (even
     });
 });
 }
+const REQUIREMENT = 60;
 function GetPoints(rank, progress) {
 	let maxPoints
 

@@ -94,7 +94,7 @@ function viewBackupContents(backupFileName) {
     })
     .then(backupContents => {
       // Display the backup contents in a modal
-      $('#backupContentsModal .modal-body').html(backupContents);
+      $('#backupContentsModal .modal-body').text(backupContents);
     })
     .catch(error => {
       toastr.error('Error viewing backup contents. Please try again.');

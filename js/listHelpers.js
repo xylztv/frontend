@@ -1,4 +1,5 @@
 import { API_URL } from "./config.js";
+import { escapeHTML } from "./utils.js";
 
 // Function to update the sidebar with helper and admin names
 function updateSidebar(helperNames, adminNames) {
@@ -9,7 +10,7 @@ function updateSidebar(helperNames, adminNames) {
 
     // Check if helperNames is defined and is an array
     if (Array.isArray(helperNames)) {
-        sidebarDescription.innerHTML += helperNames.map(name => `<div class="helper-name">${name}</div>`).join('');
+        sidebarDescription.innerHTML += helperNames.map(name => `<div class="helper-name">${escapeHTML(name)}</div>`).join('');
     }
 
     // Check if adminNames is defined and is an array

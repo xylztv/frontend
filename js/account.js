@@ -1,5 +1,6 @@
 import { API_URL } from "./config.js";
 import { GetChallenges, GetPoints } from './leaderboard.js';
+import { escapeHTML } from "./utils.js";
 let verificationComment = "";
 
 
@@ -322,8 +323,8 @@ function displayUserDetails(data) {
                 records.forEach(record => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                    <td><a href="${record.link}" target="_blank" style="color: inherit; text-decoration: none;">${record.name} (#${record.rank})</a></td>
-                    <td><span class="badge ${getBadgeClassForPercentage(record.progress)}">${record.progress}</span></td>
+                    <td><a href="${escapeHTML(record.link)}" target="_blank" style="color: inherit; text-decoration: none;">${escapeHTML(record.name)} (#${escapeHTML(String(record.rank))})</a></td>
+                    <td><span class="badge ${getBadgeClassForPercentage(record.progress)}">${escapeHTML(String(record.progress))}</span></td>
                     <td>
                         <span style="font-size: 0.8em;">${record.points.toFixed(2)}</span>
                     </td>
@@ -331,7 +332,7 @@ function displayUserDetails(data) {
                         <div class="button-container">
                             ${record.verified ? '<span class="badge badge-success" style="margin-left: 5px; background-color: #e795b7;">VERIFIER</span>' : ''}
                             ${record.status === 'Pending' ? '<span class="badge badge-warning" style="margin-left: 5px;">Pending</span>' : ''}
-                            ${!record.verified && record.status !== 'Pending' ? `<button class="btn btn-outline-danger btn-sm removeButton" data-level-id="${record.id}">
+                            ${!record.verified && record.status !== 'Pending' ? `<button class="btn btn-outline-danger btn-sm removeButton" data-level-id="${escapeHTML(record.id)}">
                                 <i class="fas fa-trash-alt"></i>
                             </button>` : ''}
                         </div>
@@ -346,8 +347,13 @@ function displayUserDetails(data) {
                         document.getElementById('removeRecordModalTitle').innerText = `Remove Record ${record.id}`;
                         document.getElementById('removeRecordModalMessage').innerText = `Are you sure you want to remove the record for level ${record.name}?`;
 
+                        // Clone and replace the confirm button to remove old listeners
+                        const oldBtn1 = document.getElementById('removeRecordModalConfirmBtn');
+                        const newBtn1 = oldBtn1.cloneNode(true);
+                        oldBtn1.parentNode.replaceChild(newBtn1, oldBtn1);
+
                         // Add an event listener to the confirm button in the modal
-                        document.getElementById('removeRecordModalConfirmBtn').addEventListener('click', function() {
+                        newBtn1.addEventListener('click', function() {
                             fetch(`${API_URL}/rest/deleteRecord?link=${encodeURIComponent(record.link)}`, {
                                 method: 'POST',
                                 headers: {
@@ -398,11 +404,11 @@ function displayUserDetails(data) {
                 levels.forEach(level => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td><a href="${level.link}" target="_blank" style="color: inherit; text-decoration: none;">${level.title}</a></td>
-                        <td>${level.status === 'Pending' ? '<span class="badge badge-warning">Pending</span>' : level.ranking}</td>
+                        <td><a href="${escapeHTML(level.link)}" target="_blank" style="color: inherit; text-decoration: none;">${escapeHTML(level.title)}</a></td>
+                        <td>${level.status === 'Pending' ? '<span class="badge badge-warning">Pending</span>' : escapeHTML(String(level.ranking))}</td>
                         <td>
                             <div class="button-container">
-                            <button class="btn btn-outline-danger btn-sm removeButton" data-level-id="${level.id}" ${level.status === 'Pending' ? 'style="display: none;"' : ''}>
+                            <button class="btn btn-outline-danger btn-sm removeButton" data-level-id="${escapeHTML(level.id)}" ${level.status === 'Pending' ? 'style="display: none;"' : ''}>
                                  <i class="fas fa-trash-alt"></i>
                              </button>
                             </div>
@@ -415,8 +421,13 @@ function displayUserDetails(data) {
                         document.getElementById('removeRecordModalTitle').innerText = `Remove Level`;
                         document.getElementById('removeRecordModalMessage').innerText = `Are you sure you want to remove the level ${level.title} from the list?`;
                 
+                        // Clone and replace the confirm button to remove old listeners
+                        const oldBtn2 = document.getElementById('removeRecordModalConfirmBtn');
+                        const newBtn2 = oldBtn2.cloneNode(true);
+                        oldBtn2.parentNode.replaceChild(newBtn2, oldBtn2);
+
                         // Add an event listener to the confirm button in the modal
-                        document.getElementById('removeRecordModalConfirmBtn').addEventListener('click', function() {
+                        newBtn2.addEventListener('click', function() {
                             fetch(`${API_URL}/rest/deleteLevel?id=${encodeURIComponent(level.id)}`, {
                                 method: 'POST',
                                 headers: {
@@ -436,7 +447,7 @@ function displayUserDetails(data) {
                                 toastr.error('An error occurred while removing the level.');
                             });
                         });
-                
+
                         // Open the modal
                         $('#removeRecordModal').modal('show');
                     });
@@ -471,11 +482,11 @@ function displayUserDetails(data) {
                     rejectedSubmissions.rejectedLevels.forEach(level => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                        <td><a href="${level.link}" target="_blank" style="color: inherit; text-decoration: none;"><i class="fas fa-exclamation-triangle"></i> ${level.title}</a></td>
+                        <td><a href="${escapeHTML(level.link)}" target="_blank" style="color: inherit; text-decoration: none;"><i class="fas fa-exclamation-triangle"></i> ${escapeHTML(level.title)}</a></td>
                         <td><span class="badge badge-danger">Rejected</span></td>
                         <td>
                             <div class="button-container">
-                                <button class="btn btn-outline-danger btn-sm removeButton" data-level-id="${level.id}">
+                                <button class="btn btn-outline-danger btn-sm removeButton" data-level-id="${escapeHTML(level.id)}">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
@@ -488,8 +499,13 @@ function displayUserDetails(data) {
                     document.getElementById('removeRecordModalTitle').innerText = `Remove Level`;
                     document.getElementById('removeRecordModalMessage').innerText = `Are you sure you want to remove the rejected level ${level ? level.title : 'Unknown'} from your profile?`;
 
+                    // Clone and replace the confirm button to remove old listeners
+                    const oldBtn3 = document.getElementById('removeRecordModalConfirmBtn');
+                    const newBtn3 = oldBtn3.cloneNode(true);
+                    oldBtn3.parentNode.replaceChild(newBtn3, oldBtn3);
+
                     // Add an event listener to the confirm button in the modal
-                    document.getElementById('removeRecordModalConfirmBtn').addEventListener('click', function() {
+                    newBtn3.addEventListener('click', function() {
                         fetch(`${API_URL}/rest/deleteRejectedLevel?id=${encodeURIComponent(level.id)}`, {
                             method: 'POST',
                             headers: {
@@ -538,12 +554,12 @@ function displayUserDetails(data) {
 
                             const row = document.createElement('tr');
                             row.innerHTML = `
-                                <td><a href="${record.link}" target="_blank" style="color: inherit; text-decoration: none;"><i class="fas fa-exclamation-triangle"></i> ${level ? level.title : 'Unknown'}</a></td>
-                                <td><span class="badge badge-success">${record.percent}</td>
-                                <td></span><span class="badge badge-danger">Rejected</span></td>
+                                <td><a href="${escapeHTML(record.link)}" target="_blank" style="color: inherit; text-decoration: none;"><i class="fas fa-exclamation-triangle"></i> ${escapeHTML(level ? level.title : 'Unknown')}</a></td>
+                                <td><span class="badge badge-success">${escapeHTML(record.percent)}</span></td>
+                                <td><span class="badge badge-danger">Rejected</span></td>
                                 <td>
                                     <div class="button-container">
-                                        <button class="btn btn-outline-danger btn-sm removeButton" data-level-id="${level.id}">
+                                        <button class="btn btn-outline-danger btn-sm removeButton" data-level-id="${escapeHTML(level ? level.id : '')}">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </div>
@@ -556,8 +572,13 @@ function displayUserDetails(data) {
                         document.getElementById('removeRecordModalTitle').innerText = `Remove Record ${level ? level.title : 'Unknown'}`;
                         document.getElementById('removeRecordModalMessage').innerText = `Are you sure you want to remove the rejected record for level ${level ? level.title : 'Unknown'} from your profile?`;
 
+                        // Clone and replace the confirm button to remove old listeners
+                        const oldBtn4 = document.getElementById('removeRecordModalConfirmBtn');
+                        const newBtn4 = oldBtn4.cloneNode(true);
+                        oldBtn4.parentNode.replaceChild(newBtn4, oldBtn4);
+
                         // Add an event listener to the confirm button in the modal
-                        document.getElementById('removeRecordModalConfirmBtn').addEventListener('click', function() {
+                        newBtn4.addEventListener('click', function() {
                             fetch(`${API_URL}/rest/deleteRejectedRecord?link=${encodeURIComponent(record.link)}`, {
                                 method: 'POST',
                                 headers: {

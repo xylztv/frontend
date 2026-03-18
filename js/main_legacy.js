@@ -1,23 +1,6 @@
 import { API_URL } from "./config.js";
+import { escapeHTML } from "./utils.js";
 const fetch_url = `${API_URL}/rest/legacy_levels`;
-
-const template_list = `
-<div class="list-item">
-    <div class="list-number">#1</div>
-    <div class="list-thumbnail">
-        <a href="https://www.youtube.com/watch?v=GSCG9yohUm4" target="_blank">
-            <img class="list-image" src="https://img.youtube.com/vi/GSCG9yohUm4/maxresdefault.jpg" alt="Level thumbnail">
-        </a>
-    </div>
-    <div class="list-info">
-        <p class="level-name" id="popupEvent">Xylz Challenge II</p>
-        <div class="level-info">
-            <p class="level-id" onClick="copyText(event)">87793135</p>
-            <p class="level-author">GameCatch</p>
-            <p class="level-verifier">GameCatch</p>
-        </div>
-    </div>
-</div>`;
 
 async function fetchData(url) {
     try {
@@ -75,18 +58,18 @@ async function addListItems(data) {
         data.forEach((listItem, index) => {
             middle[0].insertAdjacentHTML("beforeend",`
                 <div class="list-item">
-                    <div class="list-number">#${listItem.ranking}</div>
+                    <div class="list-number">#${escapeHTML(String(listItem.ranking))}</div>
                     <div class="list-thumbnail">
-                        <a href="${listItem.link}" target="_blank">
+                        <a href="${escapeHTML(listItem.link)}" target="_blank">
                             <img class="list-image" src="${thumbnails[index]}" alt="Level thumbnail">
                         </a>
                     </div>
                     <div class="list-info">
-                        <p class="level-name">${listItem.title}</p>
+                        <p class="level-name">${escapeHTML(listItem.title)}</p>
                         <div class="level-info">
-                            <p class="level-id">${listItem.id}</p>
-                            <p class="level-author">${listItem.creator}</p>
-                            <p class="level-verifier">${listItem.verifier}</p>
+                            <p class="level-id">${escapeHTML(listItem.id)}</p>
+                            <p class="level-author">${escapeHTML(listItem.creator)}</p>
+                            <p class="level-verifier">${escapeHTML(listItem.verifier)}</p>
                         </div>
                     </div>
                 </div>`

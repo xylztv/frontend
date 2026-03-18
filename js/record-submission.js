@@ -1,7 +1,7 @@
 import { API_URL } from "./config.js";
-const headers = {
-    'Authorization': `Bearer ${localStorage.getItem('userToken')}`
-};
+function getAuthHeaders() {
+    return { 'Authorization': `Bearer ${localStorage.getItem('userToken')}` };
+}
 const debounce = (fn, wait) => {
     let timeout;
     return (...args) => {
@@ -88,7 +88,7 @@ document.getElementById('recordForm').addEventListener('submit', async (e) => {
 
         fetch(url, {
             method: "POST",
-            headers: headers
+            headers: getAuthHeaders()
         })
 
             .then(async (response) => {
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Get the GDusername of the authenticated user
     const response = await fetch(`${API_URL}/get-gdusername`, {
-        headers: headers
+        headers: getAuthHeaders()
     });
     const data = await response.json();
 

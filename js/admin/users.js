@@ -1,4 +1,5 @@
 import { API_URL } from "../config.js";
+import { escapeHTML } from "../utils.js";
 let users = [];  // This will store the fetched users
 function saveUserChanges() {
   const editModalUsername = document.getElementById('editModalUsername').value;
@@ -189,13 +190,13 @@ function renderUsersTable(users) {
   users.forEach(user => {
     const row = document.createElement('tr');
     row.innerHTML = `
-      <td>${user.username}</td>
-      <td>${user.gdusername || "N/A"}</td>
-      <td>${user.permission_level}</td>
+      <td>${escapeHTML(user.username)}</td>
+      <td>${escapeHTML(user.gdusername || "N/A")}</td>
+      <td>${escapeHTML(String(user.permission_level))}</td>
       <td>${new Date(user.joinDate).toLocaleDateString()}</td>
       <td>
-  <button class="btn btn-info editUserBtn" data-username="${user.username}">Edit</button>
-  <button class="btn btn-danger deleteUserBtn" data-username="${user.username}">Delete</button>
+  <button class="btn btn-info editUserBtn" data-username="${escapeHTML(user.username)}">Edit</button>
+  <button class="btn btn-danger deleteUserBtn" data-username="${escapeHTML(user.username)}">Delete</button>
 </td>
 
     `;

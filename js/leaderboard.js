@@ -1,4 +1,5 @@
 import { API_URL } from "./config.js";
+import { escapeHTML } from "./utils.js";
 const fetch_url_records = `${API_URL}/rest/records`;
 const fetch_url_challenges = `${API_URL}/rest/mainlist`
 const REQUIREMENT = 60
@@ -168,17 +169,19 @@ async function Setup() {
 	let tableBody = table.querySelector(`tbody`)
 
 	// Insert every player on the leaderboard
+let leaderboardHTML = '';
 leaderboardData.forEach((playerEntry, i) => {
-    tableBody.innerHTML += `
+    leaderboardHTML += `
     <tr>
         <td>
             <span style="font-weight: bold; margin-right: 5px;">#${i + 1} </span>
-            <a href="#/" data-player="${playerEntry.player}">${playerEntry.player}</a>
-            <span id="flag-${playerEntry.player}"></span>
+            <a href="#/" data-player="${escapeHTML(playerEntry.player)}">${escapeHTML(playerEntry.player)}</a>
+            <span id="flag-${escapeHTML(playerEntry.player)}"></span>
         </td>
         <td>${playerEntry.totalPoints.toFixed(2)}</td>
     </tr>`
 });
+tableBody.innerHTML = leaderboardHTML;
 
 
 async function fetchFlag(player, size) {
@@ -226,7 +229,7 @@ await Promise.all(leaderboardData.map(async (playerEntry) => {
 		<div class="popup-box profile">
 			<div style="position: sticky; top: 0; display: flex; justify-content: center; width: 100%;">
 				<div class="popup-header">
-				<span style="font-size: 2rem; margin-bottom: 0.25em;" id="player-name-${playerEntry.player}">${playerEntry.player} <span id="popup-flag-${playerEntry.player}"></span></span>
+				<span style="font-size: 2rem; margin-bottom: 0.25em;" id="player-name-${escapeHTML(playerEntry.player)}">${escapeHTML(playerEntry.player)} <span id="popup-flag-${escapeHTML(playerEntry.player)}"></span></span>
 					<span>Points: ${playerEntry.totalPoints.toFixed(2)}</span>
 				</div>
 				<div>
@@ -250,20 +253,20 @@ await Promise.all(leaderboardData.map(async (playerEntry) => {
 			txt += `
 					<tr>
 						<td>
-							<strong>${challengeInfo.name} (#${challengeInfo.rank})</strong>
+							<strong>${escapeHTML(challengeInfo.name)} (#${escapeHTML(String(challengeInfo.rank))})</strong>
 							<br>
 								<span>${recordInfo.points.toFixed(2)} points</span>
 							<br>
 			`
 
 			let verifiedTag = `<span class="badge badge-success">VERIFIER</span>`
-			let progressTag = `<span style="color: rgb(181, 181, 181);">${recordInfo.progress}</span>`
+			let progressTag = `<span style="color: rgb(181, 181, 181);">${escapeHTML(String(recordInfo.progress))}</span>`
 
 			txt += recordInfo.verified ? verifiedTag : progressTag
 			txt += `
 						</td>
 						<td>
-							<a href=${recordInfo.link} target="_blank">Link</a>
+							<a href="${escapeHTML(recordInfo.link)}" target="_blank">Link</a>
 						</td>
 					</tr>
 			`

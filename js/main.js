@@ -1,4 +1,5 @@
 import { API_URL } from "./config.js";
+import { escapeHTML } from "./utils.js";
 
 const fetch_url = `${API_URL}/rest/mainlist`;
 
@@ -54,16 +55,16 @@ function createListItem(item) {
     listItem.innerHTML = `
         <div class="list-number ${!item.ranking ? 'skeleton' : ''}">${rankingText}</div>
         <div class="list-thumbnail">
-            <a href="${item.link}" target="_blank">
+            <a href="${escapeHTML(item.link)}" target="_blank">
                 ${imageElement}
             </a>
         </div>
         <div class="list-info">
-            <p class="level-name ${!item.title ? 'skeleton' : ''}">${item.title || ''}</p>
+            <p class="level-name ${!item.title ? 'skeleton' : ''}">${escapeHTML(item.title) || ''}</p>
             <div class="level-info">
-                <p class="level-id ${!item.id ? 'skeleton' : ''}">${item.id || ''}</p>
-                <p class="level-author ${!item.creator ? 'skeleton' : ''}">${item.creator || ''}</p>
-                <p class="level-verifier ${!item.verifier ? 'skeleton' : ''}">${item.verifier || ''}</p>
+                <p class="level-id ${!item.id ? 'skeleton' : ''}">${escapeHTML(item.id) || ''}</p>
+                <p class="level-author ${!item.creator ? 'skeleton' : ''}">${escapeHTML(item.creator) || ''}</p>
+                <p class="level-verifier ${!item.verifier ? 'skeleton' : ''}">${escapeHTML(item.verifier) || ''}</p>
             </div>
         </div>
     `;

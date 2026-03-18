@@ -2,9 +2,9 @@ import { API_URL } from "./config.js";
 
 let isYouTubeLinkPresent = false;
 let isLevelIdValid = false;
-const headers = {
-    'Authorization': `Bearer ${localStorage.getItem('userToken')}`
-};
+function getAuthHeaders() {
+    return { 'Authorization': `Bearer ${localStorage.getItem('userToken')}` };
+}
 
 const debounce = (fn, wait) => {
     let timeout;
@@ -184,7 +184,7 @@ for (let creator of creatorList) {
     
     fetch(url, {
         method: "POST",
-        headers: headers
+        headers: getAuthHeaders()
     })
     .then(async (response) => {
         const responseData = await response.json();
@@ -257,8 +257,6 @@ async function uploadNongFile() {
     if (nongFile) {
         let formData = new FormData();
         formData.append('nongFile', nongFile);
-        // Get levelId from the HTML document
-    const levelId = document.getElementById("levelId").value;
     
     // Append levelId to formData
     formData.append('levelId', levelId);
@@ -412,9 +410,6 @@ function addInputField(type) {
   
   const addButton = document.getElementById(`${type}AddButton`);
   container.insertBefore(newInputDiv, addButton);
-  if (type === 'creator') {
-    const creatorInputs = document.querySelectorAll('#creatorFields input[name="creator"]');
-}
 }
 
 

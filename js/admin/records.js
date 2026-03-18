@@ -1,6 +1,10 @@
 import { API_URL } from "../config.js";
+import { escapeHTML } from "../utils.js";
 let mainlistLevels = [];
-const userToken = localStorage.getItem('userToken');
+
+function getAuthHeaders() {
+  return { 'Authorization': 'Bearer ' + localStorage.getItem('userToken') };
+}
 function loadMainlistLevels(token) {
     fetch(`${API_URL}/rest/mainlist`, {
         headers: {
@@ -14,7 +18,7 @@ function loadMainlistLevels(token) {
 }
 
 // Call this function once after the user logs in or as part of an initial setup
-loadMainlistLevels(userToken);
+loadMainlistLevels(localStorage.getItem('userToken'));
 
 function handleRecordsSection(token, endpoint) {
     if (endpoint === '/rest/records') {
@@ -60,7 +64,7 @@ function loadRecords(token) {
         for (let player in groupedByPlayer) {
             const playerRow = document.createElement('tr');
             playerRow.innerHTML = `
-                <td><a href="#" data-records='${JSON.stringify(groupedByPlayer[player])}' onclick="displayPlayerDetailedRecords('${player}')">${player}</a></td>
+                <td><a href="#" data-records='${escapeHTML(JSON.stringify(groupedByPlayer[player]))}' onclick="displayPlayerDetailedRecords('${escapeHTML(player)}')">${escapeHTML(player)}</a></td>
                 <td>${groupedByPlayer[player].length}</td>
             `;
             tbody.appendChild(playerRow);
@@ -105,7 +109,7 @@ function deleteRecord(encodedRecord) {
         .then(result => {
             if (result.success) {
                 toastr.success(result.message || "Record deleted successfully.");
-                handleRecordsSection(userToken, '/rest/records');  // Refresh the records
+                handleRecordsSection(localStorage.getItem('userToken'), '/rest/records');  // Refresh the records
             } else {
                 toastr.error(result.message || "Failed to delete the record.");
             }
@@ -363,10 +367,10 @@ if (recordTypeDropdown) {
     recordTypeDropdown.addEventListener('change', function(e) {
         switch (e.target.value) {
             case 'records':
-                handleRecordsSection(userToken, '/rest/records');
+                handleRecordsSection(localStorage.getItem('userToken'), '/rest/records');
                 break;
             case 'pending_records':
-                handleRecordsSection(userToken, '/rest/pending-records');
+                handleRecordsSection(localStorage.getItem('userToken'), '/rest/pending-records');
                 break;
             default:
                 console.error('Unknown record type:', e.target.value);
@@ -381,17 +385,17 @@ recordsButton.addEventListener('click', function () {
     if (recordTypeDropdown) {
         switch(recordTypeDropdown.value) {
             case 'records':
-                handleRecordsSection(userToken, '/rest/records');
+                handleRecordsSection(localStorage.getItem('userToken'), '/rest/records');
                 break;
             case 'pending_records':
-                handleRecordsSection(userToken, '/rest/pending-records');
+                handleRecordsSection(localStorage.getItem('userToken'), '/rest/pending-records');
                 break;
             default:
                 console.error('Unknown record type:', recordTypeDropdown.value);
                 return;
         }
     } else {
-        handleRecordsSection(userToken, '/rest/pending-records'); // Default endpoint
+        handleRecordsSection(localStorage.getItem('userToken'), '/rest/pending-records'); // Default endpoint
     }
 });
 window.displayPlayerDetailedRecords = displayPlayerDetailedRecords;
