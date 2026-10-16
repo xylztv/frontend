@@ -15,6 +15,9 @@ The challenge list is served at `https://xylz.online/list/`. Keep page links and
 assets relative to this directory. `js/config.js` derives the API base from its
 own URL so API calls stay on the same origin and under `/list/`.
 
+Production is served by nginx/Express, not GitHub Pages. Keep GitHub Pages
+disabled in the repository settings and do not add a Pages `CNAME` file here.
+
 Browser regression checks (Python, Playwright, and Chromium required):
 `python3 tests/list_migration.py`. The checks mock all APIs and never create
 production records. When changing modules, update the cache version in their
