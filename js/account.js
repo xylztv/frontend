@@ -6,32 +6,12 @@ let verificationComment = "";
 
 async function fetchUserDetails() {
     try {
-        const storedUserData = localStorage.getItem('userData');
-        if (storedUserData) {
-            const userData = JSON.parse(storedUserData);
-            if (userData.gdusername) {
-                displayUserDetails(userData);
-            } else {
-                // GD username not found in stored user data, fetch user data again
-                const response = await fetchUserData();
-                if (response.ok) {
-                    const freshUserData = await response.json();
-                    localStorage.setItem('userData', JSON.stringify(freshUserData));
-                    displayUserDetails(freshUserData);
-                } else {
-                    throw new Error('Failed to fetch user details');
-                }
-            }
-        } else {
-            const response = await fetchUserData();
-            if (response.ok) {
-                const userData = await response.json();
-                localStorage.setItem('userData', JSON.stringify(userData));
-                displayUserDetails(userData);
-            } else {
-                throw new Error('Failed to fetch user details');
-            }
-        }
+        // the server is the source of truth for GD link state, cached names may be stale
+        const response = await fetchUserData();
+        if (!response.ok) throw new Error('Failed to fetch user details');
+        const userData = await response.json();
+        localStorage.setItem('userData', JSON.stringify(userData));
+        displayUserDetails(userData);
     } catch (error) {
         console.error('Error fetching user details:', error);
         toastr.error('Failed to fetch account details.');
@@ -615,7 +595,9 @@ function displayUserDetails(data) {
         });
         
     } else {
-        gdUsernameDisplay.innerText = '';
+        gdUsernameDisplay.innerText = data.gdRecoveryUsername ? 'Verification required for ' + data.gdRecoveryUsername : '';
+        linkGdAccountBtn.innerText = data.gdRecoveryUsername ? 'Recover GD account' : 'Link GD account';
+        if (data.gdRecoveryUsername) document.getElementById('gdUsername').value = data.gdRecoveryUsername;
         linkGdAccountBtn.style.display = 'block';
         unlinkGdAccountBtn.style.display = 'none';
         gdRecordsField.style.display = 'none';
@@ -815,6 +797,10 @@ document.getElementById('changePasswordForm').addEventListener('submit', functio
         if (data.success) {
             toastr.success(data.message);
             $('#changePasswordModal').modal('hide');
+            localStorage.removeItem('userToken');
+            localStorage.removeItem('userData');
+            localStorage.removeItem('justLoggedIn');
+            window.location.href = 'signin.html';
         } else {
             toastr.error(data.message);
         }
