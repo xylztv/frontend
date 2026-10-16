@@ -122,7 +122,7 @@
         </div>
         <div class="right-section">
             <button class="button-54" role="button" onclick="window.location.href='legacy.html'">legacy</button>
-            <button class="button-54" role="button" onclick="window.location.href='/leaderboard.html'">Leaderboard</button>  
+            <button class="button-54" role="button" onclick="window.location.href='leaderboard.html'">Leaderboard</button>
         </div>
         <div class="hamburger-menu">
             <input type="checkbox" id="checkbox">
@@ -132,11 +132,11 @@
                 <div class="bar bar--bottom"></div>
             </label>
             <ul class="menu">
-                <li role="button" onclick="window.location.href='/leaderboard.html'">Leaderboard</li>
-                <li role="button" onclick="window.location.href='/legacy.html'">Legacy</li>
-                <li role="button" class="loggedOutButtons" onclick="window.location.href='/signin.html'">Sign in</li>
-                <li role="button" class="loggedOutButtons" onclick="window.location.href='/signup.html'">Sign Up</li>
-                <li role="button" class="loggedInButton" onclick="window.location.href='/account.html'">Account</li>
+                <li role="button" onclick="window.location.href='leaderboard.html'">Leaderboard</li>
+                <li role="button" onclick="window.location.href='legacy.html'">Legacy</li>
+                <li role="button" class="loggedOutButtons" onclick="window.location.href='signin.html'">Sign in</li>
+                <li role="button" class="loggedOutButtons" onclick="window.location.href='signup.html'">Sign Up</li>
+                <li role="button" class="loggedInButton" onclick="window.location.href='account.html'">Account</li>
             </ul>
         </div>            
     </div>
@@ -158,7 +158,7 @@
                     <button type="submit" class="submit btn btn-primary">Sign Up</button>
                     <p class="signup-link">
                         Already have an account?
-                        <a href="/signin.html">Sign in</a>
+                        <a href="signin.html">Sign in</a>
                     </p>
                 </form>
             </div>
@@ -167,7 +167,7 @@
   
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script type="module">
-      import { API_URL } from './js/config.js';
+      import { API_URL } from './js/config.js?v=20261016';
       document.getElementById('signUpForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -220,7 +220,7 @@
                     localStorage.setItem('justLoggedIn', 'true');
                     toastr.success('Signed up successfully.');
                     // Optionally, redirect to a dashboard or main page
-                    window.location.href = '/';
+                    window.location.href = 'index.html';
                 } else {
                     toastr.error(data.message);
                 }
@@ -256,7 +256,7 @@ document.getElementById('confirmPassword').addEventListener('input', checkFormSt
         <link rel="stylesheet" href="css/sidebar.css" defer>
         <link rel="stylesheet" href="css/middle.css" defer>
         <link rel="stylesheet" href="css/footer.css" defer>
-        <script type="module" data-cfasync="false" src="js/authCheck.js" defer></script>
+        <script type="module" data-cfasync="false" src="js/authCheck.js?v=20261016" defer></script>
         <script src='https://unpkg.com/trianglify@^4/dist/trianglify.bundle.js'></script>
         <script>
             var pattern = trianglify({

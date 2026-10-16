@@ -1,5 +1,5 @@
-import { API_URL } from "./config.js";
-import { GetChallenges, GetPoints } from './leaderboard.js';
+import { API_URL } from "./config.js?v=20261016";
+import { GetChallenges, GetPoints } from './leaderboard.js?v=20261016';
 import { escapeHTML } from "./utils.js";
 let verificationComment = "";
 
@@ -785,7 +785,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.getElementById('logoutBtn').addEventListener('click', function() {
     localStorage.removeItem('userToken');
     localStorage.removeItem('userData');
-    window.location.href = '/';
+    window.location.href = 'index.html';
 });
 
 document.getElementById('changePasswordForm').addEventListener('submit', function(event) {

@@ -1,4 +1,4 @@
-import { API_URL } from "./config.js";
+import { API_URL } from "./config.js?v=20261016";
 
 let changedLevels = [];
 let originalRankings = {}; // { levelId: ranking }

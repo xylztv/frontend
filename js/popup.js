@@ -1,4 +1,4 @@
-import { API_URL } from "./config.js";
+import { API_URL } from "./config.js?v=20261016";
 import { escapeHTML } from "./utils.js";
 const fetch_url = `${API_URL}/rest/records`;
 const nong_fetch_url = `${API_URL}/rest/all-nongs`;
@@ -72,7 +72,7 @@ async function Setup() {
 
         runsHTML += `
         <div style="display: flex; justify-content: space-between; width: 100%;">
-        <a href="/record_submission_form.html?levelId=${escapeHTML(levelID)}" target="_blank"><label><span class="submit-button">Submit Record</span></label></a>`
+        <a href="record_submission_form.html?levelId=${escapeHTML(levelID)}" target="_blank"><label><span class="submit-button">Submit Record</span></label></a>`
 
         // check if nong exists
         let nongData = nongs.find(e => e.id == levelID)

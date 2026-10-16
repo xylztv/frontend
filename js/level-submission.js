@@ -1,4 +1,5 @@
-import { API_URL } from "./config.js";
+import { API_URL } from "./config.js?v=20261016";
+import { escapeHTML } from "./utils.js";
 
 let isYouTubeLinkPresent = false;
 let isLevelIdValid = false;
@@ -187,7 +188,7 @@ for (let creator of creatorList) {
         headers: getAuthHeaders()
     })
     .then(async (response) => {
-        const responseData = await response.json();
+        const responseData = await response.json().catch(() => ({}));
         if (response.ok) {
             const nongFileInput = document.getElementById('nongFile');
             const nongFile = nongFileInput.files[0];
@@ -211,14 +212,20 @@ for (let creator of creatorList) {
             }
         } else {
             console.error("Error:", response.status);
-            if (responseData.error === 3) {
+            if ([401, 403].includes(response.status) || [2, 3].includes(responseData.error)) {
                 toastr.error('You must be logged in to submit levels', 'Error');
             } else if (responseData.error === "level already exists") {
                 toastr.warning('Level already exists', 'Warning');
             } else {
-                toastr.error('Unknown error occurred', 'Error');
+                const detail = typeof responseData.error === 'string' ? responseData.error : responseData.message;
+                toastr.error(escapeHTML(detail || `Could not submit level (HTTP ${response.status}). Please try again.`), 'Error');
             }
         }
+    }).catch(error => {
+        console.error('Error submitting level:', error);
+        toastr.error('Could not reach the list server. Please try again.', 'Error');
+    }).finally(() => {
+        submitButton.disabled = false;
     });
 } else {
     toastr.error('Please fill in all required fields correctly.', 'Error');
